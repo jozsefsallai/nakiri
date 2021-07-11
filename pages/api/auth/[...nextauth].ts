@@ -38,7 +38,6 @@ export default function (req, res) {
 
         if (profile) {
           token.id = profile.id;
-          token.username = profile.username;
           token.discriminator = profile.discriminator;
         }
 
@@ -52,10 +51,6 @@ export default function (req, res) {
 
         if (token?.id) {
           sess.user.id = token.id as string;
-        }
-
-        if (token?.username) {
-          sess.user.username = token.username as string;
         }
 
         if (token?.discriminator) {
