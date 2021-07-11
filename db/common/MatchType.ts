@@ -1,0 +1,5 @@
+export enum MatchType {
+  YOUTUBE_VIDEO_ID,
+  YOUTUBE_CHANNEL_ID,
+  LINK_PATTERN
+};
