@@ -31,6 +31,12 @@ const { AuthorizedUser, UserPermissions } = require('../db/models/auth/Authorize
     }
   ]);
 
+  const userCount = await authorizedUserRepository.count({ discordId });
+
+  if (userCount > 0) {
+    throw new Error('User already added to the list of authorized users.');
+  }
+
   const permissions = permissionsList.length === 0
     ? 1
     : permissionsList.reduce((a, b) => a + b);

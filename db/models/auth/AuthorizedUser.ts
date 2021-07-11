@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export enum UserPermissions {
-  MANAGE_OWN_GUILD_BLACKLISTS = 1,
-  MANAGE_GLOBAL_BLACKLISTS = 2,
-  MANAGE_AUTHORIZED_USERS = 4
+  MANAGE_OWN_GUILD_BLACKLISTS = 1 << 0,
+  MANAGE_GLOBAL_BLACKLISTS    = 1 << 1,
+  MANAGE_AUTHORIZED_USERS     = 1 << 2
 };
 
 export interface IAuthorizedUser {
@@ -12,7 +12,13 @@ export interface IAuthorizedUser {
   updatedAt: Date;
   discordId: string;
   permissions: number;
-}
+};
+
+export interface IUser extends IAuthorizedUser {
+  username: string;
+  discriminator: string;
+  image?: string;
+};
 
 @Entity()
 export class AuthorizedUser implements IAuthorizedUser {
