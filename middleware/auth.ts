@@ -10,6 +10,8 @@ export const ensureAuthenticated = (callback: NextApiHandler, strict: boolean = 
     let isLoggedIn = false;
 
     if (!strict && req.headers.authorization?.length > 0) {
+      await db.prepare();
+
       const keyRepository = db.getRepository(Key);
       const key = req.headers.authorization!;
 
