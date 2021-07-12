@@ -2,42 +2,42 @@ import { NextApiHandler } from 'next';
 
 import firstOf from '@/lib/firstOf';
 
-import { getYouTubeVideoIDs } from './getYouTubeVideoIDs';
-import { addYouTubeVideoID } from './addYouTubeVideoID';
+import { getLinkPatterns } from './getLinkPatterns';
+import { addLinkPattern } from './addLinkPattern';
 
 export const index: NextApiHandler = async (req, res) => {
-  const videoIDs = await getYouTubeVideoIDs(firstOf(req.query.guild));
+  const patterns = await getLinkPatterns(firstOf(req.query.guild));
   const compact = firstOf(req.query.compact) !== 'false';
 
   if (compact) {
     return res.json({
       ok: true,
-      videoIDs: videoIDs.map(entry => entry.videoId)
+      patterns: patterns.map(entry => entry.pattern)
     });
   }
 
   return res.json({
     ok: true,
-    videoIDs
+    patterns
   });
 };
 
 export const create: NextApiHandler = async (req, res) => {
   const guildId = firstOf(req.query.guild);
-  const videoID: string | undefined = req.body.videoID;
+  const pattern: string | undefined = req.body.pattern;
 
-  if (typeof videoID === 'undefined') {
+  if (typeof pattern === 'undefined') {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_VIDEO_ID'
+      error: 'MISSING_REGEX_PATTERN'
     });
   }
 
   try {
-    await addYouTubeVideoID(videoID, guildId);
+    await addLinkPattern(pattern, guildId);
     return res.json({ ok: true });
   } catch (err) {
-    if (err.name === 'YouTubeVideoIDCreationError') {
+    if (err.name === 'LinkPatternCreationError') {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code

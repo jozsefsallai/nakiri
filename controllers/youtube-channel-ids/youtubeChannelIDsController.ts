@@ -2,42 +2,42 @@ import { NextApiHandler } from 'next';
 
 import firstOf from '@/lib/firstOf';
 
-import { getYouTubeVideoIDs } from './getYouTubeVideoIDs';
-import { addYouTubeVideoID } from './addYouTubeVideoID';
+import { getYouTubeChannelIDs } from './getYouTubeChannelIDs';
+import { addYouTubeChannelID } from './addYouTubeChannelID';
 
 export const index: NextApiHandler = async (req, res) => {
-  const videoIDs = await getYouTubeVideoIDs(firstOf(req.query.guild));
+  const channelIDs = await getYouTubeChannelIDs(firstOf(req.query.guild));
   const compact = firstOf(req.query.compact) !== 'false';
 
   if (compact) {
     return res.json({
       ok: true,
-      videoIDs: videoIDs.map(entry => entry.videoId)
+      channelIDs: channelIDs.map(entry => entry.channelId)
     });
   }
 
   return res.json({
     ok: true,
-    videoIDs
+    channelIDs
   });
 };
 
 export const create: NextApiHandler = async (req, res) => {
   const guildId = firstOf(req.query.guild);
-  const videoID: string | undefined = req.body.videoID;
+  const channelId: string | undefined = req.body.channelID;
 
-  if (typeof videoID === 'undefined') {
+  if (typeof channelId === 'undefined') {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_VIDEO_ID'
+      error: 'MISSING_CHANNEL_ID'
     });
   }
 
   try {
-    await addYouTubeVideoID(videoID, guildId);
+    await addYouTubeChannelID(channelId, guildId);
     return res.json({ ok: true });
   } catch (err) {
-    if (err.name === 'YouTubeVideoIDCreationError') {
+    if (err.name === 'YouTubeChannelIDCreationError') {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code

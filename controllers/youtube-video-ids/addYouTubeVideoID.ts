@@ -1,8 +1,8 @@
 import db from '@/services/db';
-import { YouTubeVideoID, IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
+import { YouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { FindConditions, IsNull } from 'typeorm';
 import { APIError } from '@/lib/errors';
-import { isValidYouTubeVideoID } from '@/lib/idValidators';
+import { isValidYouTubeVideoID } from '@/lib/commonValidators';
 
 export class YouTubeVideoIDCreationError extends APIError {
   constructor(statusCode: number, code: string) {

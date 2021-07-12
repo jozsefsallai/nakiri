@@ -1,0 +1,36 @@
+export const isValidYouTubeVideoID = (input: string): boolean => {
+  if (input.length !== 11) {
+    return false;
+  }
+
+  if (/[^A-Za-z0-9_-]/.test(input)) {
+    return false;
+  }
+
+  return true;
+};
+
+export const isValidYouTubeChannelID = (input: string): boolean => {
+  if (input.length !== 24) {
+    return false;
+  }
+
+  if (!input.startsWith('UC')) {
+    return false;
+  }
+
+  if (/[^A-Za-z0-9_-]/.test(input)) {
+    return false;
+  }
+
+  return true;
+};
+
+export const isValidRegex = (input: string): boolean => {
+  try {
+    new RegExp(input);
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
