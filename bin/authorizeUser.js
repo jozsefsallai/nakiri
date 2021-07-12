@@ -4,7 +4,8 @@ require('dotenv').config();
 const inquirer = require('inquirer');
 
 const db = require('../services/db').default;
-const { AuthorizedUser, UserPermissions } = require('../db/models/auth/AuthorizedUser');
+const { AuthorizedUser } = require('../db/models/auth/AuthorizedUser');
+const { UserPermissions } = require('../lib/UserPermissions');
 
 (async () => {
   await db.prepare();

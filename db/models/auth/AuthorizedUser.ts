@@ -1,10 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-
-export enum UserPermissions {
-  MANAGE_OWN_GUILD_BLACKLISTS = 1 << 0,
-  MANAGE_GLOBAL_BLACKLISTS    = 1 << 1,
-  MANAGE_AUTHORIZED_USERS     = 1 << 2
-};
+import { UserPermissionsUtil } from '../../../lib/UserPermissions';
 
 export interface IAuthorizedUser {
   id: string;
@@ -37,20 +32,20 @@ export class AuthorizedUser implements IAuthorizedUser {
   @Column('int', { default: 1 })
   permissions: number;
 
-  private hasPermission(permission: number): boolean {
-    return (this.permissions & permission) === permission;
+  hasPermission(permission: number): boolean {
+    return UserPermissionsUtil.hasPermission(this.permissions, permission);
   }
 
   canManageOwnGuildBlacklists(): boolean {
-    return this.hasPermission(UserPermissions.MANAGE_OWN_GUILD_BLACKLISTS);
+    return UserPermissionsUtil.canManageOwnGuildBlacklists(this.permissions);
   }
 
   canManageGlobalBlacklists(): boolean {
-    return this.hasPermission(UserPermissions.MANAGE_GLOBAL_BLACKLISTS);
+    return UserPermissionsUtil.canManageGlobalBlacklists(this.permissions);
   }
 
   canManageAuthorizedUsers(): boolean {
-    return this.hasPermission(UserPermissions.MANAGE_AUTHORIZED_USERS);
+    return UserPermissionsUtil.canManageAuthorizedUsers(this.permissions);
   }
 
   toJSON(): IAuthorizedUser {

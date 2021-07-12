@@ -1,4 +1,4 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
 
 import db from '@/services/db';
@@ -34,7 +34,7 @@ export const ensureAuthenticated = (callback: NextApiHandler, strict: boolean = 
 
 export const ensureAnonymous = (callback: NextApiHandler): NextApiHandler => {
   return async (req, res) => {
-    const session = getSession({ req });
+    const session = await getSession({ req });
 
     if (session) {
       return res.status(400).json({
