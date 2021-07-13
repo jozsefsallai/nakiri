@@ -1,19 +1,45 @@
-import { AuthorizedUser, IAuthorizedUser } from '@/db/models/auth/AuthorizedUser';
+import { UserPermissionsUtil } from './UserPermissions';
 
-export interface IUser extends IAuthorizedUser {
+export interface IUser {
+  id: string;
   name: string;
   discriminator: string;
   image?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  discordId: string;
+  permissions: number;
 };
 
-export class User extends AuthorizedUser implements IUser {
+// I know this is code duplication, but it's pretty much the only way I can do
+// this right now. Extending from AuthorizedUser will bundle typeorm too.
+export class User implements IUser {
+  id: string;
   name: string;
   discriminator: string;
   image?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  discordId: string;
+  permissions: number;
+
+  hasPermission(permission: number): boolean {
+    return UserPermissionsUtil.hasPermission(this.permissions, permission);
+  }
+
+  canManageOwnGuildBlacklists(): boolean {
+    return UserPermissionsUtil.canManageOwnGuildBlacklists(this.permissions);
+  }
+
+  canManageGlobalBlacklists(): boolean {
+    return UserPermissionsUtil.canManageGlobalBlacklists(this.permissions);
+  }
+
+  canManageAuthorizedUsers(): boolean {
+    return UserPermissionsUtil.canManageAuthorizedUsers(this.permissions);
+  }
 
   constructor({ id, name, image, discriminator, discordId, createdAt, updatedAt, permissions }: IUser) {
-    super();
-
     this.id = id;
     this.name = name;
     this.image = image;

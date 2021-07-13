@@ -25,8 +25,7 @@ export const redirectIfAuthenticated = async (req, res): Promise<boolean> => {
     res.end();
 
     return true;
-  } catch (err) {
-    console.error(err)
+  } catch (_) {
     return false;
   }
 };

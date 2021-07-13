@@ -1,6 +1,8 @@
-import db from '@/services/db';
-import { AuthorizedUser, IUser } from '@/db/models/auth/AuthorizedUser';
 import { Session } from 'next-auth';
+
+import db from '@/services/db';
+import { AuthorizedUser } from '@/db/models/auth/AuthorizedUser';
+import { IUser } from '@/lib/User';
 
 export const getUser = async (session: Session): Promise<IUser | null> => {
   await db.prepare();
