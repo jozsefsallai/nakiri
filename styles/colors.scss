@@ -1,8 +1,28 @@
-$ayame-primary: #9c3741;
-$ayame-secondary: #ef3a7d;
-$ayame-faint: #ec6978;
+:root {
+  --ayame-primary-100: #ffebf5;
+  --ayame-primary-200: #ffd7e1;
+  --ayame-primary-300: #ffc3cd;
+  --ayame-primary-400: #ffafb9;
+  --ayame-primary-500: #ff9ba5;
+  --ayame-primary-600: #ec8791;
+  --ayame-primary-700: #d8737d;
+  --ayame-primary-800: #c45f69;
+  --ayame-primary-900: #b04b55;
+  --ayame-primary: #9c3741;
 
-$danger: #940402;
-$success: #339402;
-$warning: #945e02;
-$info: #023a94;
+  --ayame-secondary-100: #ffeeff;
+  --ayame-secondary-200: #ffdaff;
+  --ayame-secondary-300: #ffc6ff;
+  --ayame-secondary-400: #ffb2f5;
+  --ayame-secondary-500: #ff9ee1;
+  --ayame-secondary-600: #ff8acd;
+  --ayame-secondary-700: #ff76b9;
+  --ayame-secondary-800: #ff62a5;
+  --ayame-secondary-900: #ff4e91;
+  --ayame-secondary: #ef3a7d;
+
+  --danger: #940402;
+  --success: #339402;
+  --warning: #945e02;
+  --info: #023a94;
+}

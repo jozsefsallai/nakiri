@@ -9,12 +9,6 @@ export interface IAuthorizedUser {
   permissions: number;
 };
 
-export interface IUser extends IAuthorizedUser {
-  username: string;
-  discriminator: string;
-  image?: string;
-};
-
 @Entity()
 export class AuthorizedUser implements IAuthorizedUser {
   @PrimaryGeneratedColumn('uuid')

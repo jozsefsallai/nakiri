@@ -22,6 +22,10 @@ module.exports = {
       {
         source: '/docs/insomnia.json',
         destination: '/api/docs'
+      },
+      {
+        source: '/manage',
+        destination: '/api/manage'
       }
     ];
   }
