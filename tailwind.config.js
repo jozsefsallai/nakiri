@@ -53,6 +53,8 @@ module.exports = {
       success: 'var(--success)',
       warning: 'var(--warning)',
 
+      gray: 'var(--gray)',
+
       transparent: 'transparent',
       black: '#000',
       white: '#fff'

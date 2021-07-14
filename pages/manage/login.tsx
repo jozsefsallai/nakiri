@@ -1,7 +1,7 @@
 import Head from 'next/head';
 
 import BoxLayout from '@/layouts/BoxLayout';
-import Button from '@/components/common/Button';
+import Button from '@/components/common/button/Button';
 
 import { redirectIfAuthenticated } from '@/lib/redirects';
 

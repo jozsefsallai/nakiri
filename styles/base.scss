@@ -14,6 +14,14 @@ body {
   @apply bg-ayame-primary-100;
 }
 
+a {
+  @apply text-ayame-primary;
+
+  &:hover {
+    @apply text-ayame-secondary;
+  }
+}
+
 h1, h2, h3, h4, h5 {
   @apply font-bold;
   @apply my-3;
@@ -45,3 +53,5 @@ ul {
   @apply my-5;
   @apply pl-8;
 }
+
+@import './progress';

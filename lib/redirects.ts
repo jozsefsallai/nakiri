@@ -20,7 +20,7 @@ export const redirectIfAuthenticated = async (req, res): Promise<boolean> => {
     await apiService.users.getLoggedInUser(req.headers);
 
     res.writeHead(302, {
-      location: '/manage/home'
+      location: '/manage/guilds'
     });
     res.end();
 
@@ -36,7 +36,7 @@ export const redirectIfDoesNotHavePermission = async (req, res, permission: User
 
     if (!UserPermissionsUtil.hasPermission(user.permissions, permission)) {
       res.writeHead(302, {
-        location: '/manage/home'
+        location: '/manage/guilds'
       });
       res.end();
 

@@ -7,7 +7,7 @@ export default bar({
     const session = await getSession({ req });
 
     if (session) {
-      res.redirect(302, '/manage/home');
+      res.redirect(302, '/manage/guilds');
       return;
     }
 
