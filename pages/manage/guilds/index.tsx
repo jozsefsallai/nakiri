@@ -19,7 +19,7 @@ const ManageGuildsIndexPage = () => {
       const { guilds } = await apiService.guilds.getGuilds();
       setGuilds(guilds);
     } catch (err) {
-      setError('Failed to fetch guilds.')
+      setError('Failed to fetch guilds.');
     }
   };
 
