@@ -13,7 +13,7 @@ const Box = ({ title, ...props }: BoxProps, ref) => {
 
   return (
     <section className={classNames}>
-      {title && <h1 className="text-2xl font-normal">{title}</h1>}
+      {title && <h1 className="text-2xl">{title}</h1>}
       {props.children}
     </section>
   );

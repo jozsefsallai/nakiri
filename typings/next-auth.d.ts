@@ -7,5 +7,7 @@ declare module 'next-auth' {
       name: string;
       discriminator: string;
     };
+
+    accessToken: string;
   }
 }

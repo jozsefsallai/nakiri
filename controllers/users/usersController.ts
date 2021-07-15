@@ -1,4 +1,3 @@
-import firstOf from '@/lib/firstOf';
 import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
 import { authorizeUser } from './authorizeUser';

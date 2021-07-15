@@ -46,7 +46,7 @@ export default function (req, res) {
 
       async session(sess, token) {
         if (token?.accessToken) {
-          sess.accessToken = token.accessToken;
+          sess.accessToken = token.accessToken as string;
         }
 
         if (token?.id) {
