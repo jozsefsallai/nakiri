@@ -4,7 +4,7 @@ import { addGuild } from './addGuild';
 import { fetchGuilds } from './fetchGuilds';
 
 export const all: NextApiHandler = async (req, res) => {
-  const session = await getSession({ req })
+  const session = await getSession({ req });
 
   try {
     const guilds = await fetchGuilds(session, true);
