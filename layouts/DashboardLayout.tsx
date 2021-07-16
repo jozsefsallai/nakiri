@@ -7,16 +7,18 @@ export interface DashboardLayoutProps {
   children: ReactNode;
   hasContainer?: boolean;
   title?: string;
+  buttonText?: string;
+  onButtonClick?();
 };
 
-const DashboardLayout = ({ children, hasContainer, title }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children, hasContainer, buttonText, onButtonClick, title }: DashboardLayoutProps) => {
   return (
     <section>
       <TheHeader />
 
       <div className="container py-10">
         {!hasContainer && children}
-        {hasContainer && <Box title={title}>{children}</Box>}
+        {hasContainer && <Box title={title} buttonText={buttonText} onButtonClick={onButtonClick}>{children}</Box>}
       </div>
 
       <footer className="p-4 text-center text-xs">

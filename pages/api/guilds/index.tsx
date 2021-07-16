@@ -4,5 +4,6 @@ import * as guildsController from '@/controllers/guilds/guildsController';
 import { ensureAuthenticated } from '@/middleware/auth';
 
 export default bar({
-  get: ensureAuthenticated(guildsController.index, true)
+  get: ensureAuthenticated(guildsController.index, true),
+  post: ensureAuthenticated(guildsController.insert, true)
 });
