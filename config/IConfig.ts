@@ -16,6 +16,7 @@ export interface IDatabaseConfig {
 export interface IDiscordConfig {
   clientId: string;
   clientSecret: string;
+  botToken: string;
 };
 
 export interface IConfig {

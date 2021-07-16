@@ -68,13 +68,6 @@ It is recommended that you grant all permissions to the first user.
 yarn dev
 ```
 
-**8. Build for production:**
-
-```
-yarn build
-yarn start
-```
-
 ## Useful Commands
 
 ### Linting
@@ -93,6 +86,44 @@ yarn migration:generate NameOfMigration
 
 ```
 yarn migration:rollback
+```
+
+### Generate API key manually
+
+```
+node bin/generateKey
+```
+
+### Import into global blacklists
+
+```
+node bin/import
+```
+
+### Update documentation assets
+
+```
+sh bin/makedocs.sh
+```
+
+## Deploying for Production
+
+Create a production build:
+
+```
+yarn build
+```
+
+Run the following command in your favorite Node process manager (e.g. PM2):
+
+```
+yarn start
+```
+
+This job should be running on a tidy schedule:
+
+```
+NODE_ENV=production node bin/updateUsers
 ```
 
 ## License

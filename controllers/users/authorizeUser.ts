@@ -2,6 +2,8 @@ import db from '@/services/db';
 import { AuthorizedUser } from '@/db/models/auth/AuthorizedUser';
 import { APIError } from '@/lib/errors';
 import { UserPermissions } from '@/lib/UserPermissions';
+import axios from 'axios';
+import config from '@/config';
 
 export class AuthorizedUserCreationError extends APIError {
   data?: any;
@@ -35,11 +37,20 @@ export const authorizeUser = async (discordId: string, permissionsList: number[]
     });
   }
 
+  const discordResponse = await axios.get(`https://discordapp.com/api/users/${discordId}`, {
+    headers: {
+      Authorization: `Bot ${config.discord.botToken}`
+    }
+  }).then(res => res.data);
+
   const permissions = permissionsList.reduce((a, b) => a + b);
 
   const entry = new AuthorizedUser();
   entry.discordId = discordId;
   entry.permissions = permissions;
+  entry.name = discordResponse.username;
+  entry.discriminator = discordResponse.discriminator;
+  entry.image = discordResponse.avatar;
 
   await authorizedUserRepository.insert(entry);
 };

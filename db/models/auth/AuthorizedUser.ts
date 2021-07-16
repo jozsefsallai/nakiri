@@ -7,6 +7,9 @@ export interface IAuthorizedUser {
   updatedAt: Date;
   discordId: string;
   permissions: number;
+  name: string;
+  discriminator: string;
+  image?: string;
 };
 
 @Entity()
@@ -25,6 +28,15 @@ export class AuthorizedUser implements IAuthorizedUser {
 
   @Column('int', { default: 1 })
   permissions: number;
+
+  @Column()
+  name: string;
+
+  @Column()
+  discriminator: string;
+
+  @Column({ nullable: true })
+  image?: string;
 
   hasPermission(permission: number): boolean {
     return UserPermissionsUtil.hasPermission(this.permissions, permission);
@@ -48,7 +60,10 @@ export class AuthorizedUser implements IAuthorizedUser {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       discordId: this.discordId,
-      permissions: this.permissions
+      permissions: this.permissions,
+      name: this.name,
+      discriminator: this.discriminator,
+      image: this.image
     };
   }
 }

@@ -2,7 +2,9 @@ require('ts-node/register');
 require('dotenv').config();
 
 const inquirer = require('inquirer');
+const axios = require('axios');
 
+const config = require('../config').default;
 const db = require('../services/db').default;
 const { AuthorizedUser } = require('../db/models/auth/AuthorizedUser');
 const { UserPermissions } = require('../lib/UserPermissions');
@@ -42,8 +44,17 @@ const { UserPermissions } = require('../lib/UserPermissions');
     ? 1
     : permissionsList.reduce((a, b) => a + b);
 
+  const discordResponse = await axios.get(`https://discordapp.com/api/users/${discordId}`, {
+    headers: {
+      Authorization: `Bot ${config.discord.botToken}`
+    }
+  }).then(res => res.data);
+
   const user = new AuthorizedUser();
   user.discordId = discordId;
+  user.name = discordResponse.username;
+  user.discriminator = discordResponse.discriminator;
+  user.image = discordResponse.avatar;
   user.permissions = permissions;
 
   await authorizedUserRepository.insert(user);
