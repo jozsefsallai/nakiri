@@ -101,7 +101,10 @@ const NewUserPage = () => {
 
       if (result.isConfirmed) {
         await authorizeUser(data);
+        return;
       }
+
+      setRequestInProgress(false);
     } catch (err) {
       setRequestInProgress(false);
 
