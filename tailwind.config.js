@@ -55,6 +55,9 @@ module.exports = {
 
       gray: 'var(--gray)',
 
+      'discord-dark': 'var(--discord-dark)',
+      'discord-gray': 'var(--discord-gray)',
+
       transparent: 'transparent',
       black: '#000',
       white: '#fff'

@@ -1,7 +1,10 @@
+import firstOf from '@/lib/firstOf';
 import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
 import { authorizeUser } from './authorizeUser';
+import { getDiscordUser } from './getDiscordUser';
 import { getUser } from './getUser';
+import { getUsers } from './getUsers';
 
 export const get: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
@@ -18,6 +21,42 @@ export const get: NextApiHandler = async (req, res) => {
     ok: true,
     user
   });
+};
+
+export const getData: NextApiHandler = async (req, res) => {
+  const discordId = firstOf(req.query.id)?.trim();
+
+  if (typeof discordId === 'undefined' || discordId.length === 0) {
+    return res.status(400).json({
+      ok: false,
+      error: 'MISSING_DISCORD_ID'
+    });
+  }
+
+  try {
+    const data = await getDiscordUser(discordId);
+    return res.json({
+      ok: true,
+      data
+    });
+  } catch (err) {
+    return res.status(500).json({
+      ok: false,
+      error: 'FAILED_TO_FETCH_USER_DATA'
+    });
+  }
+};
+
+export const index: NextApiHandler = async (req, res) => {
+  try {
+    const users = await getUsers();
+    return res.json({ ok: true, users });
+  } catch (err) {
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR'
+    });
+  }
 };
 
 export const authorize: NextApiHandler = async (req, res) => {

@@ -32,6 +32,7 @@
     "react-feather": "^2.0.9",
     "sass": "^1.29.0",
     "sweetalert2": "^11.0.18",
+    "sweetalert2-react-content": "^4.1.0",
     "typeorm": "^0.2.34",
     "uuid": "^8.3.2"
   },

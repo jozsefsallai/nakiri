@@ -54,4 +54,40 @@ ul {
   @apply pl-8;
 }
 
+.input-group {
+  @apply my-4;
+
+  .checkbox {
+    @apply my-2;
+    @apply block;
+  }
+}
+
+label {
+  @apply font-bold;
+}
+
+input, textarea, select {
+  @apply block;
+  @apply w-full;
+  @apply px-4;
+  @apply py-3;
+  @apply my-2;
+  @apply rounded-md;
+  @apply outline-none;
+  @apply bg-ayame-primary-100;
+  @apply border-2;
+  @apply border-ayame-primary-400;
+
+  &:focus {
+    @apply border-ayame-primary;
+  }
+
+  &[type="checkbox"] {
+    @apply inline-block;
+    @apply mr-2;
+    @apply w-auto;
+  }
+}
+
 @import './progress';
