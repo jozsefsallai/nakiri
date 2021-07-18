@@ -85,7 +85,7 @@ const NewLinkPatternPage = () => {
       title: 'Regex Tester',
       html: <RegexTester pattern={pattern} />
     });
-  }
+  };
 
   useEffect(() => {
     fetchGuilds();
