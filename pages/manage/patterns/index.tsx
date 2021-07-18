@@ -62,15 +62,7 @@ const ManageLinkPatternsIndexPage = () => {
 
     await MySwal.fire({
       title: 'Regex Tester',
-      html: (
-        <div>
-          <div className="text-sm">
-            Pattern:<br /><pre>{targetPattern.pattern}</pre>
-          </div>
-
-          <RegexTester pattern={targetPattern.pattern} />
-        </div>
-      )
+      html: <RegexTester pattern={targetPattern.pattern} />
     });
   };
 

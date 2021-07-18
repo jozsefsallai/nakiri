@@ -31,6 +31,10 @@ const RegexTester = ({ pattern }: RegexTesterProps) => {
 
   return (
     <div>
+      <div className="text-sm">
+        Pattern:<br /><pre>{pattern}</pre>
+      </div>
+
       <textarea onChange={handleTextboxChange}></textarea>
       {hasMatch && <CompactSuccessMessageBox message="At least one match has been found!" />}
       {!hasMatch && <CompactInfoMessageBox message="No matches found." />}

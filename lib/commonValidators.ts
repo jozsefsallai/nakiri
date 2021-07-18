@@ -27,6 +27,10 @@ export const isValidYouTubeChannelID = (input: string): boolean => {
 };
 
 export const isValidRegex = (input: string): boolean => {
+  if (input.trim().length === 0) {
+    return false;
+  }
+
   try {
     new RegExp(input);
     return true;
