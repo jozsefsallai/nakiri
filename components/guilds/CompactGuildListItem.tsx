@@ -4,20 +4,26 @@ import GuildIcon from './GuildIcon';
 
 export interface CompactGuildListItemProps {
   guild: IGuild | IGuildWithKey;
+  active?: boolean;
   onClick?(guild: IGuild);
 };
 
-const CompactGuildListItem = ({ guild, onClick }: CompactGuildListItemProps) => {
+const CompactGuildListItem = ({ guild, active, onClick }: CompactGuildListItemProps) => {
   const classNames = clsx(
     'flex px-3 py-2 my-2 rounded-md items-center gap-2',
     {
       'hover:bg-ayame-secondary-200': !!onClick,
+      'bg-ayame-secondary-200': active,
       'cursor-pointer': !!onClick
     }
   );
 
+  const handleGuildClick = onClick
+    ? () => onClick(guild)
+    : undefined;
+
   return (
-    <div className={classNames}>
+    <div className={classNames} onClick={handleGuildClick}>
       <GuildIcon guild={guild} compact />
       <div>{guild.name}</div>
     </div>

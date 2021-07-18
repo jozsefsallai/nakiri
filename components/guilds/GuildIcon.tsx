@@ -30,6 +30,11 @@ const GuildIcon = ({ guild, compact, ...props }: GuildIconProps, ref) => {
     props.className
   );
 
+  const initialsClassName = clsx({
+    'text-xl': !compact,
+    'text-sm': compact
+  });
+
   return (
     <div
       {...props}
@@ -38,7 +43,7 @@ const GuildIcon = ({ guild, compact, ...props }: GuildIconProps, ref) => {
       ref={ref}
     >
       {icon && <img src={icon} className="rounded-full" alt={guildInitials} />}
-      {!icon && <span className="text-xl">{guildInitials}</span>}
+      {!icon && <span className={initialsClassName}>{guildInitials}</span>}
     </div>
   );
 };

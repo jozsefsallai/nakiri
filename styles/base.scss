@@ -90,4 +90,10 @@ input, textarea, select {
   }
 }
 
+.blacklist-item {
+  &:nth-child(odd) {
+    @apply bg-ayame-primary-100;
+  }
+}
+
 @import './progress';

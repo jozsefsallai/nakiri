@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
-const ManageChannelsIndexPage = () => {
+const ManageUsersIndexPage = () => {
   const [ users, setUsers ] = useState<IAuthorizedUser[] | null>(null);
   const [ error, setError ] = useState<string>('');
 
@@ -56,4 +56,4 @@ export const getServerSideProps = async ({ req, res }) => {
   };
 };
 
-export default ManageChannelsIndexPage;
+export default ManageUsersIndexPage;

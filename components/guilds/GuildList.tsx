@@ -5,15 +5,17 @@ import GuildListItem from './GuildListItem';
 export interface GuildListProps {
   guilds: (IGuild | IGuildWithKey)[];
   onGuildClick?(guild: IGuild);
+  activeGuild?: IGuild;
   compact?: boolean;
 };
 
-const GuildList = ({ guilds, onGuildClick, compact }: GuildListProps) => {
+const GuildList = ({ guilds, onGuildClick, activeGuild, compact }: GuildListProps) => {
+  console.log(guilds);
   return (
     <div>
       {guilds.map(guild => (
         <>
-          {compact && <CompactGuildListItem guild={guild} key={guild.id} />}
+          {compact && <CompactGuildListItem guild={guild} key={guild.id} onClick={onGuildClick} active={activeGuild?.id === guild.id} />}
           {!compact && <GuildListItem guild={guild} key={guild.id} onClick={onGuildClick} />}
         </>
       ))}
