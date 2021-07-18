@@ -80,7 +80,7 @@ const ManageVideosIndexPage = () => {
       )}
       {items && items.length === 0 && <ZeroDataState message="No blacklisted video IDs have been found." />}
 
-      {(!items || !guilds) && !error && <Loading />}
+      {(!items || (items && !guilds)) && !error && <Loading />}
       {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
