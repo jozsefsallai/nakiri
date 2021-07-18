@@ -88,8 +88,8 @@ const ManageChannelsIndexPage = () => {
         />
       )}
 
-      {guilds == null && !error && <Loading />}
-      {guilds == null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {guilds === null && !error && <Loading />}
+      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
 };

@@ -9,7 +9,7 @@ export enum MessageBoxLevel {
 };
 
 export interface MessageBoxProps {
-  level: MessageBoxLevel;
+  level?: MessageBoxLevel;
   message?: string;
   children?: ReactNode;
 };

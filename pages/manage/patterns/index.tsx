@@ -12,6 +12,12 @@ import { useState } from 'react';
 
 import { IGuild } from '@/controllers/guilds/IGuild';
 
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import RegexTester from '@/components/common/regex-tester/RegexTester';
+
+const MySwal = withReactContent(Swal);
+
 const ManageLinkPatternsIndexPage = () => {
   const [items, setItems] = useState<ILinkPattern[] | null>(null);
   const [guilds, setGuilds] = useState<IGuild[] | null>(null);
@@ -51,6 +57,23 @@ const ManageLinkPatternsIndexPage = () => {
     alert(`Not implemented ${id}`);
   };
 
+  const handleTestActionClick = async (id: string) => {
+    const targetPattern = items.find(pattern => pattern.id === id);
+
+    await MySwal.fire({
+      title: 'Regex Tester',
+      html: (
+        <div>
+          <div className="text-sm">
+            Pattern:<br /><pre>{targetPattern.pattern}</pre>
+          </div>
+
+          <RegexTester pattern={targetPattern.pattern} />
+        </div>
+      )
+    });
+  };
+
   useEffect(() => {
     fetchGuilds();
   }, []);
@@ -65,6 +88,7 @@ const ManageLinkPatternsIndexPage = () => {
           zdsMessage="No blacklisted link patterns have been found."
           guilds={guilds}
           actions={[
+            { label: 'Test', onClick: handleTestActionClick },
             { label: 'Delete', onClick: handleDeleteActionClick }
           ]}
         />
