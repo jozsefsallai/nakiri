@@ -16,18 +16,27 @@ export interface AddLinkPatternAPIResponse extends APIResponse {
 
 export class LinkPatternsAPIService {
   static GET_LINK_PATTERNS_URL = '/api/lists/link-patterns?compact=false';
+  static GET_LINK_PATTERNS_WITH_GUILD_URL = '/api/lists/link-patterns?compact=false&guild=:guild&strict=true';
 
   static ADD_LINK_PATTERN_URL = '/api/lists/link-patterns';
   static ADD_LINK_PATTERN_WITH_GUILD_URL = '/api/lists/link-patterns?guild=:guild';
 
-  public async getLinkPatterns(): Promise<GetLinkPatternsAPIResponse> {
-    return axiosService.get(LinkPatternsAPIService.GET_LINK_PATTERNS_URL)
-      .then(res => res.data);
+  public async getLinkPatterns(guild?: string): Promise<GetLinkPatternsAPIResponse> {
+    const url = this.makeGetLinkPatternsUrl(guild);
+    return axiosService.get(url).then(res => res.data);
   }
 
   public async addLinkPattern({ pattern, guild }: AddLinkPatternAPIRequest): Promise<AddLinkPatternAPIResponse> {
     const url = this.makeAddLinkPatternUrl(guild);
     return axiosService.post(url, { pattern }).then(res => res.data);
+  }
+
+  private makeGetLinkPatternsUrl(guild?: string): string {
+    if (guild) {
+      return LinkPatternsAPIService.GET_LINK_PATTERNS_WITH_GUILD_URL.replace(':guild', guild);
+    }
+
+    return LinkPatternsAPIService.GET_LINK_PATTERNS_URL;
   }
 
   private makeAddLinkPatternUrl(guild?: string): string {

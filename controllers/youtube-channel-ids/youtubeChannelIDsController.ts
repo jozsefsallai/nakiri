@@ -6,7 +6,8 @@ import { getYouTubeChannelIDs } from './getYouTubeChannelIDs';
 import { addYouTubeChannelID } from './addYouTubeChannelID';
 
 export const index: NextApiHandler = async (req, res) => {
-  const channelIDs = await getYouTubeChannelIDs(firstOf(req.query.guild));
+  const strict = firstOf(req.query.strict) === 'true';
+  const channelIDs = await getYouTubeChannelIDs(firstOf(req.query.guild), strict);
   const compact = firstOf(req.query.compact) !== 'false';
 
   if (compact) {

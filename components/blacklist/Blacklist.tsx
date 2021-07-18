@@ -1,8 +1,10 @@
 import { IGuild } from '@/controllers/guilds/IGuild';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import MessageBox, { MessageBoxLevel } from '../common/messagebox/MessageBox';
 import ZeroDataState from '../common/zds/ZeroDataState';
 import GuildList from '../guilds/GuildList';
+import Loading from '../loading/Loading';
 
 import { BlacklistAction } from './BlacklistActions';
 import FilteredBlacklist, { BlacklistItem } from './FilteredBlacklist';
@@ -10,18 +12,32 @@ import FilteredBlacklist, { BlacklistItem } from './FilteredBlacklist';
 export interface BlacklistProps {
   items: BlacklistItem[];
   guilds: IGuild[];
+  fetcher(guild?: string | null);
+  zdsMessage?: string;
+  error?: string;
   onTextClick?(text: string): void;
   actions?: BlacklistAction[];
 };
 
-const Blacklist = ({ items, guilds, onTextClick, actions }: BlacklistProps) => {
-  const [ filteredItems, setFilteredItems ] = useState<BlacklistItem[]>(items);
+const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, actions }: BlacklistProps) => {
   const [ activeGuild, setActiveGuild ] = useState<IGuild | null>(null);
 
   const handleGuildClick = (guild: IGuild | null) => {
+    if (guild === null && activeGuild === null) {
+      return;
+    }
+
+    if (guild?.id === activeGuild?.id) {
+      return;
+    }
+
     setActiveGuild(guild);
-    setFilteredItems(_items => guild ? _items.filter(item => item.guildId === guild.id) : items);
+    fetcher(guild ? guild.id : null);
   };
+
+  useEffect(() => {
+    fetcher();
+  }, []);
 
   return (
     <div className="flex gap-4">
@@ -34,13 +50,15 @@ const Blacklist = ({ items, guilds, onTextClick, actions }: BlacklistProps) => {
       </div>
 
       <div className="flex-1">
-        {filteredItems.length > 0 && <FilteredBlacklist
-          items={filteredItems}
+        {items && items.length > 0 && <FilteredBlacklist
+          items={items}
           onTextClick={onTextClick}
           actions={actions}
         />}
 
-        {filteredItems.length === 0 && <ZeroDataState message="No items match your filtering criteria." />}
+        {items?.length === 0 && <ZeroDataState message={zdsMessage} />}
+        {!items && !error && <Loading />}
+        {error?.length > 0 && <MessageBox level={MessageBoxLevel.DANGER}>{error}</MessageBox>}
       </div>
     </div>
   );

@@ -25,7 +25,6 @@ const FilteredBlacklist = ({ items, onTextClick, actions }: FilteredBlacklistPro
       key={item.id}
       id={item.id}
       text={text}
-      guild={item.guildId}
       onTextClick={onTextClick}
       actions={actions}
     />;

@@ -6,7 +6,8 @@ import { getLinkPatterns } from './getLinkPatterns';
 import { addLinkPattern } from './addLinkPattern';
 
 export const index: NextApiHandler = async (req, res) => {
-  const patterns = await getLinkPatterns(firstOf(req.query.guild));
+  const strict = firstOf(req.query.strict) === 'true';
+  const patterns = await getLinkPatterns(firstOf(req.query.guild), strict);
   const compact = firstOf(req.query.compact) !== 'false';
 
   if (compact) {

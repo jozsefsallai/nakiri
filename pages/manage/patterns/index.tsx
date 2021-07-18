@@ -1,5 +1,4 @@
 import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
-import ZeroDataState from '@/components/common/zds/ZeroDataState';
 import Loading from '@/components/loading/Loading';
 import { ILinkPattern } from '@/db/models/blacklists/LinkPattern';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -20,18 +19,25 @@ const ManageLinkPatternsIndexPage = () => {
 
   const router = useRouter();
 
-  const fetchItems = async () => {
+  const fetchGuilds = async () => {
+    setGuilds(null);
+    setError('');
+
+    try {
+      const { guilds } = await apiService.guilds.getGuilds();
+      setGuilds(guilds);
+    } catch (err) {
+      setError('Failed to fetch guilds.');
+    }
+  };
+
+  const fetchItems = async (guild?: string | null) => {
     setItems(null);
     setError('');
 
     try {
-      const { patterns } = await apiService.patterns.getLinkPatterns();
+      const { patterns } = await apiService.patterns.getLinkPatterns(guild);
       setItems(patterns);
-
-      if (patterns?.length) {
-        const { guilds } = await apiService.guilds.getGuilds();
-        setGuilds(guilds);
-      }
     } catch (err) {
       setError('Failed to load link patterns.');
     }
@@ -46,24 +52,26 @@ const ManageLinkPatternsIndexPage = () => {
   };
 
   useEffect(() => {
-    fetchItems();
+    fetchGuilds();
   }, []);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted Link Patterns" buttonText="Add pattern" onButtonClick={handleNewButtonClick}>
-      {items && items.length > 0 && guilds && (
+      {guilds && (
         <Blacklist
           items={items}
+          fetcher={fetchItems}
+          error={error}
+          zdsMessage="No blacklisted link patterns have been found."
           guilds={guilds}
           actions={[
             { label: 'Delete', onClick: handleDeleteActionClick }
           ]}
         />
       )}
-      {items && items.length === 0 && <ZeroDataState message="No blacklisted link patterns have been found." />}
 
-      {(!items || (items && !guilds)) && !error && <Loading />}
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {guilds === null && !error && <Loading />}
+      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
 };

@@ -2,6 +2,7 @@ import Button from '@/components/common/button/Button';
 import DiscordCard from '@/components/users/discord-card/DiscordCard';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { errors } from '@/lib/errors';
+import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
 import toaster from '@/lib/toaster';
 import { UserPermissions } from '@/lib/UserPermissions';
 import apiService from '@/services/apis';
@@ -164,6 +165,13 @@ const NewUserPage = () => {
       </form>
     </DashboardLayout>
   );
+};
+
+export const getServerSideProps = async ({ req, res }) => {
+  await redirectIfDoesNotHavePermission(req, res, UserPermissions.MANAGE_AUTHORIZED_USERS);
+  return {
+    props: {}
+  };
 };
 
 export default NewUserPage;

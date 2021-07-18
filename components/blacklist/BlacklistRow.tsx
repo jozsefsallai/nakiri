@@ -4,12 +4,11 @@ import BlacklistActions, { BlacklistAction } from './BlacklistActions';
 export interface BlacklistRowProps {
   id: string;
   text: string;
-  guild?: string;
   onTextClick?(text: string): void;
   actions?: BlacklistAction[];
 };
 
-const BlacklistRow = ({ id, text, guild, onTextClick, actions }: BlacklistRowProps) => {
+const BlacklistRow = ({ id, text, onTextClick, actions }: BlacklistRowProps) => {
   const handleTextClick = onTextClick
     ? () => onTextClick(text)
     : undefined;
@@ -26,7 +25,6 @@ const BlacklistRow = ({ id, text, guild, onTextClick, actions }: BlacklistRowPro
     <div className="blacklist-item flex items-center justify-between px-4 py-3">
       <div>
         <span className={textClassNames} onClick={handleTextClick}>{text}</span>
-        <div className="text-sm">Guild: {guild || '(global)'}</div>
       </div>
 
       {actions && actions.length > 0 && <BlacklistActions id={id} actions={actions} />}

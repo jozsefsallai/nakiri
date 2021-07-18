@@ -6,7 +6,8 @@ import { getYouTubeVideoIDs } from './getYouTubeVideoIDs';
 import { addYouTubeVideoID } from './addYouTubeVideoID';
 
 export const index: NextApiHandler = async (req, res) => {
-  const videoIDs = await getYouTubeVideoIDs(firstOf(req.query.guild));
+  const strict = firstOf(req.query.strict) === 'true';
+  const videoIDs = await getYouTubeVideoIDs(firstOf(req.query.guild), strict);
   const compact = firstOf(req.query.compact) !== 'false';
 
   if (compact) {

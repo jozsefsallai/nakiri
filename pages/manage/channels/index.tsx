@@ -1,5 +1,4 @@
 import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
-import ZeroDataState from '@/components/common/zds/ZeroDataState';
 import Loading from '@/components/loading/Loading';
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -21,18 +20,25 @@ const ManageChannelsIndexPage = () => {
 
   const router = useRouter();
 
-  const fetchItems = async () => {
+  const fetchGuilds = async () => {
+    setGuilds(null);
+    setError('');
+
+    try {
+      const { guilds } = await apiService.guilds.getGuilds();
+      setGuilds(guilds);
+    } catch (err) {
+      setError('Failed to fetch guilds.');
+    }
+  };
+
+  const fetchItems = async (guild?: string | null) => {
     setItems(null);
     setError('');
 
     try {
-      const { channelIDs } = await apiService.channelIDs.getChannelIDs();
+      const { channelIDs } = await apiService.channelIDs.getChannelIDs(guild);
       setItems(channelIDs);
-
-      if (channelIDs?.length) {
-        const { guilds } = await apiService.guilds.getGuilds();
-        setGuilds(guilds);
-      }
     } catch (err) {
       setError('Failed to load channel IDs.');
     }
@@ -63,14 +69,17 @@ const ManageChannelsIndexPage = () => {
   };
 
   useEffect(() => {
-    fetchItems();
+    fetchGuilds();
   }, []);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted YouTube Channel IDs" buttonText="Add channel ID" onButtonClick={handleNewButtonClick}>
-      {items && items.length > 0 && guilds && (
+      {guilds && (
         <Blacklist
           items={items}
+          fetcher={fetchItems}
+          error={error}
+          zdsMessage="No blacklisted channel IDs have been found."
           guilds={guilds}
           onTextClick={handleTextClick}
           actions={[
@@ -78,10 +87,9 @@ const ManageChannelsIndexPage = () => {
           ]}
         />
       )}
-      {items && items.length === 0 && <ZeroDataState message="No blacklisted channel IDs have been found." />}
 
-      {(!items || (items && !guilds)) && !error && <Loading />}
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {guilds == null && !error && <Loading />}
+      {guilds == null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
 };

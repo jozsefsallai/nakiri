@@ -53,3 +53,26 @@ export const redirectIfDoesNotHavePermission = async (req, res, permission: User
     return false;
   }
 };
+
+export const redirectIfDoesNotHaveOneOfPermissions = async (req, res, permissions: UserPermissions[]): Promise<boolean> => {
+  try {
+    const { user } = await apiService.users.getLoggedInUser(req.headers);
+
+    const userPermissions = permissions.filter(permission => UserPermissionsUtil.hasPermission(user.permissions, permission));
+    if (userPermissions.length === 0) {
+      res.writeHead(302, {
+        location: '/manage/guilds'
+      });
+      res.end();
+
+      return true;
+    }
+  } catch (_) {
+    res.writeHead(302, {
+      location: '/manage/login'
+    });
+    res.end();
+
+    return false;
+  }
+};
