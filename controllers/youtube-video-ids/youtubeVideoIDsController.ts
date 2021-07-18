@@ -4,6 +4,8 @@ import firstOf from '@/lib/firstOf';
 
 import { getYouTubeVideoIDs } from './getYouTubeVideoIDs';
 import { addYouTubeVideoID } from './addYouTubeVideoID';
+import { getSession } from 'next-auth/client';
+import { deleteYouTubeVideoID } from './deleteYouTubeVideoID';
 
 export const index: NextApiHandler = async (req, res) => {
   const strict = firstOf(req.query.strict) === 'true';
@@ -39,6 +41,30 @@ export const create: NextApiHandler = async (req, res) => {
     return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'YouTubeVideoIDCreationError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code
+      });
+    }
+
+    console.error(err);
+
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR'
+    });
+  }
+};
+
+export const destroy: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+  const session = await getSession({ req });
+
+  try {
+    await deleteYouTubeVideoID(session, id);
+    return res.json({ ok: true });
+  } catch (err) {
+    if (err.name === 'YouTubeVideoIDDeletionError') {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code

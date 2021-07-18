@@ -10,7 +10,6 @@ export interface GuildListProps {
 };
 
 const GuildList = ({ guilds, onGuildClick, activeGuild, compact }: GuildListProps) => {
-  console.log(guilds);
   return (
     <div>
       {guilds.map(guild => (

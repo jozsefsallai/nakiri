@@ -12,6 +12,8 @@ import { useState } from 'react';
 
 import Swal from 'sweetalert2';
 import { IGuild } from '@/controllers/guilds/IGuild';
+import toaster from '@/lib/toaster';
+import { errors } from '@/lib/errors';
 
 const ManageVideosIndexPage = () => {
   const [ items, setItems ] = useState<IYouTubeVideoID[] | null>(null);
@@ -44,12 +46,39 @@ const ManageVideosIndexPage = () => {
     }
   };
 
+  const deleteItem = async (id: string) => {
+    try {
+      await apiService.videoIDs.deleteVideoID(id);
+      setItems(items => items.filter(video => video.id !== id));
+      toaster.success('Video ID deleted successfully!');
+    } catch (err) {
+      const message = err?.response?.data?.error;
+
+      if (message) {
+        toaster.danger(errors[message]);
+        return;
+      }
+
+      toaster.danger(errors.INTERNAL_SERVER_ERROR);
+    }
+  };
+
   const handleNewButtonClick = () => {
     router.push('/manage/videos/new');
   };
 
-  const handleDeleteActionClick = (id: string) => {
-    alert(`Not implemented ${id}`);
+  const handleDeleteActionClick = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You are about to delete this video ID. This cannot be undone!',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      await deleteItem(id);
+    }
   };
 
   const handleTextClick = async (text: string) => {

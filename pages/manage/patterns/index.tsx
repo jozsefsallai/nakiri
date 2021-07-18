@@ -15,6 +15,8 @@ import { IGuild } from '@/controllers/guilds/IGuild';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import RegexTester from '@/components/common/regex-tester/RegexTester';
+import toaster from '@/lib/toaster';
+import { errors } from '@/lib/errors';
 
 const MySwal = withReactContent(Swal);
 
@@ -49,12 +51,39 @@ const ManageLinkPatternsIndexPage = () => {
     }
   };
 
+  const deleteItem = async (id: string) => {
+    try {
+      await apiService.patterns.deleteLinkPattern(id);
+      setItems(items => items.filter(pattern => pattern.id !== id));
+      toaster.success('Link pattern deleted successfully!');
+    } catch (err) {
+      const message = err?.response?.data?.error;
+
+      if (message) {
+        toaster.danger(errors[message]);
+        return;
+      }
+
+      toaster.danger(errors.INTERNAL_SERVER_ERROR);
+    }
+  };
+
   const handleNewButtonClick = () => {
     router.push('/manage/patterns/new');
   };
 
-  const handleDeleteActionClick = (id: string) => {
-    alert(`Not implemented ${id}`);
+  const handleDeleteActionClick = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You are about to delete this link pattern. This cannot be undone!',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      await deleteItem(id);
+    }
   };
 
   const handleTestActionClick = async (id: string) => {

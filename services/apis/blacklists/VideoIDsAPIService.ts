@@ -14,12 +14,17 @@ export interface AddVideoIDAPIRequest {
 export interface AddVideoIDAPIResponse extends APIResponse {
 };
 
+export interface DeleteVideoIDAPIResponse extends APIResponse {
+};
+
 export class VideoIDsAPIService {
   static GET_VIDEO_IDS_URL = '/api/lists/youtube/videos?compact=false';
   static GET_VIDEO_IDS_WITH_GUILD_URL = '/api/lists/youtube/videos?compact=false&guild=:guild&strict=true';
 
   static ADD_VIDEO_ID_URL = '/api/lists/youtube/videos';
   static ADD_VIDEO_ID_WITH_GUILD_URL = '/api/lists/youtube/videos?guild=:guild';
+
+  static DELETE_VIDEO_ID_URL = '/api/lists/youtube/videos/:id';
 
   public async getVideoIDs(guild?: string): Promise<GetVideoIDsAPIResponse> {
     const url = this.makeGetVideoIDsURL(guild);
@@ -29,6 +34,11 @@ export class VideoIDsAPIService {
   public async addVideoID({ videoID, guild }: AddVideoIDAPIRequest): Promise<AddVideoIDAPIResponse> {
     const url = this.makeAddVideoIDURL(guild);
     return axiosService.post(url, { videoID }).then(res => res.data);
+  }
+
+  public async deleteVideoID(videoID: string): Promise<DeleteVideoIDAPIResponse> {
+    const url = this.makeDeleteVideoIDURL(videoID);
+    return axiosService.delete(url).then(res => res.data);
   }
 
   private makeGetVideoIDsURL(guild?: string): string {
@@ -45,5 +55,9 @@ export class VideoIDsAPIService {
     }
 
     return VideoIDsAPIService.ADD_VIDEO_ID_URL;
+  }
+
+  private makeDeleteVideoIDURL(videoID: string): string {
+    return VideoIDsAPIService.DELETE_VIDEO_ID_URL.replace(':id', videoID);
   }
 }
