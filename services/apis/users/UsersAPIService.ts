@@ -24,6 +24,15 @@ export interface AuthorizeDiscordUserAPIRequest {
 export interface AuthorizeDiscordUserAPIResponse extends APIResponse {
 };
 
+export interface UpdateUserPermissionsAPIRequest {
+  id: string;
+  permissions: number[];
+};
+
+export interface UpdateUserPermissionsAPIResponse extends APIResponse {
+  user: IAuthorizedUser;
+};
+
 export class UsersAPIService {
   static GET_LOGGED_IN_USER_URL = '/api/users/me';
   static GET_DISCORD_USER_URL = '/api/users/discord/:id';
@@ -31,6 +40,8 @@ export class UsersAPIService {
   static GET_AUTHORIZED_USERS_URL = '/api/users';
 
   static AUTHORIZE_DISCORD_USER_URL = '/api/users/authorize';
+
+  static UPDATE_USER_PERMISSIONS_URL = '/api/users/:id';
 
   public async getLoggedInUser(headers?: any): Promise<GetLoggedInUserAPIResponse> {
     return axiosService.get(UsersAPIService.GET_LOGGED_IN_USER_URL, { headers })
@@ -52,7 +63,16 @@ export class UsersAPIService {
       .then(res => res.data);
   }
 
+  public async updateUserPermissions({ id, permissions }: UpdateUserPermissionsAPIRequest): Promise<UpdateUserPermissionsAPIResponse> {
+    const url = this.makeUpdateUserPermissionsUrl(id);
+    return axiosService.patch(url, { permissions }).then(res => res.data);
+  };
+
   private makeGetDiscordUserUrl(discordId: string): string {
     return UsersAPIService.GET_DISCORD_USER_URL.replace(':id', discordId);
+  }
+
+  private makeUpdateUserPermissionsUrl(id: string): string {
+    return UsersAPIService.UPDATE_USER_PERMISSIONS_URL.replace(':id', id);
   }
 }

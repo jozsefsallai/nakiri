@@ -11,6 +11,8 @@ import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import toaster from '@/lib/toaster';
+import { errors } from '@/lib/errors';
 
 const ManageUsersIndexPage = () => {
   const [ users, setUsers ] = useState<IAuthorizedUser[] | null>(null);
@@ -34,13 +36,30 @@ const ManageUsersIndexPage = () => {
     router.push('/manage/users/new');
   };
 
+  const handleUserPermissionsUpdate = async (id: string, permissions: number[]) => {
+    try {
+      const { user } = await apiService.users.updateUserPermissions({ id, permissions });
+      setUsers(users.map(u => u.id === user.id ? user : u));
+      toaster.success('User permissions updated successfully!');
+    } catch (err) {
+      const message = err?.response?.data?.error;
+
+      if (message) {
+        toaster.danger(errors[message]);
+        return;
+      }
+
+      toaster.danger(errors.INTERNAL_SERVER_ERROR);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
 
   return (
     <DashboardLayout hasContainer title="Authorized Users" buttonText="Add User" onButtonClick={handleNewButtonClick}>
-      {users && users.length > 0 && <UserList users={users} />}
+      {users && users.length > 0 && <UserList users={users} onUpdateUserPermissions={handleUserPermissionsUpdate} />}
       {users && users.length === 0 && <ZeroDataState message="No authorized users found. Which is weird, because you're here." />}
 
       {!users && !error && <Loading />}

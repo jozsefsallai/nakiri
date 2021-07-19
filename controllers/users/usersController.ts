@@ -5,6 +5,7 @@ import { authorizeUser } from './authorizeUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getUser } from './getUser';
 import { getUsers } from './getUsers';
+import { updateUserPermissions } from './updateUser';
 
 export const get: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
@@ -82,6 +83,38 @@ export const authorize: NextApiHandler = async (req, res) => {
     return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'AuthorizedUserCreationError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+        ...(err.data && { data: err.data })
+      });
+    }
+
+    console.error(err);
+
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR'
+    });
+  }
+};
+
+export const updatePermissions: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+  const permissions: number[] = req.body.permissions;
+
+  if (typeof permissions === 'undefined' || permissions.length === 0) {
+    return res.status(400).json({
+      ok: false,
+      error: 'MISSING_PERMISSIONS'
+    });
+  }
+
+  try {
+    const user = await updateUserPermissions(id, permissions);
+    return res.json({ ok: true, user });
+  } catch (err) {
+    if (err.name === 'UserUpdateError') {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code,
