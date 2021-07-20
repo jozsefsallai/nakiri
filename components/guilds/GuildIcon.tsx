@@ -42,7 +42,7 @@ const GuildIcon = ({ guild, compact, ...props }: GuildIconProps, ref) => {
       title={guild.name}
       ref={ref}
     >
-      {icon && <img src={icon} className="rounded-full" alt={guildInitials} />}
+      {icon && <img src={icon} className="rounded-full w-full h-full" alt={guildInitials} />}
       {!icon && <span className={initialsClassName}>{guildInitials}</span>}
     </div>
   );
