@@ -82,27 +82,29 @@ const UserListItem = ({ user, onUpdateUserPermissions, onUnauthorizeUser }: User
 
   return (
     <>
-      <div className="flex items-center gap-3 my-4">
-        <div className="w-24 h-24">
-          <DiscordAvatar
-            url={user.image}
-            id={user.discordId}
-            discriminator={user.discriminator}
-            alt={user.name}
-            className="rounded-full"
-          />
-        </div>
-
-        <div className="flex-1">
-          <div className="text-lg font-bold">
-            {user.name}
-            <span className="text-gray">#{user.discriminator}</span>
+      <div className="lg:flex items-center justify-between gap-3 my-4">
+        <div className="flex items-center gap-3">
+          <div className="w-24 h-24">
+            <DiscordAvatar
+              url={user.image}
+              id={user.discordId}
+              discriminator={user.discriminator}
+              alt={user.name}
+              className="rounded-full"
+            />
           </div>
 
-          <div className="text-xs"><strong>Permissions:</strong> {permissions}</div>
+          <div className="flex-1">
+            <div className="text-lg font-bold">
+              {user.name}
+              <span className="text-gray">#{user.discriminator}</span>
+            </div>
+
+            <div className="text-xs"><strong>Permissions:</strong> {permissions}</div>
+          </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 my-4 lg:my-0">
           <Button size={ButtonSize.SMALL} onClick={handlePermsButtonClick}>Perms</Button>
           <Button size={ButtonSize.SMALL} onClick={handleUnauthorizeButtonClick}>Unauthorize</Button>
         </div>

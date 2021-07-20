@@ -48,9 +48,9 @@ const GuildListItem = ({ guild, onClick }: GuildListItemProps) => {
         <div className={titleClassNames} onClick={handleGuildClick}>{guild.name}</div>
 
         {'key' in guild && guild.key && (
-          <div className="flex items-center gap-3 text-sm">
-            {guild.key}
-            <Button size={ButtonSize.SMALL} onClick={handleCopyClick}>{copyButtonText}</Button>
+          <div className="lg:flex items-center gap-3 text-sm">
+            <div>{guild.key}</div>
+            <Button size={ButtonSize.SMALL} onClick={handleCopyClick} className="mr-3 lg:mr-0">{copyButtonText}</Button>
             <Button size={ButtonSize.SMALL} onClick={handleRegenerateClick}>Regenerate</Button>
           </div>
         )}

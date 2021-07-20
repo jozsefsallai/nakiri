@@ -9,7 +9,7 @@ export interface NavigationItemProps {
 
 const NavigationItem = ({ url, label, active }: NavigationItemProps) => {
   const classNames = clsx(
-    'hover:text-white hover:bg-ayame-primary px-4 py-2 rounded-md text-sm mx-1',
+    'hover:text-white hover:bg-ayame-primary px-4 py-2 rounded-md text-sm mx-1 my-1 lg:my-0 block lg:inline-block',
     {
       'text-black': !active,
       'text-white': active,

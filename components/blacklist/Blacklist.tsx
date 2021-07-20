@@ -1,6 +1,7 @@
 import { IGuild } from '@/controllers/guilds/IGuild';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { Filter } from 'react-feather';
 import MessageBox, { MessageBoxLevel } from '../common/messagebox/MessageBox';
 import ZeroDataState from '../common/zds/ZeroDataState';
 import GuildList from '../guilds/GuildList';
@@ -21,6 +22,7 @@ export interface BlacklistProps {
 
 const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, actions }: BlacklistProps) => {
   const [ activeGuild, setActiveGuild ] = useState<IGuild | null>(null);
+  const [ filtersVisible, setFiltersVisible ] = useState(false);
 
   const handleGuildClick = (guild: IGuild | null) => {
     if (guild === null && activeGuild === null) {
@@ -39,9 +41,19 @@ const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, act
     fetcher();
   }, []);
 
+  const toggleFiltersVisibility = () => setFiltersVisible(filtersVisible => !filtersVisible);
+
   return (
-    <div className="flex gap-4">
-      <div className="py-4 w-80">
+    <div className="lg:flex gap-4">
+      <div className="lg:hidden select-none py-4 flex items-center justify-center gap-3 mt-4" onClick={toggleFiltersVisibility}>
+        <Filter />
+        <div>Toggle filters</div>
+      </div>
+
+      <div className={clsx('py-4 lg:w-80 lg:block', {
+        'block': filtersVisible,
+        'hidden': !filtersVisible
+      })}>
         <div
           className={clsx('py-3 px-4 hover:bg-ayame-secondary-200 rounded-md cursor-pointer', { 'bg-ayame-secondary-200': activeGuild === null })}
           onClick={() => handleGuildClick(null)}

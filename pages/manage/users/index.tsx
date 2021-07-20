@@ -53,7 +53,7 @@ const ManageUsersIndexPage = () => {
 
       toaster.danger(errors.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
   const handleUserPermissionsUpdate = async (id: string, permissions: number[]) => {
     try {

@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { HTMLProps, forwardRef } from 'react';
-import Button from '../button/Button';
+import Button, { ButtonSize } from '../button/Button';
 
 export interface BoxProps extends HTMLProps<HTMLDivElement> {
   title?: string;
@@ -17,9 +17,10 @@ const Box = ({ title, buttonText, onButtonClick, ...props }: BoxProps, ref) => {
   return (
     <section {...props} className={classNames}>
       {title && (
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl">{title}</h1>
-          {buttonText && onButtonClick && <Button onClick={onButtonClick}>{buttonText}</Button>}
+        <div className="lg:flex items-center justify-between">
+          <h1 className="lg:text-2xl text-xl">{title}</h1>
+          {buttonText && onButtonClick && <Button onClick={onButtonClick} className="hidden lg:inline-block">{buttonText}</Button>}
+          {buttonText && onButtonClick && <Button onClick={onButtonClick} size={ButtonSize.SMALL} className="block lg:hidden w-full">{buttonText}</Button>}
         </div>
       )}
       {props.children}
