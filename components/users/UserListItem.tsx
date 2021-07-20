@@ -8,6 +8,7 @@ import DiscordAvatar from './common/DiscordAvatar';
 export interface UserListItemProps {
   user: IAuthorizedUser;
   onUpdateUserPermissions(id: string, permissions: number[]);
+  onUnauthorizeUser(user: IAuthorizedUser);
 };
 
 type PermissionsMap = {
@@ -17,16 +18,12 @@ type PermissionsMap = {
   };
 };
 
-const UserListItem = ({ user, onUpdateUserPermissions }: UserListItemProps) => {
+const UserListItem = ({ user, onUpdateUserPermissions, onUnauthorizeUser }: UserListItemProps) => {
   const permissions = Object.keys(UserPermissions)
     .filter(permission => {
       return typeof permission === 'string' && (user.permissions & UserPermissions[permission]) === UserPermissions[permission];
     })
     .join(', ');
-
-  const handleNotImplemented = () => {
-    alert('Not implemented yet!');
-  };
 
   const [ editMode, setEditMode ] = useState(false);
   const [ requestInProgress, setRequestInProgress ] = useState(false);
@@ -78,6 +75,11 @@ const UserListItem = ({ user, onUpdateUserPermissions }: UserListItemProps) => {
     setEditMode(false);
   };
 
+  const handleUnauthorizeButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    onUnauthorizeUser(user);
+  };
+
   return (
     <>
       <div className="flex items-center gap-3 my-4">
@@ -102,7 +104,7 @@ const UserListItem = ({ user, onUpdateUserPermissions }: UserListItemProps) => {
 
         <div className="flex gap-2">
           <Button size={ButtonSize.SMALL} onClick={handlePermsButtonClick}>Perms</Button>
-          <Button size={ButtonSize.SMALL} onClick={handleNotImplemented}>Unauthorize</Button>
+          <Button size={ButtonSize.SMALL} onClick={handleUnauthorizeButtonClick}>Unauthorize</Button>
         </div>
       </div>
 

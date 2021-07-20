@@ -13,5 +13,12 @@ export default bar({
       usersController.updatePermissions,
       [ UserPermissions.MANAGE_AUTHORIZED_USERS ]
     ), true
+  ),
+
+  delete: ensureAuthenticated(
+    ensureUserHasPermissions(
+      usersController.destroy,
+      [ UserPermissions.MANAGE_AUTHORIZED_USERS ]
+    ), true
   )
 });

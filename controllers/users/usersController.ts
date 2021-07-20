@@ -5,6 +5,7 @@ import { authorizeUser } from './authorizeUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getUser } from './getUser';
 import { getUsers } from './getUsers';
+import { unauthorizeUser } from './unauthorizeUser';
 import { updateUserPermissions } from './updateUser';
 
 export const get: NextApiHandler = async (req, res) => {
@@ -119,6 +120,29 @@ export const updatePermissions: NextApiHandler = async (req, res) => {
         ok: false,
         error: err.code,
         ...(err.data && { data: err.data })
+      });
+    }
+
+    console.error(err);
+
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR'
+    });
+  }
+};
+
+export const destroy: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+
+  try {
+    await unauthorizeUser(id);
+    return res.json({ ok: true });
+  } catch (err) {
+    if (err.name === 'UnauthorizeUserError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code
       });
     }
 
