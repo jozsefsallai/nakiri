@@ -19,8 +19,13 @@ export interface IDiscordConfig {
   botToken: string;
 };
 
+export interface IYouTubeConfig {
+  apiKey: string;
+};
+
 export interface IConfig {
   app: IAppConfig;
   database: IDatabaseConfig;
   discord: IDiscordConfig;
+  youtube?: IYouTubeConfig;
 };

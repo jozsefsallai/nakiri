@@ -23,4 +23,10 @@ const config: IConfig = {
   }
 };
 
+if (process.env.YOUTUBE_API_KEY) {
+  config.youtube = {
+    apiKey: process.env.YOUTUBE_API_KEY
+  };
+}
+
 export default config;

@@ -27,6 +27,7 @@ const RegexTester = ({ pattern }: RegexTesterProps) => {
     }
 
     setHasMatch(regex.test(e.currentTarget.value));
+    regex.lastIndex = 0;
   };
 
   return (
