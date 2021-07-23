@@ -2,8 +2,13 @@ import bar from 'next-bar';
 import { ensureAuthenticated } from '@/middleware/auth';
 
 import * as linkPatternsController from '@/controllers/link-patterns/linkPatternsController';
+import { ensureHasAccessToGuild } from '@/middleware/permissions';
 
 export default bar({
-  get: ensureAuthenticated(linkPatternsController.index),
-  post: ensureAuthenticated(linkPatternsController.create)
+  get: ensureAuthenticated(
+    ensureHasAccessToGuild(linkPatternsController.index)
+  ),
+  post: ensureAuthenticated(
+    ensureHasAccessToGuild(linkPatternsController.create)
+  )
 });
