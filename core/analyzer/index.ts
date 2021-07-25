@@ -88,19 +88,24 @@ export class Analyzer {
     return conditions;
   }
 
-  private async checkVideoUploader(videoId: string): Promise<boolean> {
+  private async getVideoUploader(videoId: string): Promise<YouTubeChannelID | null> {
     if (!this.preemptiveVideoIDAnalysis || !this.youTubeAPI) {
-      return false;
+      return null;
     }
 
     const channelId = await this.youTubeAPI.getChannelIDForVideoID(videoId);
     if (!channelId) {
-      return false;
+      return null;
     }
 
     const where = this._makeFindConditions<YouTubeChannelID>(channelId, 'channelId');
     const entry = await this.youTubeChannelIDRepository.findOne({ where });
-    return !!entry;
+
+    if (!entry) {
+      return null;
+    }
+
+    return entry;
   }
 
   private async checkChannelHandle(handle: string): Promise<boolean> {
@@ -139,12 +144,12 @@ export class Analyzer {
         continue;
       }
 
-      const isUploaderBlacklisted = await this.checkVideoUploader(videoId);
-      if (isUploaderBlacklisted) {
+      const videoUploader = await this.getVideoUploader(videoId);
+      if (videoUploader) {
         problematicIDs.push(videoId);
 
         try {
-          await addYouTubeVideoID(videoId, this.guildId);
+          await addYouTubeVideoID(videoId, videoUploader.guildId);
         } catch (_) {}
 
         if (!this.greedy) {
