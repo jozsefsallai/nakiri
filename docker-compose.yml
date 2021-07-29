@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  mysql:
+    container_name: mysql
+    ports:
+      - '3306:3306'
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - /database:/var/lib/mysql
+
+  nakiriapi:
+    container_name: nakiriapi
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    command: sh -c "yarn migrate && node ./bin/authorizeInitialUser.js && yarn start"
+    environment:
+      PROTOCOL: ${PROTOCOL}
+      DOMAIN: ${DOMAIN}
+      PORT: ${PORT}
+
+      DATABASE_DIALECT: mysql
+      DATABASE_HOST: mysql
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+
+      INITIAL_USER_DISCORD_ID: ${INITIAL_USER_DISCORD_ID}
+    ports:
+      - 3000:3000
