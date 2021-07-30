@@ -39,6 +39,10 @@ export class User implements IUser {
     return UserPermissionsUtil.canManageAuthorizedUsers(this.permissions);
   }
 
+  canManageGuildMonitoredKeywords(): boolean {
+    return UserPermissionsUtil.canManageGuildMonitoredKeywords(this.permissions);
+  }
+
   constructor({ id, name, image, discriminator, discordId, createdAt, updatedAt, permissions }: IUser) {
     this.id = id;
     this.name = name;

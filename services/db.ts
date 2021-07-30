@@ -9,6 +9,9 @@ import { LinkPattern } from '../db/models/blacklists/LinkPattern';
 import { AuthorizedUser } from '../db/models/auth/AuthorizedUser';
 import { Key } from '../db/models/auth/Key';
 
+import { MonitoredKeyword } from '../db/models/keywords/MonitoredKeyword';
+import { KeywordSearchResult } from '../db/models/keywords/KeywordSearchResult';
+
 import { CamelCaseNamingStrategy } from '../lib/namingStrategies';
 
 const connectionOptions: ConnectionOptions = {
@@ -31,7 +34,10 @@ const connectionOptions: ConnectionOptions = {
     LinkPattern,
 
     AuthorizedUser,
-    Key
+    Key,
+
+    MonitoredKeyword,
+    KeywordSearchResult
   ]
 };
 

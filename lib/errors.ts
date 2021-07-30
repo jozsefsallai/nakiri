@@ -40,6 +40,11 @@ export const errors = {
   CANNOT_DELETE_ENTRY_FROM_THIS_GUILD: 'You cannot delete entries from this guild.',
   CANNOT_MANAGE_GLOBAL_BLACKLISTS: 'You cannot manage the global blacklist.',
 
+  KEYWORD_NOT_PROVIDED: 'You have not provided a keyword.',
+  GUILD_NOT_PROVIDED: 'You have not provided a guild.',
+  WEBHOOK_URL_NOT_PROVIDED: 'You have not provided a webhook URL.',
+  KEYWORD_ALREADY_EXISTS: 'The provided keyword already exists for this guild.',
+
   NOT_AUTHENTICATED: 'You need to be logged in to perform this request.',
   NOT_ANONYMOUS: 'You need to be logged out to perform this request.',
   INSUFFICIENT_PERMISSIONS: 'You do not have the required permissions to perform this action.',
