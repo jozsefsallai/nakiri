@@ -38,3 +38,16 @@ export const isValidRegex = (input: string): boolean => {
     return false;
   }
 };
+
+export const isValidUrl = (input: string): boolean => {
+  if (input.trim().length === 0) {
+    return false;
+  }
+
+  try {
+    const url = new URL(input);
+    return [ 'http:', 'https:' ].includes(url.protocol);
+  } catch (_) {
+    return false;
+  }
+};

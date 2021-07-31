@@ -1,11 +1,12 @@
 import { ILinkPattern } from '@/db/models/blacklists/LinkPattern';
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
+import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
 
 import { BlacklistAction } from './BlacklistActions';
 import BlacklistRow from './BlacklistRow';
 
-export type BlacklistItem = ILinkPattern | IYouTubeVideoID | IYouTubeChannelID;
+export type BlacklistItem = ILinkPattern | IYouTubeVideoID | IYouTubeChannelID | IMonitoredKeyword;
 
 export interface FilteredBlacklistProps {
   items: BlacklistItem[];
@@ -14,12 +15,28 @@ export interface FilteredBlacklistProps {
 };
 
 const FilteredBlacklist = ({ items, onTextClick, actions }: FilteredBlacklistProps) => {
+  const getItemText = (item: BlacklistItem) => {
+    if ('videoId' in item) {
+      return item.videoId;
+    }
+
+    if ('channelId' in item) {
+      return item.channelId;
+    }
+
+    if ('pattern' in item) {
+      return item.pattern;
+    }
+
+    if ('keyword' in item) {
+      return item.keyword;
+    }
+
+    return '<unknown>';
+  };
+
   const renderItem = (item: BlacklistItem) => {
-    const text = 'videoId' in (item as IYouTubeVideoID)
-      ? (item as IYouTubeVideoID).videoId
-      : 'channelId' in (item as IYouTubeChannelID)
-        ? (item as IYouTubeChannelID).channelId
-        : (item as ILinkPattern).pattern;
+    const text = getItemText(item);
 
     return <BlacklistRow
       key={item.id}

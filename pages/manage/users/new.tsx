@@ -35,6 +35,11 @@ const NewUserPage = () => {
       checked: false
     },
 
+    [UserPermissions.MANAGE_MONITORED_KEYWORDS]: {
+      label: 'Manage monitored keywords in own guilds',
+      checked: false
+    },
+
     [UserPermissions.MANAGE_AUTHORIZED_USERS]: {
       label: 'Manage authorized users',
       checked: false

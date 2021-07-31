@@ -31,7 +31,7 @@ const { AuthorizedUser } = require('../db/models/auth/AuthorizedUser');
   user.name = discordResponse.username;
   user.discriminator = discordResponse.discriminator;
   user.image = discordResponse.avatar;
-  user.permissions = 7;
+  user.permissions = 15;
 
   await authorizedUserRepository.insert(user);
   console.log('Initial user authorized successfully.');

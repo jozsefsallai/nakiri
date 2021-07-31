@@ -18,10 +18,11 @@ export interface BlacklistProps {
   error?: string;
   onTextClick?(text: string): void;
   actions?: BlacklistAction[];
+  hideGlobal?: boolean;
 };
 
-const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, actions }: BlacklistProps) => {
-  const [ activeGuild, setActiveGuild ] = useState<IGuild | null>(null);
+const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, actions, hideGlobal }: BlacklistProps) => {
+  const [ activeGuild, setActiveGuild ] = useState<IGuild | null>(hideGlobal ? guilds[0] : null);
   const [ filtersVisible, setFiltersVisible ] = useState(false);
 
   const handleGuildClick = (guild: IGuild | null) => {
@@ -38,6 +39,11 @@ const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, act
   };
 
   useEffect(() => {
+    if (hideGlobal) {
+      fetcher(guilds[0].id);
+      return;
+    }
+
     fetcher();
   }, []);
 
@@ -54,10 +60,10 @@ const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, act
         'block': filtersVisible,
         'hidden': !filtersVisible
       })}>
-        <div
+        {!hideGlobal && <div
           className={clsx('py-3 px-4 hover:bg-ayame-secondary-200 rounded-md cursor-pointer', { 'bg-ayame-secondary-200': activeGuild === null })}
           onClick={() => handleGuildClick(null)}
-        >Global</div>
+        >Global</div>}
         <GuildList compact guilds={guilds} onGuildClick={handleGuildClick} activeGuild={activeGuild} />
       </div>
 

@@ -39,6 +39,11 @@ const UserListItem = ({ user, onUpdateUserPermissions, onUnauthorizeUser }: User
       checked: UserPermissionsUtil.canManageGlobalBlacklists(user.permissions)
     },
 
+    [UserPermissions.MANAGE_MONITORED_KEYWORDS]: {
+      label: 'Manage monitored keywords in own guilds',
+      checked: false
+    },
+
     [UserPermissions.MANAGE_AUTHORIZED_USERS]: {
       label: 'Manage authorized users',
       checked: UserPermissionsUtil.canManageAuthorizedUsers(user.permissions)

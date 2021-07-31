@@ -43,6 +43,7 @@ export const errors = {
   KEYWORD_NOT_PROVIDED: 'You have not provided a keyword.',
   GUILD_NOT_PROVIDED: 'You have not provided a guild.',
   WEBHOOK_URL_NOT_PROVIDED: 'You have not provided a webhook URL.',
+  INVALID_WEBHOOK_URL: 'The provided webhook URL is invalid.',
   KEYWORD_ALREADY_EXISTS: 'The provided keyword already exists for this guild.',
 
   NOT_AUTHENTICATED: 'You need to be logged in to perform this request.',

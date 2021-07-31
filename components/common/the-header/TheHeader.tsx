@@ -20,6 +20,13 @@ const TheHeader = () => {
     { url: '/manage/patterns', label: 'Link patterns' }
   ];
 
+  if (currentUser?.canManageGuildMonitoredKeywords()) {
+    navigationItems.push({
+      url: '/manage/monitored-keywords',
+      label: 'Keywords'
+    });
+  }
+
   if (currentUser?.canManageAuthorizedUsers()) {
     navigationItems.push({
       url: '/manage/users',
