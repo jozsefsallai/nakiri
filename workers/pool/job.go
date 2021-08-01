@@ -18,7 +18,7 @@ func handleItem(job models.MonitoredKeyword, item youtube.YTListItem, throttler 
 	database.InsertKeywordSearchResult(&job, item)
 
 	throttler.Throttle()
-	return webhooks.SendWebhook(job.WebhookURL, item)
+	return webhooks.SendWebhook(&job, item)
 }
 
 func handleJob(job models.MonitoredKeyword, response []youtube.YTListItem, throttler *Throttler, webhookThrottlers map[string]*Throttler) {

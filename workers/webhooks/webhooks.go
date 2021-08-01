@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jozsefsallai/nakiri/workers/database/models"
 	"github.com/jozsefsallai/nakiri/workers/youtube"
 )
 
 // SendWebhook will send information about a given YouTube video to a webhook
 // URL.
-func SendWebhook(webhookUrl string, item youtube.YTListItem) error {
+func SendWebhook(keyword *models.MonitoredKeyword, item youtube.YTListItem) error {
 	payload := createDiscordWebhookPayload()
+
+	payload.Username = fmt.Sprintf("Keyword Result [%s]", keyword.Keyword)
 
 	embed := payload.CreateEmbed()
 	embed.Title = item.Snippet.Title
@@ -32,7 +35,7 @@ func SendWebhook(webhookUrl string, item youtube.YTListItem) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", webhookUrl, bytes.NewReader(payloadBody))
+	req, err := http.NewRequest("POST", keyword.WebhookURL, bytes.NewReader(payloadBody))
 	if err != nil {
 		return err
 	}
