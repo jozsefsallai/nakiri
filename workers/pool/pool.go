@@ -8,30 +8,63 @@ import (
 	"github.com/jozsefsallai/nakiri/workers/config"
 	"github.com/jozsefsallai/nakiri/workers/database"
 	"github.com/jozsefsallai/nakiri/workers/database/models"
+	"github.com/jozsefsallai/nakiri/workers/youtube"
 )
 
-func worker(id int, jobs <-chan models.MonitoredKeyword, wg *sync.WaitGroup) {
+var youtubeClient *youtube.Client
+
+func worker(id int, jobs <-chan models.MonitoredKeyword, throttler *Throttler, webhookThrottlers map[string]*Throttler, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for job := range jobs {
-		log.Println("worker", id, "is working on job", job.Keyword)
-		time.Sleep(time.Second) // TODO: perform API checks
-		log.Println("worker", id, "finished job", job.Keyword)
+		log.Printf("worker %d is working on job \"%s\"\n", id, job.Keyword)
+
+		response, err := youtubeClient.Search(job.Keyword)
+		if err != nil {
+			log.Println("worker", id, "failed job", job.Keyword, ":", err)
+			continue
+		}
+
+		handleJob(job, response.Items, throttler, webhookThrottlers)
+
+		log.Printf("worker %d finished job %s\n", id, job.Keyword)
 	}
 }
 
+// CreateWorkerPools will create a pool of workers. The number of workers is
+// defined in the config file. The pool will be created with a wait group
+// that will be used to wait for all the workers to finish. The number of jobs
+// is equal to the number of keyword entries in the database. These jobs will
+// be distrubuted equally to the workers, depending on which worker is free to
+// process the job.
 func CreateWorkerPools() {
 	log.Println("Bootstrapping worker pools.")
+
+	youtubeClient = youtube.NewClient(config.Config.YouTube.APIKey)
+	throttler := Throttler{
+		MaxInvocations: 2,
+		Delay:          300 * time.Millisecond,
+	}
 
 	var wg sync.WaitGroup
 
 	entries := database.GetMonitoredKeywords()
 	entryCount := len(entries)
 
+	webhookThrottlers := make(map[string]*Throttler)
+	for _, entry := range entries {
+		if _, ok := webhookThrottlers[entry.WebhookURL]; !ok {
+			webhookThrottlers[entry.WebhookURL] = &Throttler{
+				MaxInvocations: 30,
+				Delay:          time.Minute,
+			}
+		}
+	}
+
 	jobs := make(chan models.MonitoredKeyword, entryCount)
 	for i := 0; i < config.Config.Workers.Count; i++ {
 		wg.Add(1)
-		go worker(i+1, jobs, &wg)
+		go worker(i+1, jobs, &throttler, webhookThrottlers, &wg)
 	}
 
 	for i := 0; i < entryCount; i++ {

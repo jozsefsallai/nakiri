@@ -7,10 +7,11 @@ export interface IKeywordSearchResult {
   updatedAt: Date;
   keyword?: Partial<IMonitoredKeyword>;
   title: string;
-  url: string;
+  videoId: string;
   thumbnailUrl?: string | null;
   uploadDate: Date;
   uploader: string;
+  uploaderName: string;
 };
 
 @Entity()
@@ -31,7 +32,7 @@ export class KeywordSearchResult implements IKeywordSearchResult {
   title: string;
 
   @Column()
-  url: string;
+  videoId: string;
 
   @Column({ nullable: true, default: null })
   thumbnailUrl?: string | null;
@@ -42,6 +43,9 @@ export class KeywordSearchResult implements IKeywordSearchResult {
   @Column()
   uploader: string;
 
+  @Column()
+  uploaderName: string;
+
   toJSON(): IKeywordSearchResult {
     return {
       id: this.id,
@@ -49,10 +53,11 @@ export class KeywordSearchResult implements IKeywordSearchResult {
       updatedAt: this.updatedAt,
       keyword: this.keyword,
       title: this.title,
-      url: this.url,
+      videoId: this.videoId,
       thumbnailUrl: this.thumbnailUrl,
       uploadDate: this.uploadDate,
-      uploader: this.uploader
+      uploader: this.uploader,
+      uploaderName: this.uploaderName
     };
   }
 }

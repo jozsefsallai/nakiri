@@ -17,7 +17,7 @@ func init() {
 
 func main() {
 	s := gocron.NewScheduler(time.UTC)
-	s.Every(config.Config.Workers.ScanInterval).Minutes().Do(pool.CreateWorkerPools)
+	s.Every(config.Config.Workers.ScanInterval).Hours().Do(pool.CreateWorkerPools)
 	fmt.Println("NakiriAPI worker pool service is running.")
 	s.StartBlocking()
 }
