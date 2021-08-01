@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -18,7 +19,7 @@ type Client struct {
 const YOUTUBE_SEARCH_API_URL = "https://youtube.googleapis.com/youtube/v3/search?part=snippet&order=date&q=:query&maxResults=:maxResults&safeSearch=none&type=video&key=:apiKey"
 
 func (c *Client) buildSearchUrl(query string, maxResults int) string {
-	replacer := strings.NewReplacer(":apiKey", c.APIKey, ":maxResults", strconv.Itoa(maxResults), ":query", query)
+	replacer := strings.NewReplacer(":apiKey", c.APIKey, ":maxResults", strconv.Itoa(maxResults), ":query", url.QueryEscape(query))
 	return replacer.Replace(YOUTUBE_SEARCH_API_URL)
 }
 
