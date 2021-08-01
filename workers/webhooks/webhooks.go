@@ -2,12 +2,30 @@ package webhooks
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/binary"
 	"fmt"
+	"io"
+	"math/rand"
 	"net/http"
 
 	"github.com/jozsefsallai/nakiri/workers/database/models"
 	"github.com/jozsefsallai/nakiri/workers/youtube"
 )
+
+func getEmbedColor(keyword *models.MonitoredKeyword) int {
+	hash := sha256.New()
+	io.WriteString(hash, fmt.Sprintf("%snakiriseed", keyword.Keyword))
+	seed := binary.BigEndian.Uint64(hash.Sum(nil))
+
+	rng := rand.New(rand.NewSource(int64(seed)))
+
+	r := rng.Intn(256)
+	g := rng.Intn(256)
+	b := rng.Intn(256)
+
+	return int(r<<16 | g<<8 | b)
+}
 
 // SendWebhook will send information about a given YouTube video to a webhook
 // URL.
@@ -25,6 +43,7 @@ func SendWebhook(keyword *models.MonitoredKeyword, item youtube.YTListItem) erro
 		Width:  item.Snippet.Thumbnails.Default.Width,
 		Height: item.Snippet.Thumbnails.Default.Height,
 	}
+	embed.Color = getEmbedColor(keyword)
 
 	embed.AddField("Channel ID", item.Snippet.ChannelID, true)
 	embed.AddField("Channel name", item.Snippet.ChannelTitle, true)
@@ -41,9 +60,13 @@ func SendWebhook(keyword *models.MonitoredKeyword, item youtube.YTListItem) erro
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	_, err = http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
+	}
+
+	if res.StatusCode >= 300 {
+		return fmt.Errorf("received status code %d while trying to POST webhook. %s", res.StatusCode, item.ID.VideoID)
 	}
 
 	return nil

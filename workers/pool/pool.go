@@ -21,13 +21,13 @@ func worker(id int, jobs <-chan models.MonitoredKeyword, throttler *Throttler, w
 
 		response, err := youtubeClient.Search(job.Keyword)
 		if err != nil {
-			log.Println("worker", id, "failed job", job.Keyword, ":", err)
+			log.Printf("worker %d failed job \"%s\": %v\n", id, job.Keyword, err)
 			continue
 		}
 
 		handleJob(job, response.Items, throttler, webhookThrottlers)
 
-		log.Printf("worker %d finished job %s\n", id, job.Keyword)
+		log.Printf("worker %d finished job \"%s\"\n", id, job.Keyword)
 	}
 }
 
@@ -55,8 +55,8 @@ func CreateWorkerPools() {
 	for _, entry := range entries {
 		if _, ok := webhookThrottlers[entry.WebhookURL]; !ok {
 			webhookThrottlers[entry.WebhookURL] = &Throttler{
-				MaxInvocations: 30,
-				Delay:          time.Minute,
+				MaxInvocations: 1,
+				Delay:          3 * time.Second,
 			}
 		}
 	}
