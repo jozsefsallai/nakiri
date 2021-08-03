@@ -11,6 +11,7 @@ import { Key } from '../db/models/auth/Key';
 
 import { MonitoredKeyword } from '../db/models/keywords/MonitoredKeyword';
 import { KeywordSearchResult } from '../db/models/keywords/KeywordSearchResult';
+import { KeywordWhitelistedChannel } from '../db/models/keywords/KeywordWhitelistedChannel';
 
 import { CamelCaseNamingStrategy } from '../lib/namingStrategies';
 
@@ -37,7 +38,8 @@ const connectionOptions: ConnectionOptions = {
     Key,
 
     MonitoredKeyword,
-    KeywordSearchResult
+    KeywordSearchResult,
+    KeywordWhitelistedChannel
   ]
 };
 

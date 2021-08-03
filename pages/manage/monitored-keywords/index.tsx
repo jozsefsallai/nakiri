@@ -1,4 +1,5 @@
 import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import Button, { ButtonSize } from '@/components/common/button/Button';
 import Loading from '@/components/loading/Loading';
 import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -39,7 +40,6 @@ const ManageMonitoredKeywordsIndexPage = () => {
 
     try {
       const { entries } = await apiService.monitoredKeywords.getMonitoredKeywords(guild);
-      console.log(entries);
       setItems(entries);
     } catch (err) {
       setError('Failed to load monitored keywords.');
@@ -50,12 +50,18 @@ const ManageMonitoredKeywordsIndexPage = () => {
     router.push('/manage/monitored-keywords/new');
   };
 
+  const handleWhitelistsClick = () => {
+    router.push('/manage/monitored-keywords/whitelisted-channels');
+  };
+
   useEffect(() => {
     fetchGuilds();
   }, []);
 
   return (
     <DashboardLayout hasContainer title="Monitored Keywords" buttonText="Add keyword" onButtonClick={handleNewButtonClick}>
+      <Button size={ButtonSize.SMALL} onClick={handleWhitelistsClick}>Manage Whitelisted Channels</Button>
+
       {guilds && (
         <Blacklist
           items={items}

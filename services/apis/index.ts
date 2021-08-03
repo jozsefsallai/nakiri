@@ -5,6 +5,7 @@ import { VideoIDsAPIService } from './blacklists/VideoIDsAPIService';
 import { ChannelIDsAPIService } from './blacklists/ChannelIDsAPIService';
 import { LinkPatternsAPIService } from './blacklists/LinkPatternsAPIService';
 import { MonitoredKeywordsAPIService } from './monitored-keywords/MonitoredKeywordsAPIService';
+import { KeywordWhitelistedChannelsAPIService } from './monitored-keywords/KeywordWhitelistedChannels';
 
 class APIService {
   public users = new UsersAPIService();
@@ -15,6 +16,7 @@ class APIService {
   public patterns = new LinkPatternsAPIService();
 
   public monitoredKeywords = new MonitoredKeywordsAPIService();
+  public keywordWhitelistedChannels = new KeywordWhitelistedChannelsAPIService();
 };
 
 const apiService = new APIService();
