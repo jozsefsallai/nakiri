@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -55,6 +56,19 @@ func GetMonitoredKeywords() []models.MonitoredKeyword {
 	var keywords []models.MonitoredKeyword
 	db.Find(&keywords)
 	return keywords
+}
+
+// GetWhitelistedChannel will return a whitelisted channel entry based on a
+// given guild ID and channel ID. If no entry is found, nil is returned.
+func GetWhitelistedChannel(guildID, channelID string) *models.KeywordWhitelistedChannel {
+	var entry models.KeywordWhitelistedChannel
+	result := db.Model(&models.KeywordWhitelistedChannel{}).Where("guildId = ? AND channelId = ?", guildID, channelID).First(&entry)
+
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil
+	}
+
+	return &entry
 }
 
 // CountKeywordSearchResultsByVideoID will return the number of keyword search

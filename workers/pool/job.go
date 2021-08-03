@@ -9,7 +9,16 @@ import (
 	"github.com/jozsefsallai/nakiri/workers/youtube"
 )
 
+func isChannelWhitelisted(guildID, channelID string) bool {
+	entry := database.GetWhitelistedChannel(guildID, channelID)
+	return entry != nil
+}
+
 func handleItem(job models.MonitoredKeyword, item youtube.YTListItem, throttler *Throttler) error {
+	if isChannelWhitelisted(job.GuildID, item.Snippet.ChannelID) {
+		return nil
+	}
+
 	count := database.CountKeywordSearchResultByVideoID(job.ID, item.ID.VideoID)
 	if count != 0 {
 		return nil
