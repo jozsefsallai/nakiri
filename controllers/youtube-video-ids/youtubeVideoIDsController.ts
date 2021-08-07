@@ -1,5 +1,7 @@
 import { NextApiHandler } from 'next';
 
+import { getPagination, hasNextPages, hasPreviousPages } from 'next-api-paginate';
+
 import firstOf from '@/lib/firstOf';
 
 import { getYouTubeVideoIDs } from './getYouTubeVideoIDs';
@@ -9,18 +11,36 @@ import { deleteYouTubeVideoID } from './deleteYouTubeVideoID';
 
 export const index: NextApiHandler = async (req, res) => {
   const strict = firstOf(req.query.strict) === 'true';
-  const videoIDs = await getYouTubeVideoIDs(firstOf(req.query.guild), strict);
   const compact = firstOf(req.query.compact) !== 'false';
+
+  const { page, limit } = getPagination(req);
+
+  const skip = limit !== Infinity ? (page - 1) * limit : undefined;
+  const take = limit !== Infinity ? limit : undefined;
+
+  const { videoIDs, totalCount } = await getYouTubeVideoIDs(firstOf(req.query.guild), strict, skip, take);
+  const pageCount = limit !== Infinity ? Math.ceil(totalCount / limit) : 1;
+
+  const pagination = {
+    page,
+    limit,
+    pageCount,
+    totalCount,
+    hasPrevious: hasPreviousPages(req),
+    hasNext: hasNextPages(req)(pageCount)
+  };
 
   if (compact) {
     return res.json({
       ok: true,
+      pagination,
       videoIDs: videoIDs.map(entry => entry.videoId)
     });
   }
 
   return res.json({
     ok: true,
+    pagination,
     videoIDs
   });
 };

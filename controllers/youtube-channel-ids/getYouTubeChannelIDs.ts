@@ -1,8 +1,8 @@
 import db from '@/services/db';
-import { YouTubeChannelID, IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
+import { YouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { FindConditions, IsNull } from 'typeorm';
 
-export const getYouTubeChannelIDs = async (guildId?: string, strict?: boolean): Promise<IYouTubeChannelID[]> => {
+export const getYouTubeChannelIDs = async (guildId?: string, strict?: boolean, skip?: number, take?: number) => {
   await db.prepare();
   const youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
 
@@ -16,7 +16,8 @@ export const getYouTubeChannelIDs = async (guildId?: string, strict?: boolean): 
     where.push({ guildId }); // guild-specific blacklist
   }
 
-  const channelIDs = await youTubeChannelIDRepository.find({ where });
+  const totalCount = await youTubeChannelIDRepository.count({ where });
+  const channelIDs = await youTubeChannelIDRepository.find({ where, skip, take, order: { updatedAt: 'DESC' } });
 
-  return channelIDs.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  return { totalCount, channelIDs };
 };

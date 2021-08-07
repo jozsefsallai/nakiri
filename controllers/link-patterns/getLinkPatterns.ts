@@ -1,8 +1,8 @@
 import db from '@/services/db';
-import { LinkPattern, ILinkPattern } from '@/db/models/blacklists/LinkPattern';
+import { LinkPattern } from '@/db/models/blacklists/LinkPattern';
 import { FindConditions, IsNull } from 'typeorm';
 
-export const getLinkPatterns = async (guildId?: string, strict?: boolean): Promise<ILinkPattern[]> => {
+export const getLinkPatterns = async (guildId?: string, strict?: boolean, skip?: number, take?: number) => {
   await db.prepare();
   const linkPatternRepository = db.getRepository(LinkPattern);
 
@@ -16,7 +16,8 @@ export const getLinkPatterns = async (guildId?: string, strict?: boolean): Promi
     where.push({ guildId }); // guild-specific blacklist
   }
 
-  const linkPatterns = await linkPatternRepository.find({ where });
+  const totalCount = await linkPatternRepository.count({ where });
+  const patterns = await linkPatternRepository.find({ where, skip, take, order: { updatedAt: 'DESC' } });
 
-  return linkPatterns.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  return { patterns, totalCount };
 };
