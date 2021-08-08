@@ -2,6 +2,12 @@ import axiosService, { APIResponse } from '@/services/axios';
 
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 
+export interface GetChannelIDsAPIRequest {
+  guild?: string;
+  page?: number;
+  limit?: number;
+};
+
 export interface GetChannelIDsAPIResponse extends APIResponse {
   channelIDs: IYouTubeChannelID[];
 };
@@ -18,16 +24,16 @@ export interface DeleteChannelIDAPIResponse extends APIResponse {
 };
 
 export class ChannelIDsAPIService {
-  static GET_CHANNEL_IDS_URL = '/api/lists/youtube/channels?compact=false';
-  static GET_CHANNEL_IDS_WITH_GUILD_URL = '/api/lists/youtube/channels?compact=false&guild=:guild&strict=true';
+  static GET_CHANNEL_IDS_URL = '/api/lists/youtube/channels?compact=false&page=:page&limit=:limit';
+  static GET_CHANNEL_IDS_WITH_GUILD_URL = '/api/lists/youtube/channels?compact=false&guild=:guild&strict=true&page=:page&limit=:limit';
 
   static ADD_CHANNEL_ID_URL = '/api/lists/youtube/channels';
   static ADD_CHANNEL_ID_WITH_GUILD_URL = '/api/lists/youtube/channels?guild=:guild';
 
   static DELETE_CHANNEL_ID_URL = '/api/lists/youtube/channels/:id';
 
-  public async getChannelIDs(guild?: string): Promise<GetChannelIDsAPIResponse> {
-    const url = this.makeGetChannelIDsUrl(guild);
+  public async getChannelIDs({ guild, page, limit }: GetChannelIDsAPIRequest): Promise<GetChannelIDsAPIResponse> {
+    const url = this.makeGetChannelIDsUrl(guild, page, limit);
     return axiosService.get(url).then(res => res.data);
   }
 
@@ -41,12 +47,14 @@ export class ChannelIDsAPIService {
     return axiosService.delete(url).then(res => res.data);
   }
 
-  private makeGetChannelIDsUrl(guild?: string): string {
-    if (guild) {
-      return ChannelIDsAPIService.GET_CHANNEL_IDS_WITH_GUILD_URL.replace(':guild', guild);
-    }
+  private makeGetChannelIDsUrl(guild?: string, page?: number, limit?: number): string {
+    const url = guild
+      ? ChannelIDsAPIService.GET_CHANNEL_IDS_WITH_GUILD_URL.replace(':guild', guild)
+      : ChannelIDsAPIService.GET_CHANNEL_IDS_URL;
 
-    return ChannelIDsAPIService.GET_CHANNEL_IDS_URL;
+    return url
+      .replace(':page', (page ?? 1).toString())
+      .replace(':limit', (limit ?? 25).toString());
   }
 
   private makeAddChannelIDUrl(guild?: string): string {

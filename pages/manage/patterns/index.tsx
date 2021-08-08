@@ -17,12 +17,14 @@ import withReactContent from 'sweetalert2-react-content';
 import RegexTester from '@/components/common/regex-tester/RegexTester';
 import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
+import { APIPaginationData } from '@/services/axios';
 
 const MySwal = withReactContent(Swal);
 
 const ManageLinkPatternsIndexPage = () => {
-  const [items, setItems] = useState<ILinkPattern[] | null>(null);
   const [guilds, setGuilds] = useState<IGuild[] | null>(null);
+  const [items, setItems] = useState<ILinkPattern[] | null>(null);
+  const [pagination, setPagination] = useState<APIPaginationData | null>(null);
   const [error, setError] = useState<string>('');
 
   const router = useRouter();
@@ -39,13 +41,15 @@ const ManageLinkPatternsIndexPage = () => {
     }
   };
 
-  const fetchItems = async (guild?: string | null) => {
+  const fetchItems = async (guild?: string | null, page?: number) => {
     setItems(null);
+    setPagination(null);
     setError('');
 
     try {
-      const { patterns } = await apiService.patterns.getLinkPatterns(guild);
+      const { patterns } = await apiService.patterns.getLinkPatterns({ guild, page });
       setItems(patterns);
+      setPagination(pagination);
     } catch (err) {
       setError('Failed to load link patterns.');
     }
@@ -104,6 +108,7 @@ const ManageLinkPatternsIndexPage = () => {
       {guilds && (
         <Blacklist
           items={items}
+          pagination={pagination}
           fetcher={fetchItems}
           error={error}
           zdsMessage="No blacklisted link patterns have been found."

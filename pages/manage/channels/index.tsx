@@ -14,10 +14,12 @@ import Swal from 'sweetalert2';
 import { IGuild } from '@/controllers/guilds/IGuild';
 import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
+import { APIPaginationData } from '@/services/axios';
 
 const ManageChannelsIndexPage = () => {
-  const [items, setItems] = useState<IYouTubeChannelID[] | null>(null);
   const [guilds, setGuilds] = useState<IGuild[] | null>(null);
+  const [items, setItems] = useState<IYouTubeChannelID[] | null>(null);
+  const [pagination, setPagination] = useState<APIPaginationData | null>(null);
   const [error, setError] = useState<string>('');
 
   const router = useRouter();
@@ -34,13 +36,15 @@ const ManageChannelsIndexPage = () => {
     }
   };
 
-  const fetchItems = async (guild?: string | null) => {
+  const fetchItems = async (guild?: string | null, page?: number) => {
     setItems(null);
+    setPagination(null);
     setError('');
 
     try {
-      const { channelIDs } = await apiService.channelIDs.getChannelIDs(guild);
+      const { channelIDs, pagination } = await apiService.channelIDs.getChannelIDs({ guild, page });
       setItems(channelIDs);
+      setPagination(pagination);
     } catch (err) {
       setError('Failed to load channel IDs.');
     }
@@ -106,6 +110,7 @@ const ManageChannelsIndexPage = () => {
       {guilds && (
         <Blacklist
           items={items}
+          pagination={pagination}
           fetcher={fetchItems}
           error={error}
           zdsMessage="No blacklisted channel IDs have been found."

@@ -3,8 +3,18 @@ import buildUrl from '@/lib/buildUrl';
 import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 import NProgress from 'nprogress';
 
+export interface APIPaginationData {
+  page: number;
+  limit: number;
+  pageCount: number;
+  totalCount: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+};
+
 export interface APIResponse {
   ok: boolean;
+  pagination?: APIPaginationData;
 };
 
 export interface APIErrorResponse extends APIResponse {

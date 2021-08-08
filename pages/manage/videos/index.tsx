@@ -14,10 +14,12 @@ import Swal from 'sweetalert2';
 import { IGuild } from '@/controllers/guilds/IGuild';
 import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
+import { APIPaginationData } from '@/services/axios';
 
 const ManageVideosIndexPage = () => {
-  const [ items, setItems ] = useState<IYouTubeVideoID[] | null>(null);
   const [ guilds, setGuilds ] = useState<IGuild[] | null>(null);
+  const [ items, setItems ] = useState<IYouTubeVideoID[] | null>(null);
+  const [ pagination, setPagination ] = useState<APIPaginationData | null>(null);
   const [ error, setError ] = useState<string>('');
 
   const router = useRouter();
@@ -34,13 +36,15 @@ const ManageVideosIndexPage = () => {
     }
   };
 
-  const fetchItems = async (guild?: string | null) => {
+  const fetchItems = async (guild?: string | null, page?: number) => {
     setItems(null);
+    setPagination(null);
     setError('');
 
     try {
-      const { videoIDs } = await apiService.videoIDs.getVideoIDs(guild);
+      const { videoIDs, pagination } = await apiService.videoIDs.getVideoIDs({ guild, page });
       setItems(videoIDs);
+      setPagination(pagination);
     } catch (err) {
       setError('Failed to load video IDs.');
     }
@@ -106,6 +110,7 @@ const ManageVideosIndexPage = () => {
       {guilds && (
         <Blacklist
           items={items}
+          pagination={pagination}
           fetcher={fetchItems}
           error={error}
           zdsMessage="No blacklisted video IDs have been found."

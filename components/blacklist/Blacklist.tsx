@@ -1,8 +1,10 @@
 import { IGuild } from '@/controllers/guilds/IGuild';
+import { APIPaginationData } from '@/services/axios';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { Filter } from 'react-feather';
 import MessageBox, { MessageBoxLevel } from '../common/messagebox/MessageBox';
+import Pagination from '../common/pagination/Pagination';
 import ZeroDataState from '../common/zds/ZeroDataState';
 import GuildList from '../guilds/GuildList';
 import Loading from '../loading/Loading';
@@ -13,7 +15,8 @@ import FilteredBlacklist, { BlacklistItem } from './FilteredBlacklist';
 export interface BlacklistProps {
   items: BlacklistItem[];
   guilds: IGuild[];
-  fetcher(guild?: string | null);
+  pagination?: APIPaginationData;
+  fetcher(guild?: string | null, page?: number);
   zdsMessage?: string;
   error?: string;
   onTextClick?(text: string): void;
@@ -21,7 +24,7 @@ export interface BlacklistProps {
   hideGlobal?: boolean;
 };
 
-const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, actions, hideGlobal }: BlacklistProps) => {
+const Blacklist = ({ items, guilds, pagination, fetcher, error, zdsMessage, onTextClick, actions, hideGlobal }: BlacklistProps) => {
   const [ activeGuild, setActiveGuild ] = useState<IGuild | null>(hideGlobal ? guilds[0] : null);
   const [ filtersVisible, setFiltersVisible ] = useState(false);
 
@@ -36,6 +39,10 @@ const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, act
 
     setActiveGuild(guild);
     fetcher(guild ? guild.id : null);
+  };
+
+  const handlePaginationChange = (page: number) => {
+    fetcher(activeGuild ? activeGuild.id : null, page);
   };
 
   useEffect(() => {
@@ -77,6 +84,14 @@ const Blacklist = ({ items, guilds, fetcher, error, zdsMessage, onTextClick, act
         {items?.length === 0 && <ZeroDataState message={zdsMessage} />}
         {!items && !error && <Loading />}
         {error?.length > 0 && <MessageBox level={MessageBoxLevel.DANGER}>{error}</MessageBox>}
+
+        {pagination && (
+          <Pagination
+            currentPage={pagination.page}
+            pageCount={pagination.pageCount}
+            onChange={handlePaginationChange}
+          />
+        )}
       </div>
     </div>
   );
