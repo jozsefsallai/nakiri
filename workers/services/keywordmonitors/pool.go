@@ -1,4 +1,4 @@
-package pool
+package keywordmonitors
 
 import (
 	"log"
@@ -8,12 +8,13 @@ import (
 	"github.com/jozsefsallai/nakiri/workers/config"
 	"github.com/jozsefsallai/nakiri/workers/database"
 	"github.com/jozsefsallai/nakiri/workers/database/models"
+	"github.com/jozsefsallai/nakiri/workers/utils"
 	"github.com/jozsefsallai/nakiri/workers/youtube"
 )
 
 var youtubeClient *youtube.Client
 
-func worker(id int, jobs <-chan models.MonitoredKeyword, throttler *Throttler, webhookThrottlers map[string]*Throttler, wg *sync.WaitGroup) {
+func worker(id int, jobs <-chan models.MonitoredKeyword, throttler *utils.Throttler, webhookThrottlers map[string]*utils.Throttler, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for job := range jobs {
@@ -41,7 +42,7 @@ func CreateWorkerPools() {
 	log.Println("Bootstrapping worker pools.")
 
 	youtubeClient = youtube.NewClient(config.Config.YouTube.APIKey)
-	throttler := Throttler{
+	throttler := utils.Throttler{
 		MaxInvocations: 2,
 		Delay:          300 * time.Millisecond,
 	}
@@ -51,10 +52,10 @@ func CreateWorkerPools() {
 	entries := database.GetMonitoredKeywords()
 	entryCount := len(entries)
 
-	webhookThrottlers := make(map[string]*Throttler)
+	webhookThrottlers := make(map[string]*utils.Throttler)
 	for _, entry := range entries {
 		if _, ok := webhookThrottlers[entry.WebhookURL]; !ok {
-			webhookThrottlers[entry.WebhookURL] = &Throttler{
+			webhookThrottlers[entry.WebhookURL] = &utils.Throttler{
 				MaxInvocations: 1,
 				Delay:          3 * time.Second,
 			}

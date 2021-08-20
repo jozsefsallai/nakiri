@@ -1,10 +1,11 @@
-package pool
+package keywordmonitors
 
 import (
 	"log"
 
 	"github.com/jozsefsallai/nakiri/workers/database"
 	"github.com/jozsefsallai/nakiri/workers/database/models"
+	"github.com/jozsefsallai/nakiri/workers/utils"
 	"github.com/jozsefsallai/nakiri/workers/webhooks"
 	"github.com/jozsefsallai/nakiri/workers/youtube"
 )
@@ -14,7 +15,7 @@ func isChannelWhitelisted(guildID, channelID string) bool {
 	return entry != nil
 }
 
-func handleItem(job models.MonitoredKeyword, item youtube.YTListItem, throttler *Throttler) error {
+func handleItem(job models.MonitoredKeyword, item youtube.YTListItem, throttler *utils.Throttler) error {
 	if isChannelWhitelisted(job.GuildID, item.Snippet.ChannelID) {
 		return nil
 	}
@@ -30,7 +31,7 @@ func handleItem(job models.MonitoredKeyword, item youtube.YTListItem, throttler 
 	return webhooks.SendWebhook(&job, item)
 }
 
-func handleJob(job models.MonitoredKeyword, response []youtube.YTListItem, throttler *Throttler, webhookThrottlers map[string]*Throttler) {
+func handleJob(job models.MonitoredKeyword, response []youtube.YTListItem, throttler *utils.Throttler, webhookThrottlers map[string]*utils.Throttler) {
 	for i := len(response) - 1; i >= 0; i-- {
 		item := response[i]
 
