@@ -1,8 +1,11 @@
 import db from '@/services/db';
-import { YouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { FindConditions, IsNull } from 'typeorm';
+
+import { YouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { APIError } from '@/lib/errors';
 import { isValidYouTubeChannelID } from '@/lib/commonValidators';
+
+import { collectChannelMetadata } from '@/jobs/queue';
 
 export class YouTubeChannelIDCreationError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -42,4 +45,6 @@ export const addYouTubeChannelID = async (channelId: string, guildId?: string) =
   }
 
   await youTubeChannelIDRepository.insert(entry);
+
+  collectChannelMetadata.add({ entry });
 };

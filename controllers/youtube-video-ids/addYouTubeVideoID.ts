@@ -1,8 +1,11 @@
 import db from '@/services/db';
-import { YouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { FindConditions, IsNull } from 'typeorm';
+
+import { YouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { APIError } from '@/lib/errors';
 import { isValidYouTubeVideoID } from '@/lib/commonValidators';
+
+import { collectVideoMetadata } from '@/jobs/queue';
 
 export class YouTubeVideoIDCreationError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -42,4 +45,6 @@ export const addYouTubeVideoID = async (videoId: string, guildId?: string) => {
   }
 
   await youTubeVideoIDRepository.insert(entry);
+
+  collectVideoMetadata.add({ entry });
 };

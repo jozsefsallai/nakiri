@@ -13,6 +13,14 @@ export interface IDatabaseConfig {
   name: string;
 };
 
+export interface IRedisConfig {
+  host: string;
+  port: number;
+  password?: string;
+
+  buildRedisUrl(database?: number): string;
+};
+
 export interface IDiscordConfig {
   clientId: string;
   clientSecret: string;
@@ -26,6 +34,7 @@ export interface IYouTubeConfig {
 export interface IConfig {
   app: IAppConfig;
   database: IDatabaseConfig;
+  redis: IRedisConfig;
   discord: IDiscordConfig;
   youtube?: IYouTubeConfig;
 };

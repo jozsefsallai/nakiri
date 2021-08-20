@@ -7,6 +7,7 @@ use in Hololive fan Discord servers.
 
 - Node.js v12 or newer
 - MySQL (other databases might work but I have not tested it)
+- Redis
 
 ## Getting Started
 
