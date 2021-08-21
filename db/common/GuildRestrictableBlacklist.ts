@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export interface IGuildRestrictableBlacklist {
   id: string;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date;
   guildId?: string;
 };
 
@@ -17,6 +18,9 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @DeleteDateColumn()
+  deletedAt: Date;
+
   @Column('varchar', { nullable: true, default: null })
   guildId?: string;
 
@@ -25,6 +29,7 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
       id: this.id,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      deletedAt: this.deletedAt,
       guildId: this.guildId
     };
   }

@@ -1,6 +1,6 @@
 import config from '../config';
 
-import { ConnectionOptions, createConnection, getConnection, getManager, getRepository } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection, getConnection, getManager, getRepository } from 'typeorm';
 
 import { YouTubeVideoID } from '../db/models/blacklists/YouTubeVideoID';
 import { YouTubeChannelID } from '../db/models/blacklists/YouTubeChannelID';
@@ -59,6 +59,15 @@ const db = {
     }
 
     return connectionReadyPromise;
+  },
+
+  async getTemporaryNamedConnection(name: string): Promise<Connection> {
+    try {
+      const connection = getConnection(name);
+      await connection.close();
+    } catch (err) {}
+
+    return createConnection({ name, ...connectionOptions });
   },
 
   getConnection,
