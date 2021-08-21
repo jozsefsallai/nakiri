@@ -511,6 +511,13 @@
   dependencies:
     "@types/lodash" "*"
 
+"@types/lodash.truncate@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.truncate/-/lodash.truncate-4.4.6.tgz#ae64c26531b117bcd0573c86cab7a9de4393e8e9"
+  integrity sha512-PTZoD9mSRANSAHnb89AmoIiuthTPGfehBIo4ojd8U8CFc3aac89IVaaIRQNJbglY8SOJoOZEEVE3nNND3uRoyg==
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash@*":
   version "4.14.171"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.171.tgz#f01b3a5fe3499e34b622c362a46a609fdb23573b"

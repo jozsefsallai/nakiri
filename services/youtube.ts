@@ -37,10 +37,14 @@ export class YouTubeAPIService {
 
     const video = data.items[0];
     const { publishedAt, channelId, title, description, thumbnails, channelTitle } = video.snippet;
+
+    const thumbnailEntries = thumbnails && Object.values(thumbnails) as any;
+    const thumbnailUrl = thumbnailEntries?.length > 0 && thumbnailEntries.pop().url;
+
     const metadata: YouTubeVideoData = {
       title,
       description,
-      thumbnailUrl: thumbnails?.lenght > 0 && thumbnails.pop().url,
+      thumbnailUrl,
       uploadDate: new Date(publishedAt),
       uploaderId: channelId,
       uploaderName: channelTitle
@@ -60,11 +64,15 @@ export class YouTubeAPIService {
     const channel = data.items[0];
 
     const { publishedAt, description, thumbnails, title } = channel.snippet;
+
+    const thumbnailEntries = thumbnails && Object.values(thumbnails) as any;
+    const thumbnailUrl = thumbnailEntries?.length > 0 && thumbnailEntries.pop().url;
+
     const metadata: YouTubeChannelData = {
       name: title,
       description,
       publishedAt: new Date(publishedAt),
-      thumbnailUrl: thumbnails?.length > 0 && thumbnails.pop().url
+      thumbnailUrl
     };
 
     return metadata;

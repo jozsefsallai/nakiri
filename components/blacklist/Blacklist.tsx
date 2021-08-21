@@ -21,10 +21,11 @@ export interface BlacklistProps {
   error?: string;
   onTextClick?(text: string): void;
   actions?: BlacklistAction[];
+  entryComponent?: React.FC<any> | React.ComponentClass<any>;
   hideGlobal?: boolean;
 };
 
-const Blacklist = ({ items, guilds, pagination, fetcher, error, zdsMessage, onTextClick, actions, hideGlobal }: BlacklistProps) => {
+const Blacklist = ({ items, guilds, pagination, fetcher, error, zdsMessage, onTextClick, actions, entryComponent, hideGlobal }: BlacklistProps) => {
   const [ activeGuild, setActiveGuild ] = useState<IGuild | null>(hideGlobal ? guilds[0] : null);
   const [ filtersVisible, setFiltersVisible ] = useState(false);
 
@@ -79,6 +80,7 @@ const Blacklist = ({ items, guilds, pagination, fetcher, error, zdsMessage, onTe
           items={items}
           onTextClick={onTextClick}
           actions={actions}
+          entryComponent={entryComponent}
         />}
 
         {items?.length === 0 && <ZeroDataState message={zdsMessage} />}

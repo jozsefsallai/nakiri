@@ -8,6 +8,7 @@
 
 html, body, #__next, .app {
   @apply min-h-screen;
+  @apply overflow-x-hidden;
 }
 
 body {

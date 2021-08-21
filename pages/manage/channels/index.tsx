@@ -3,6 +3,7 @@ import Loading from '@/components/loading/Loading';
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist from '@/components/blacklist/Blacklist';
+import YouTubeChannelEntry from '@/components/blacklist/entry-data/YouTubeChannelEntry';
 
 import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
@@ -119,6 +120,7 @@ const ManageChannelsIndexPage = () => {
           actions={[
             { label: 'Delete', onClick: handleDeleteActionClick }
           ]}
+          entryComponent={YouTubeChannelEntry}
         />
       )}
 

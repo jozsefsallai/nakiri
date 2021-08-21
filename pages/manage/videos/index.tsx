@@ -3,6 +3,7 @@ import Loading from '@/components/loading/Loading';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist from '@/components/blacklist/Blacklist';
+import YouTubeVideoEntry from '@/components/blacklist/entry-data/YouTubeVideoEntry';
 
 import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
@@ -119,6 +120,7 @@ const ManageVideosIndexPage = () => {
           actions={[
             { label: 'Delete', onClick: handleDeleteActionClick }
           ]}
+          entryComponent={YouTubeVideoEntry}
         />
       )}
 

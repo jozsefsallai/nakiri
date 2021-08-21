@@ -12,9 +12,10 @@ export interface FilteredBlacklistProps {
   items: BlacklistItem[];
   onTextClick?(text: string): void;
   actions?: BlacklistAction[];
+  entryComponent?: React.FC<any> | React.ComponentClass<any>;
 };
 
-const FilteredBlacklist = ({ items, onTextClick, actions }: FilteredBlacklistProps) => {
+const FilteredBlacklist = ({ items, onTextClick, actions, entryComponent }: FilteredBlacklistProps) => {
   const getItemText = (item: BlacklistItem) => {
     if ('videoId' in item) {
       return item.videoId;
@@ -41,7 +42,9 @@ const FilteredBlacklist = ({ items, onTextClick, actions }: FilteredBlacklistPro
     return <BlacklistRow
       key={item.id}
       id={item.id}
+      item={item}
       text={text}
+      entryComponent={entryComponent}
       onTextClick={onTextClick}
       actions={actions}
     />;
