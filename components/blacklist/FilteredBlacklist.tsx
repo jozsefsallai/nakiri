@@ -1,12 +1,13 @@
 import { ILinkPattern } from '@/db/models/blacklists/LinkPattern';
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
+import { IKeywordWhitelistedChannel } from '@/db/models/keywords/KeywordWhitelistedChannel';
 import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
 
 import { BlacklistAction } from './BlacklistActions';
 import BlacklistRow from './BlacklistRow';
 
-export type BlacklistItem = ILinkPattern | IYouTubeVideoID | IYouTubeChannelID | IMonitoredKeyword;
+export type BlacklistItem = ILinkPattern | IYouTubeVideoID | IYouTubeChannelID | IMonitoredKeyword | IKeywordWhitelistedChannel;
 
 export interface FilteredBlacklistProps {
   items: BlacklistItem[];
