@@ -14,6 +14,9 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 import { IGuild } from '@/controllers/guilds/IGuild';
+import toaster from '@/lib/toaster';
+import { errors } from '@/lib/errors';
+import Swal from 'sweetalert2';
 
 const ManageMonitoredKeywordsIndexPage = () => {
   const [items, setItems] = useState<IMonitoredKeyword[] | null>(null);
@@ -46,12 +49,43 @@ const ManageMonitoredKeywordsIndexPage = () => {
     }
   };
 
+  const deleteItem = async (id: string) => {
+    try {
+      await apiService.monitoredKeywords.deleteMonitoredKeyword(id);
+      setItems(items => items.filter(item => item.id !== id));
+      toaster.success('Monitored keyword deleted successfully.');
+    } catch (err) {
+      const message = err?.response?.data?.error;
+
+      if (message) {
+        toaster.danger(errors[message]);
+        return;
+      }
+
+      toaster.danger(errors.INTERNAL_SERVER_ERROR);
+    }
+  };
+
   const handleNewButtonClick = () => {
     router.push('/manage/monitored-keywords/new');
   };
 
   const handleWhitelistsClick = () => {
     router.push('/manage/monitored-keywords/whitelisted-channels');
+  };
+
+  const handleDeleteActionClick = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You are about to delete this monitored keyword AND every entry associated to it. This cannot be undone!',
+      showCancelButton: true,
+      confirmButtonText: 'Delete keyword and entries',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      await deleteItem(id);
+    }
   };
 
   useEffect(() => {
@@ -70,6 +104,9 @@ const ManageMonitoredKeywordsIndexPage = () => {
           zdsMessage="No monitored keywords have been found."
           guilds={guilds}
           hideGlobal
+          actions={[
+            { label: 'Delete', onClick: handleDeleteActionClick }
+          ]}
         />
       )}
 
