@@ -92,6 +92,11 @@ const ManageMonitoredKeywordsIndexPage = () => {
     }
   };
 
+  const handleTextClick = async (text: string) => {
+    const entry = items.find(item => item.keyword === text);
+    await router.push(`/manage/monitored-keywords/${entry.id}`);
+  };
+
   useEffect(() => {
     fetchGuilds();
   }, []);
@@ -107,6 +112,7 @@ const ManageMonitoredKeywordsIndexPage = () => {
           error={error}
           zdsMessage="No monitored keywords have been found."
           guilds={guilds}
+          onTextClick={handleTextClick}
           hideGlobal
           actions={[
             { label: 'Edit', onClick: handleEditActionClick },

@@ -1,5 +1,6 @@
 import { ProcessingState } from '@/db/common/ProcessingState';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
+import { IKeywordSearchResult } from '@/db/models/keywords/KeywordSearchResult';
 
 import { Clock } from 'react-feather';
 
@@ -8,7 +9,7 @@ import truncate from 'lodash.truncate';
 import { format as formatDate } from 'date-fns';
 
 export interface YouTubeVideoEntryProps {
-  item: IYouTubeVideoID;
+  item: IYouTubeVideoID | IKeywordSearchResult;
   onTextClick?(text: string): void;
 };
 
@@ -41,32 +42,32 @@ const YouTubeVideoEntry: React.FC<YouTubeVideoEntryProps> = ({ item, onTextClick
       </div>
 
       <div className="flex-1">
-        {(item.status === ProcessingState.PENDING || item.status === ProcessingState.QUEUED) && (
+        {('status' in item && (item.status === ProcessingState.PENDING || item.status === ProcessingState.QUEUED)) && (
           <>
             <h3 className={titleClassNames} onClick={handleItemClick}>{item.videoId}</h3>
             <small>{item.status === ProcessingState.PENDING ? 'Processing metadata...' : 'Queued to be processed by a worker.'}</small>
           </>
         )}
 
-        {item.status === ProcessingState.FAILED && (
+        {'status' in item && item.status === ProcessingState.FAILED && (
           <>
             <h3 className={titleClassNames} onClick={handleItemClick}>{item.videoId}</h3>
             <small className="text-danger">Failed to process metadata.</small>
           </>
         )}
 
-        {item.status === ProcessingState.DONE && (
+        {(!('status' in item) || item.status === ProcessingState.DONE) && (
           <>
             <h3 className={titleClassNames} onClick={handleItemClick}>{truncate(item.title, { length: 100 })}</h3>
-            {item.description && <small>{truncate(item.description, { length: 200 })}</small>}
+            {'description' in item && item.description && <small>{truncate(item.description, { length: 200 })}</small>}
 
             <div className="mt-2 text-xs">
               <div>
                 <strong>Uploaded by:</strong> <a
-                  href={buildChannelURL(item.uploaderId)}
+                  href={buildChannelURL('uploaderId' in item ? item.uploaderId : (item as IKeywordSearchResult).uploader)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title={item.uploaderId}
+                  title={'uploaderId' in item ? item.uploaderId : (item as IKeywordSearchResult).uploader}
                 >{item.uploaderName}</a>
               </div>
 

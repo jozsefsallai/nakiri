@@ -13,10 +13,10 @@ const GuildList = ({ guilds, onGuildClick, activeGuild, compact }: GuildListProp
   return (
     <div>
       {guilds.map(guild => (
-        <>
-          {compact && <CompactGuildListItem guild={guild} key={guild.id} onClick={onGuildClick} active={activeGuild?.id === guild.id} />}
-          {!compact && <GuildListItem guild={guild} key={guild.id} onClick={onGuildClick} />}
-        </>
+        <div key={guild.id}>
+          {compact && <CompactGuildListItem guild={guild} onClick={onGuildClick} active={activeGuild?.id === guild.id} />}
+          {!compact && <GuildListItem guild={guild} onClick={onGuildClick} />}
+        </div>
       ))}
     </div>
   );
