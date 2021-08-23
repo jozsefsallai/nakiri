@@ -12,8 +12,11 @@ export interface CreateMonitoredKeywordAPIRequest {
   webhookUrl: string;
 };
 
-
 export interface CreateMonitoredKeywordAPIResponse extends APIResponse {
+};
+
+export interface GetMonitoredKeywordAPIResponse extends APIResponse {
+  entry: IMonitoredKeyword;
 };
 
 export interface UpdateMonitoredKeywordAPIRequest {
@@ -31,6 +34,7 @@ export interface DeleteMonitoredKeywordAPIResponse extends APIResponse {
 export class MonitoredKeywordsAPIService {
   static GET_MONITORED_KEYWORDS_API_URL = '/api/monitored-keywords/guild/:guild';
   static CREATE_MONITORED_KEYWORD_API_URL = '/api/monitored-keywords';
+  static GET_MONITORED_KEYWORD_API_URL = '/api/monitored-keywords/:id';
   static UPDATE_MONITORED_KEYWORD_API_URL = '/api/monitored-keywords/:id';
   static DELETE_MONITORED_KEYWORD_API_URL = '/api/monitored-keywords/:id';
 
@@ -45,6 +49,11 @@ export class MonitoredKeywordsAPIService {
       guildId,
       webhookUrl
     }).then(res => res.data);
+  }
+
+  public async getMonitoredKeyword(id: string): Promise<GetMonitoredKeywordAPIResponse> {
+    const url = this.makeGetMonitoredKeywordUrl(id);
+    return axiosService.get(url).then(res => res.data);
   }
 
   public async updateMonitoredKeyword(id: string, { keyword, guildId, webhookUrl }: UpdateMonitoredKeywordAPIRequest): Promise<UpdateMonitoredKeywordAPIResponse> {
@@ -63,6 +72,10 @@ export class MonitoredKeywordsAPIService {
 
   private makeGetMonitoredKeywordsUrl(guildId: string): string {
     return MonitoredKeywordsAPIService.GET_MONITORED_KEYWORDS_API_URL.replace(':guild', guildId);
+  }
+
+  private makeGetMonitoredKeywordUrl(id: string): string {
+    return MonitoredKeywordsAPIService.GET_MONITORED_KEYWORD_API_URL.replace(':id', id);
   }
 
   private makeUpdateMonitoredKeywordUrl(id: string): string {

@@ -37,8 +37,10 @@ export const errors = {
   ENTRY_NOT_FOUND: 'The requested entry could not be found.',
   UNAUTHORIZED: 'You are not authorized to perform this action.',
   CANNOT_MANAGE_OWN_BLACKLISTS: 'You cannot manage your own per-guild blacklists.',
+  CANNOT_UPDATE_ENTRY_FROM_THIS_GUILD: 'You cannot update entries from this guild.',
   CANNOT_DELETE_ENTRY_FROM_THIS_GUILD: 'You cannot delete entries from this guild.',
   CANNOT_MANAGE_GLOBAL_BLACKLISTS: 'You cannot manage the global blacklist.',
+  CANNOT_MANAGE_GUILD_MONITORED_KEYWORDS: 'You do not have permission to manage monitored keywords.',
 
   KEYWORD_NOT_PROVIDED: 'You have not provided a keyword.',
   GUILD_NOT_PROVIDED: 'You have not provided a guild.',

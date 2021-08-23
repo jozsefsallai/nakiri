@@ -74,6 +74,10 @@ const ManageMonitoredKeywordsIndexPage = () => {
     router.push('/manage/monitored-keywords/whitelisted-channels');
   };
 
+  const handleEditActionClick = async (id: string) => {
+    router.push(`/manage/monitored-keywords/${id}/edit`);
+  };
+
   const handleDeleteActionClick = async (id: string) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -105,6 +109,7 @@ const ManageMonitoredKeywordsIndexPage = () => {
           guilds={guilds}
           hideGlobal
           actions={[
+            { label: 'Edit', onClick: handleEditActionClick },
             { label: 'Delete', onClick: handleDeleteActionClick }
           ]}
         />

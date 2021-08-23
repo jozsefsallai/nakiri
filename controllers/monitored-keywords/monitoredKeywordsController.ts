@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next';
 
 import { createMonitoredKeyword } from './createMonitoredKeyword';
-import { getMonitoredKeywords } from './getMonitoredKeywords';
+import { getMonitoredKeywords, getMonitoredKeyword } from './getMonitoredKeywords';
 import { updateMonitoredKeyword } from './updateMonitoredKeyword';
 import { getSession } from 'next-auth/client';
 import { deleteMonitoredKeyword } from './deleteMonitoredKeyword';
@@ -16,6 +16,24 @@ export const index: NextApiHandler = async (req, res) => {
   return res.json({
     ok: true,
     entries
+  });
+};
+
+export const get: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+
+  const entry = await getMonitoredKeyword(id);
+
+  if (!entry) {
+    return res.status(404).json({
+      ok: false,
+      error: 'ENTRY_NOT_FOUND'
+    });
+  }
+
+  return res.json({
+    ok: true,
+    entry
   });
 };
 

@@ -39,7 +39,7 @@ export const deleteMonitoredKeyword = async (session: Session, id: string) => {
   const guild = userGuilds.find(guild => guild.id === entry.guildId);
 
   if (!guild) {
-    throw new MonitoredKeywordDeletionError(404, 'CANNOT_UPDATE_ENTRY_FROM_THIS_GUILD');
+    throw new MonitoredKeywordDeletionError(404, 'CANNOT_DELETE_ENTRY_FROM_THIS_GUILD');
   }
 
   await monitoredKeywordRepository.delete({ id });
