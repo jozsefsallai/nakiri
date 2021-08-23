@@ -35,7 +35,7 @@ export const getKeywordSearchResults = async (session: Session, id: string, skip
   };
 
   const totalCount = await keywordSearchResultsRepository.count({ where });
-  const keywordSearchResults = await keywordSearchResultsRepository.find({ where, skip, take });
+  const keywordSearchResults = await keywordSearchResultsRepository.find({ where, skip, take, order: { updatedAt: 'DESC' } });
 
   return { keywordSearchResults, totalCount };
 };
