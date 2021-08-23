@@ -4,8 +4,10 @@ import { UsersAPIService } from './users/UsersAPIService';
 import { VideoIDsAPIService } from './blacklists/VideoIDsAPIService';
 import { ChannelIDsAPIService } from './blacklists/ChannelIDsAPIService';
 import { LinkPatternsAPIService } from './blacklists/LinkPatternsAPIService';
+
 import { MonitoredKeywordsAPIService } from './monitored-keywords/MonitoredKeywordsAPIService';
 import { KeywordWhitelistedChannelsAPIService } from './monitored-keywords/KeywordWhitelistedChannels';
+import { KeywordSearchResultsAPIService } from './monitored-keywords/KeywordSearchResultsAPIService';
 
 class APIService {
   public users = new UsersAPIService();
@@ -17,6 +19,7 @@ class APIService {
 
   public monitoredKeywords = new MonitoredKeywordsAPIService();
   public keywordWhitelistedChannels = new KeywordWhitelistedChannelsAPIService();
+  public keywordSearchResults = new KeywordSearchResultsAPIService();
 };
 
 const apiService = new APIService();

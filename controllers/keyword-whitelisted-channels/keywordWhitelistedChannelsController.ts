@@ -2,9 +2,9 @@ import { NextApiHandler } from 'next';
 
 import { addWhitelistedChannel } from './addWhitelistedChannel';
 import { getWhitelistedChannels } from './getWhitelistedChannels';
+import { removeWhitelistedChannel } from './removeWhitelistedChannel';
 
 import firstOf from '@/lib/firstOf';
-import { removeWhitelistedChannel } from './removeWhitelistedChannel';
 
 export const index: NextApiHandler = async (req, res) => {
   const guild = firstOf(req.query.guild);
