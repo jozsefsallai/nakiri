@@ -3,6 +3,7 @@ module github.com/jozsefsallai/nakiri/workers
 go 1.15
 
 require (
+	github.com/getsentry/sentry-go v0.11.0
 	github.com/go-co-op/gocron v1.6.2
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0

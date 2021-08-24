@@ -77,5 +77,9 @@ func Load() {
 			Count:        workerCount,
 			ScanInterval: workerScanInterval,
 		},
+
+		Sentry: &SentryConfig{
+			DSN: os.Getenv("NEXT_PUBLIC_SENTRY_DSN"),
+		},
 	}
 }

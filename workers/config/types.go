@@ -1,5 +1,10 @@
 package config
 
+// SentryConfig contains information required for interfacing with Sentry.
+type SentryConfig struct {
+	DSN string
+}
+
 // DatabaseConfig is the configuration for the database
 type DatabaseConfig struct {
 	Host     string
@@ -24,6 +29,7 @@ type WorkersConfig struct {
 // BaseConfig contains all of the configuration for the application (database,
 // YouTube API, workers).
 type BaseConfig struct {
+	Sentry   *SentryConfig
 	Database *DatabaseConfig
 	YouTube  *YouTubeConfig
 	Workers  *WorkersConfig

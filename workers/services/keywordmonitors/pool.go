@@ -2,9 +2,11 @@ package keywordmonitors
 
 import (
 	"log"
+	"strconv"
 	"sync"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/jozsefsallai/nakiri/workers/config"
 	"github.com/jozsefsallai/nakiri/workers/database"
 	"github.com/jozsefsallai/nakiri/workers/database/models"
@@ -17,12 +19,20 @@ var youtubeClient *youtube.Client
 func worker(id int, jobs <-chan models.MonitoredKeyword, throttler *utils.Throttler, webhookThrottlers map[string]*utils.Throttler, wg *sync.WaitGroup) {
 	defer wg.Done()
 
+	hub := sentry.CurrentHub().Clone()
+	hub.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetTag("scope", "job")
+		scope.SetTag("job_name", "keyword_monitoring")
+		scope.SetTag("worker_id", strconv.Itoa(id))
+	})
+
 	for job := range jobs {
 		log.Printf("worker %d is working on job \"%s\"\n", id, job.Keyword)
 
 		response, err := youtubeClient.Search(job.Keyword)
 		if err != nil {
 			log.Printf("worker %d failed job \"%s\": %v\n", id, job.Keyword, err)
+			hub.CaptureException(err)
 			continue
 		}
 

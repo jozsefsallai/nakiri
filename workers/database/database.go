@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/jozsefsallai/nakiri/workers/config"
 	"github.com/jozsefsallai/nakiri/workers/database/models"
 	"github.com/jozsefsallai/nakiri/workers/utils"
@@ -21,6 +22,11 @@ var db *gorm.DB
 
 // Init will initialize the database connection.
 func Init() {
+	sentry.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetTag("scope", "initialization")
+		scope.SetTag("target", "gorm_init")
+	})
+
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?parseTime=true",
 		config.Config.Database.Username,
@@ -46,6 +52,7 @@ func Init() {
 	})
 	if err != nil {
 		log.Fatalf("Failed to establish database connection to %s.", dsn)
+		sentry.CaptureException(err)
 	}
 
 	db = conn
