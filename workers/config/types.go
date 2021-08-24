@@ -22,8 +22,9 @@ type YouTubeConfig struct {
 // WorkersConfig is the configuration for the workers. It contains two fields:
 // the number of workers and the schedule interval in hours.
 type WorkersConfig struct {
-	Count        int
-	ScanInterval int
+	Count           int
+	ScanInterval    int
+	CleanupInterval int
 }
 
 // BaseConfig contains all of the configuration for the application (database,

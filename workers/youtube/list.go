@@ -25,9 +25,11 @@ type YTSnippet struct {
 	Title       string
 	Description string
 	Thumbnails  struct {
-		Default YTThumbnailData
-		Medium  YTThumbnailData
-		High    YTThumbnailData
+		Default  *YTThumbnailData `json:"default,omitempty"`
+		Medium   *YTThumbnailData `json:"medium,omitempty"`
+		High     *YTThumbnailData `json:"high,omitempty"`
+		Standard *YTThumbnailData `json:"standard,omitempty"`
+		MaxRes   *YTThumbnailData `json:"maxres,omitempty"`
 	}
 	ChannelTitle string
 }
@@ -38,4 +40,45 @@ type YTListItem struct {
 	ETag    string
 	ID      YTIdentificationData
 	Snippet YTSnippet
+}
+
+// YTVideoListItem is a single video item.
+type YTVideoListItem struct {
+	Kind    string
+	ETag    string
+	ID      string
+	Snippet YTSnippet
+}
+
+// YTListResponse represents the response to a video list request from the
+// YouTube API.
+type YTListResponse struct {
+	Kind     string
+	ETag     string
+	Items    []*YTVideoListItem
+	PageInfo *YTPageInfo
+}
+
+func (snippet *YTSnippet) GetBestThumbnail() string {
+	if snippet.Thumbnails.MaxRes != nil {
+		return snippet.Thumbnails.MaxRes.URL
+	}
+
+	if snippet.Thumbnails.Standard != nil {
+		return snippet.Thumbnails.Standard.URL
+	}
+
+	if snippet.Thumbnails.High != nil {
+		return snippet.Thumbnails.High.URL
+	}
+
+	if snippet.Thumbnails.Medium != nil {
+		return snippet.Thumbnails.Medium.URL
+	}
+
+	if snippet.Thumbnails.Default != nil {
+		return snippet.Thumbnails.Default.URL
+	}
+
+	return ""
 }

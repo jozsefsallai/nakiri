@@ -59,6 +59,7 @@ func Load() {
 	dbport, _ := strconv.Atoi(os.Getenv("DATABASE_PORT"))
 	workerCount, _ := strconv.Atoi(os.Getenv("WORKER_COUNT"))
 	workerScanInterval, _ := strconv.Atoi(os.Getenv("WORKER_SCAN_INTERVAL"))
+	workerCleanupInterval, _ := strconv.Atoi(os.Getenv("WORKER_CLEANUP_INTERVAL"))
 
 	Config = &BaseConfig{
 		Database: &DatabaseConfig{
@@ -74,8 +75,9 @@ func Load() {
 		},
 
 		Workers: &WorkersConfig{
-			Count:        workerCount,
-			ScanInterval: workerScanInterval,
+			Count:           workerCount,
+			ScanInterval:    workerScanInterval,
+			CleanupInterval: workerCleanupInterval,
 		},
 
 		Sentry: &SentryConfig{

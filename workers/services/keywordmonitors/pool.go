@@ -49,7 +49,7 @@ func worker(id int, jobs <-chan models.MonitoredKeyword, throttler *utils.Thrott
 // be distrubuted equally to the workers, depending on which worker is free to
 // process the job.
 func CreateWorkerPools() {
-	log.Println("Bootstrapping worker pools.")
+	log.Println("Bootstrapping keyword monitoring worker pools.")
 
 	youtubeClient = youtube.NewClient(config.Config.YouTube.APIKey)
 	throttler := utils.Throttler{
@@ -84,5 +84,5 @@ func CreateWorkerPools() {
 	close(jobs)
 
 	wg.Wait()
-	log.Println("Worker pool finished.")
+	log.Println("Keyword monitoring worker pool finished.")
 }

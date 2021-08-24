@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/getsentry/sentry-go"
 	"github.com/jozsefsallai/nakiri/workers/config"
+	"github.com/jozsefsallai/nakiri/workers/database/dbutils"
 	"github.com/jozsefsallai/nakiri/workers/database/models"
 	"github.com/jozsefsallai/nakiri/workers/utils"
 	"github.com/jozsefsallai/nakiri/workers/youtube"
@@ -95,11 +97,62 @@ func InsertKeywordSearchResult(keyword *models.MonitoredKeyword, item youtube.YT
 		KeywordID:    keyword.ID,
 		Title:        item.Snippet.Title,
 		VideoID:      item.ID.VideoID,
-		ThumbnailURL: item.Snippet.Thumbnails.Default.URL,
+		ThumbnailURL: item.Snippet.GetBestThumbnail(),
 		UploadDate:   publishedAt,
 		Uploader:     item.Snippet.ChannelID,
 		UploaderName: item.Snippet.ChannelTitle,
 	}
 
 	db.Create(&entry)
+}
+
+// GetAllYouTubeVideoIDs will return all YouTube video IDs that are currently
+// in the database.
+func GetAllYouTubeVideoIDs() []*models.YouTubeVideoID {
+	var entries []*models.YouTubeVideoID
+	db.Model(&models.YouTubeVideoID{}).Find(&entries)
+	return entries
+}
+
+// UpdateYouTubeVideoIDState is a utility function for updating the processing
+// state of a YouTube video ID.
+func UpdateYouTubeVideoIDState(id string, state dbutils.ProcessingState) {
+	db.Model(&models.YouTubeVideoID{}).Where("id = ?", id).Update("status", state)
+}
+
+// UpdateYouTubeVideoID will update a YouTube video ID entry in the database.
+func UpdateYouTubeVideoID(entry *models.YouTubeVideoID, data *youtube.YTVideoListItem) {
+	uploadDate, _ := time.Parse(time.RFC3339, data.Snippet.PublishedAt)
+
+	entry.Title = sql.NullString{
+		String: data.Snippet.Title,
+		Valid:  true,
+	}
+
+	entry.ThumbnailURL = sql.NullString{
+		String: data.Snippet.GetBestThumbnail(),
+		Valid:  true,
+	}
+
+	entry.UploadDate = sql.NullTime{
+		Time:  uploadDate,
+		Valid: true,
+	}
+
+	entry.UploaderID = sql.NullString{
+		String: data.Snippet.ChannelID,
+		Valid:  true,
+	}
+
+	entry.UploaderName = sql.NullString{
+		String: data.Snippet.ChannelTitle,
+		Valid:  true,
+	}
+
+	db.Save(entry)
+}
+
+// DeleteYouTubeVideoID will delete a YouTube video ID entry from the database.
+func DeleteYouTubeVideoID(entry *models.YouTubeVideoID) {
+	db.Model(&models.YouTubeVideoID{}).Delete(entry)
 }
