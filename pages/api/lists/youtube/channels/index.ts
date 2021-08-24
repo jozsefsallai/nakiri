@@ -1,21 +1,26 @@
 import bar from 'next-bar';
-import { ensureAuthenticated } from '@/middleware/auth';
+import { withPagination } from 'next-api-paginate';
+import { withSentry } from '@sentry/nextjs';
 
-import * as youtubeChannelIDsController from '@/controllers/youtube-channel-ids/youtubeChannelIDsController';
+import { ensureAuthenticated } from '@/middleware/auth';
 import { ensureHasAccessToGuild } from '@/middleware/permissions';
 
-import { withPagination } from 'next-api-paginate';
+import * as youtubeChannelIDsController from '@/controllers/youtube-channel-ids/youtubeChannelIDsController';
 
 export default bar({
-  get: ensureAuthenticated(
-    ensureHasAccessToGuild(
-      withPagination({
-        defaultLimit: Infinity,
-        maxLimit: Infinity
-      })(youtubeChannelIDsController.index)
+  get: withSentry(
+    ensureAuthenticated(
+      ensureHasAccessToGuild(
+        withPagination({
+          defaultLimit: Infinity,
+          maxLimit: Infinity
+        })(youtubeChannelIDsController.index)
+      )
     )
   ),
-  post: ensureAuthenticated(
-    ensureHasAccessToGuild(youtubeChannelIDsController.create)
+  post: withSentry(
+    ensureAuthenticated(
+      ensureHasAccessToGuild(youtubeChannelIDsController.create)
+    )
   )
 });

@@ -8,6 +8,8 @@ import { getUsers } from './getUsers';
 import { unauthorizeUser } from './unauthorizeUser';
 import { updateUserPermissions } from './updateUser';
 
+import { captureException } from '@sentry/nextjs';
+
 export const get: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
   const user = await getUser(session);
@@ -42,6 +44,8 @@ export const getData: NextApiHandler = async (req, res) => {
       data
     });
   } catch (err) {
+    captureException(err);
+
     return res.status(500).json({
       ok: false,
       error: 'FAILED_TO_FETCH_USER_DATA'
@@ -54,6 +58,8 @@ export const index: NextApiHandler = async (req, res) => {
     const users = await getUsers();
     return res.json({ ok: true, users });
   } catch (err) {
+    captureException(err);
+
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR'
@@ -91,7 +97,7 @@ export const authorize: NextApiHandler = async (req, res) => {
       });
     }
 
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,
@@ -123,7 +129,7 @@ export const updatePermissions: NextApiHandler = async (req, res) => {
       });
     }
 
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,
@@ -146,7 +152,7 @@ export const destroy: NextApiHandler = async (req, res) => {
       });
     }
 
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,

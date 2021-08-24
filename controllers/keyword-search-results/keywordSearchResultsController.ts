@@ -7,6 +7,8 @@ import { getKeywordSearchResults } from './getKeywordSearchResults';
 
 import firstOf from '@/lib/firstOf';
 
+import { captureException } from '@sentry/nextjs';
+
 export const index: NextApiHandler = async (req, res) => {
   const id = firstOf(req.query.id);
   const session = await getSession({ req });
@@ -42,6 +44,8 @@ export const index: NextApiHandler = async (req, res) => {
         error: err.code
       });
     }
+
+    captureException(err);
 
     return res.status(500).json({
       ok: false,

@@ -9,6 +9,8 @@ import { addYouTubeVideoID } from './addYouTubeVideoID';
 import { getSession } from 'next-auth/client';
 import { deleteYouTubeVideoID } from './deleteYouTubeVideoID';
 
+import { captureException } from '@sentry/nextjs';
+
 export const index: NextApiHandler = async (req, res) => {
   const strict = firstOf(req.query.strict) === 'true';
   const compact = firstOf(req.query.compact) !== 'false';
@@ -67,7 +69,7 @@ export const create: NextApiHandler = async (req, res) => {
       });
     }
 
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,
@@ -91,7 +93,7 @@ export const destroy: NextApiHandler = async (req, res) => {
       });
     }
 
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,

@@ -4,7 +4,7 @@ const config: IConfig = {
   app: {
     protocol: process.env.PROTOCOL,
     domain: process.env.DOMAIN,
-    port: process.env.PORT && parseInt(process.env.PORT, 10)
+    port: process.env.PORT && parseInt(process.env.PORT, 10),
   },
 
   database: {
@@ -43,6 +43,12 @@ const config: IConfig = {
 if (process.env.YOUTUBE_API_KEY) {
   config.youtube = {
     apiKey: process.env.YOUTUBE_API_KEY
+  };
+}
+
+if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  config.app.sentry = {
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN
   };
 }
 

@@ -6,6 +6,8 @@ import { removeWhitelistedChannel } from './removeWhitelistedChannel';
 
 import firstOf from '@/lib/firstOf';
 
+import { captureException } from '@sentry/nextjs';
+
 export const index: NextApiHandler = async (req, res) => {
   const guild = firstOf(req.query.guild);
 
@@ -39,6 +41,8 @@ export const create: NextApiHandler = async (req, res) => {
       });
     }
 
+    captureException(err);
+
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR'
@@ -60,6 +64,8 @@ export const destroy: NextApiHandler = async (req, res) => {
         error: err.code
       });
     }
+
+    captureException(err);
 
     return res.status(500).json({
       ok: false,

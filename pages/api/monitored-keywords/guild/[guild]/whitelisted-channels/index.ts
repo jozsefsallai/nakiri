@@ -1,9 +1,11 @@
 import bar from 'next-bar';
+import { withSentry } from '@sentry/nextjs';
+
 import { ensureAuthenticated } from '@/middleware/auth';
 
 import * as keywordWhitelistedChannelsController from '@/controllers/keyword-whitelisted-channels/keywordWhitelistedChannelsController';
 
 export default bar({
-  get: ensureAuthenticated(keywordWhitelistedChannelsController.index, true),
-  post: ensureAuthenticated(keywordWhitelistedChannelsController.create, true),
+  get: withSentry(ensureAuthenticated(keywordWhitelistedChannelsController.index, true)),
+  post: withSentry(ensureAuthenticated(keywordWhitelistedChannelsController.create, true)),
 });

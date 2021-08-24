@@ -1,11 +1,15 @@
 import bar from 'next-bar';
-import { ensureAuthenticated } from '@/middleware/auth';
+import { withSentry } from '@sentry/nextjs';
 
-import * as analyzerController from '@/controllers/analyzer/analyzerController';
+import { ensureAuthenticated } from '@/middleware/auth';
 import { ensureHasAccessToGuild } from '@/middleware/permissions';
 
+import * as analyzerController from '@/controllers/analyzer/analyzerController';
+
 export default bar({
-  post: ensureAuthenticated(
-    ensureHasAccessToGuild(analyzerController.analyze)
+  post: withSentry(
+    ensureAuthenticated(
+      ensureHasAccessToGuild(analyzerController.analyze)
+    )
   )
 });

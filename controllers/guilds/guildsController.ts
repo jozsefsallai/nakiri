@@ -3,6 +3,8 @@ import { getSession } from 'next-auth/client';
 import { addGuild } from './addGuild';
 import { fetchGuilds } from './fetchGuilds';
 
+import { captureException } from '@sentry/nextjs';
+
 export const all: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
 
@@ -10,7 +12,7 @@ export const all: NextApiHandler = async (req, res) => {
     const guilds = await fetchGuilds(session, true);
     return res.json({ ok: true, guilds });
   } catch (err) {
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,
@@ -26,7 +28,7 @@ export const index: NextApiHandler = async (req, res) => {
     const guilds = await fetchGuilds(session);
     return res.json({ ok: true, guilds });
   } catch (err) {
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,
@@ -58,7 +60,7 @@ export const insert: NextApiHandler = async (req, res) => {
       });
     }
 
-    console.error(err);
+    captureException(err);
 
     return res.status(500).json({
       ok: false,

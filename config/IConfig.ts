@@ -1,7 +1,12 @@
+export interface ISentryConfig {
+  dsn: string;
+};
+
 export interface IAppConfig {
   protocol: string;
   domain: string;
   port: number;
+  sentry?: ISentryConfig;
 };
 
 export interface IDatabaseConfig {

@@ -1,10 +1,20 @@
 const path = require('path');
+const { withSentryConfig } = require('@sentry/nextjs');
 
-module.exports = {
+const shouldUploadSourceMapsToSentry = process.env.SENTRY_ORG
+  && process.env.SENTRY_PROJECT
+  && process.env.SENTRY_AUTH_TOKEN;
+
+module.exports = withSentryConfig({
   sassOptions: {
     includePaths: [
       path.join(__dirname, 'styles')
     ]
+  },
+
+  sentry: {
+    disableClientWebpackPlugin: !shouldUploadSourceMapsToSentry,
+    disableServerWebpackPlugin: !shouldUploadSourceMapsToSentry,
   },
 
   async redirects() {
@@ -29,4 +39,4 @@ module.exports = {
       }
     ];
   }
-};
+});
