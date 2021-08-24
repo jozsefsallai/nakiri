@@ -10,13 +10,13 @@ import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
+import { useGuilds } from '@/hooks/useGuilds';
 
 import Swal from 'sweetalert2';
 import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
 import withReactContent from 'sweetalert2-react-content';
-import { IGuild } from '@/controllers/guilds/IGuild';
 
 const MySwal = withReactContent(Swal);
 
@@ -25,7 +25,7 @@ interface KeywordSearchResultsIndexPageProps {
 };
 
 const KeywordSearchResultsIndexPage: React.FC<KeywordSearchResultsIndexPageProps> = ({ id }) => {
-  const [ guilds, setGuilds ] = useState<IGuild[] | null>(null);
+  const [ guilds, _, guildsErrored ] = useGuilds();
   const [ keyword, setKeyword ] = useState<IMonitoredKeyword | null>(null);
   const [ items, setItems ] = useState<IKeywordSearchResult[] | null>(null);
   const [ pagination, setPagination ] = useState<APIPaginationData | null>(null);
@@ -44,7 +44,6 @@ const KeywordSearchResultsIndexPage: React.FC<KeywordSearchResultsIndexPageProps
   };
 
   const fetchKeyword = async () => {
-    setGuilds(null);
     setKeyword(null);
     setError('');
 
@@ -62,13 +61,6 @@ const KeywordSearchResultsIndexPage: React.FC<KeywordSearchResultsIndexPageProps
 
       setError(errors.INTERNAL_SERVER_ERROR);
     }
-
-    try {
-      setTimeout(async () => {
-        const { guilds } = await apiService.guilds.getGuilds();
-        setGuilds(guilds);
-      }, 2000);
-    } catch (err) {}
   };
 
   const fetchItems = async (guild?: string | null, page?: number) => {
@@ -206,6 +198,12 @@ const KeywordSearchResultsIndexPage: React.FC<KeywordSearchResultsIndexPageProps
   useEffect(() => {
     fetchKeyword();
   }, []);
+
+  useEffect(() => {
+    if (guildsErrored) {
+      setError('Failed to fetch your guilds.');
+    }
+  }, [guildsErrored]);
 
   return (
     <DashboardLayout hasContainer title={title}>

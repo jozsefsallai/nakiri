@@ -2,7 +2,8 @@ import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/Mess
 import ZeroDataState from '@/components/common/zds/ZeroDataState';
 import GuildList from '@/components/guilds/GuildList';
 import Loading from '@/components/loading/Loading';
-import { IGuild } from '@/controllers/guilds/IGuild';
+import { IGuild, IGuildWithKey } from '@/controllers/guilds/IGuild';
+import { useGuilds } from '@/hooks/useGuilds';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { errors } from '@/lib/errors';
 
@@ -15,6 +16,8 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 const ManageGuildsIndexPage = () => {
+  const [ currentGuilds, setCurrentGuilds ] = useGuilds();
+
   const [ guilds, setGuilds ] = useState<IGuild[] | null>(null);
   const [ error, setError ] = useState('');
 
@@ -40,6 +43,16 @@ const ManageGuildsIndexPage = () => {
 
       const { key } = await apiService.guilds.addNewGuild(guild.id);
       toaster.success(`Added "${guild.name}" with key "${key}".`);
+
+      const finalGuild: IGuildWithKey = { ...guild, key };
+
+      if (!currentGuilds) {
+        setCurrentGuilds([ finalGuild ]);
+      } else {
+        const newGuilds = currentGuilds.slice(0);
+        newGuilds.push(finalGuild);
+        setCurrentGuilds(newGuilds.sort((a, b) => b.id.localeCompare(a.id)));
+      }
 
       setTimeout(() => {
         router.push('/manage/guilds');

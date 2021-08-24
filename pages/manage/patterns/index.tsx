@@ -7,10 +7,8 @@ import Blacklist from '@/components/blacklist/Blacklist';
 import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useState } from 'react';
-
-import { IGuild } from '@/controllers/guilds/IGuild';
+import { useEffect, useState } from 'react';
+import { useGuilds } from '@/hooks/useGuilds';
 
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -22,24 +20,12 @@ import { APIPaginationData } from '@/services/axios';
 const MySwal = withReactContent(Swal);
 
 const ManageLinkPatternsIndexPage = () => {
-  const [guilds, setGuilds] = useState<IGuild[] | null>(null);
+  const [guilds, _, guildsErrored] = useGuilds();
   const [items, setItems] = useState<ILinkPattern[] | null>(null);
   const [pagination, setPagination] = useState<APIPaginationData | null>(null);
   const [error, setError] = useState<string>('');
 
   const router = useRouter();
-
-  const fetchGuilds = async () => {
-    setGuilds(null);
-    setError('');
-
-    try {
-      const { guilds } = await apiService.guilds.getGuilds();
-      setGuilds(guilds);
-    } catch (err) {
-      setError('Failed to fetch guilds.');
-    }
-  };
 
   const fetchItems = async (guild?: string | null, page?: number) => {
     setItems(null);
@@ -100,8 +86,10 @@ const ManageLinkPatternsIndexPage = () => {
   };
 
   useEffect(() => {
-    fetchGuilds();
-  }, []);
+    if (guildsErrored) {
+      setError('Failed to fetch your guilds.');
+    }
+  }, [guildsErrored]);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted Link Patterns" buttonText="Add pattern" onButtonClick={handleNewButtonClick}>

@@ -10,32 +10,19 @@ import { UserPermissions } from '@/lib/UserPermissions';
 
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useGuilds } from '@/hooks/useGuilds';
 
-import { IGuild } from '@/controllers/guilds/IGuild';
 import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
 import Swal from 'sweetalert2';
 
 const ManageMonitoredKeywordsIndexPage = () => {
   const [items, setItems] = useState<IMonitoredKeyword[] | null>(null);
-  const [guilds, setGuilds] = useState<IGuild[] | null>(null);
+  const [guilds, _, guildsErrored] = useGuilds();
   const [error, setError] = useState<string>('');
 
   const router = useRouter();
-
-  const fetchGuilds = async () => {
-    setGuilds(null);
-    setError('');
-
-    try {
-      const { guilds } = await apiService.guilds.getGuilds();
-      setGuilds(guilds);
-    } catch (err) {
-      setError('Failed to fetch guilds.');
-    }
-  };
 
   const fetchItems = async (guild: string) => {
     setItems(null);
@@ -98,8 +85,10 @@ const ManageMonitoredKeywordsIndexPage = () => {
   };
 
   useEffect(() => {
-    fetchGuilds();
-  }, []);
+    if (guildsErrored) {
+      setError('Failed to fetch your guilds.');
+    }
+  }, [guildsErrored]);
 
   return (
     <DashboardLayout hasContainer title="Monitored Keywords" buttonText="Add keyword" onButtonClick={handleNewButtonClick}>

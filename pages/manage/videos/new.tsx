@@ -1,11 +1,11 @@
 import Button from '@/components/common/button/Button';
-import { IGuild } from '@/controllers/guilds/IGuild';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { errors } from '@/lib/errors';
 import toaster from '@/lib/toaster';
 import apiService from '@/services/apis';
 import { useEffect, useState } from 'react';
+import { useGuilds } from '@/hooks/useGuilds';
 
 import * as NewVideoIDFormValidator from '@/validators/NewVideoIDFormValidator';
 import { AddVideoIDAPIRequest } from '@/services/apis/blacklists/VideoIDsAPIService';
@@ -18,7 +18,7 @@ import { UserPermissions } from '@/lib/UserPermissions';
 const NewVideoIDPage = () => {
   const [ currentUser, _ ] = useCurrentUser();
 
-  const [ guilds, setGuilds ] = useState<IGuild[] | null>(null);
+  const [ guilds, , guildsErrored ] = useGuilds();
   const [ guildID, setGuildID ] = useState<string | undefined>(undefined);
   const [ error, setError ] = useState('');
 
@@ -47,18 +47,6 @@ const NewVideoIDPage = () => {
     }
   };
 
-  const fetchGuilds = async () => {
-    setGuilds(null);
-    setError('');
-
-    try {
-      const { guilds } = await apiService.guilds.getGuilds();
-      setGuilds(guilds);
-    } catch (err) {
-      setError('Failed to fetch guilds.');
-    }
-  };
-
   const handleGuildChange = (guildID: string) => {
     if (guildID.length === 0) {
       setGuildID(undefined);
@@ -69,8 +57,10 @@ const NewVideoIDPage = () => {
   };
 
   useEffect(() => {
-    fetchGuilds();
-  }, []);
+    if (guildsErrored) {
+      setError('Failed to fetch your guilds.');
+    }
+  }, [guildsErrored]);
 
   return (
     <DashboardLayout hasContainer title="Add YouTube video ID">

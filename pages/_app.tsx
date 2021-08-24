@@ -1,6 +1,7 @@
 import '@/styles/base.scss';
 
 import { UserProvider } from '@/components/providers/CurrentUserProvider';
+import { GuildsProvider } from '@/components/providers/GuildsProvider';
 
 import Router from 'next/router';
 import NProgress from 'nprogress';
@@ -13,10 +14,12 @@ Router.events.on('routeChangeError', NProgress.done);
 const App = ({ Component, pageProps }) => {
   return (
     <UserProvider>
-      <main className="app">
-        <Component {...pageProps} />
-        <ToastContainer />
-      </main>
+      <GuildsProvider>
+        <main className="app">
+          <Component {...pageProps} />
+          <ToastContainer />
+        </main>
+      </GuildsProvider>
     </UserProvider>
   );
 };

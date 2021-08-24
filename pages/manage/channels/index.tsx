@@ -8,34 +8,21 @@ import YouTubeChannelEntry from '@/components/blacklist/entry-data/YouTubeChanne
 import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useGuilds } from '@/hooks/useGuilds';
 
 import Swal from 'sweetalert2';
-import { IGuild } from '@/controllers/guilds/IGuild';
 import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
 
 const ManageChannelsIndexPage = () => {
-  const [guilds, setGuilds] = useState<IGuild[] | null>(null);
+  const [guilds, _, guildsErrored] = useGuilds();
   const [items, setItems] = useState<IYouTubeChannelID[] | null>(null);
   const [pagination, setPagination] = useState<APIPaginationData | null>(null);
   const [error, setError] = useState<string>('');
 
   const router = useRouter();
-
-  const fetchGuilds = async () => {
-    setGuilds(null);
-    setError('');
-
-    try {
-      const { guilds } = await apiService.guilds.getGuilds();
-      setGuilds(guilds);
-    } catch (err) {
-      setError('Failed to fetch guilds.');
-    }
-  };
 
   const fetchItems = async (guild?: string | null, page?: number) => {
     setItems(null);
@@ -103,8 +90,10 @@ const ManageChannelsIndexPage = () => {
   };
 
   useEffect(() => {
-    fetchGuilds();
-  }, []);
+    if (guildsErrored) {
+      setError('Failed to fetch your guilds.');
+    }
+  }, [ guildsErrored ]);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted YouTube Channel IDs" buttonText="Add channel ID" onButtonClick={handleNewButtonClick}>

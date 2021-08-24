@@ -1,11 +1,11 @@
 import Button, { ButtonSize } from '@/components/common/button/Button';
-import { IGuild } from '@/controllers/guilds/IGuild';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { errors } from '@/lib/errors';
 import toaster from '@/lib/toaster';
 import apiService from '@/services/apis';
 import { useEffect, useState, MouseEvent } from 'react';
+import { useGuilds } from '@/hooks/useGuilds';
 
 import * as NewLinkPatternFormValidator from '@/validators/NewLinkPatternFormValidator';
 import { AddLinkPatternAPIRequest } from '@/services/apis/blacklists/LinkPatternsAPIService';
@@ -24,7 +24,7 @@ const MySwal = withReactContent(Swal);
 const NewLinkPatternPage = () => {
   const [ currentUser, _ ] = useCurrentUser();
 
-  const [ guilds, setGuilds ] = useState<IGuild[] | null>(null);
+  const [ guilds, , guildsErrored ] = useGuilds();
   const [ guildID, setGuildID ] = useState<string | undefined>(undefined);
   const [ error, setError ] = useState('');
 
@@ -53,18 +53,6 @@ const NewLinkPatternPage = () => {
     }
   };
 
-  const fetchGuilds = async () => {
-    setGuilds(null);
-    setError('');
-
-    try {
-      const { guilds } = await apiService.guilds.getGuilds();
-      setGuilds(guilds);
-    } catch (err) {
-      setError('Failed to fetch guilds.');
-    }
-  };
-
   const handleGuildChange = (guildID: string) => {
     if (guildID.length === 0) {
       setGuildID(undefined);
@@ -88,8 +76,10 @@ const NewLinkPatternPage = () => {
   };
 
   useEffect(() => {
-    fetchGuilds();
-  }, []);
+    if (guildsErrored) {
+      setError('Failed to fetch your guilds.');
+    }
+  }, [guildsErrored]);
 
   return (
     <DashboardLayout hasContainer title="Add link pattern">

@@ -1,10 +1,10 @@
 import Button from '@/components/common/button/Button';
-import { IGuild } from '@/controllers/guilds/IGuild';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { errors } from '@/lib/errors';
 import toaster from '@/lib/toaster';
 import apiService from '@/services/apis';
 import { useEffect, useState } from 'react';
+import { useGuilds } from '@/hooks/useGuilds';
 
 import * as NewKeywordWhitelistedChannelFormValidator from '@/validators/NewKeywordWhitelistedChannelFormValidator';
 import { AddKeywordWhitelistedChannelAPIRequest } from '@/services/apis/monitored-keywords/KeywordWhitelistedChannels';
@@ -15,7 +15,7 @@ import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 
 const AddKeywordWhitelistedChannelPage = () => {
-  const [guilds, setGuilds] = useState<IGuild[] | null>(null);
+  const [guilds, , guildsErrored] = useGuilds();
   const [guildId, setGuildId] = useState<string | undefined>(undefined);
   const [error, setError] = useState('');
 
@@ -44,26 +44,15 @@ const AddKeywordWhitelistedChannelPage = () => {
     }
   };
 
-  const fetchGuilds = async () => {
-    setGuilds(null);
-    setError('');
-
-    try {
-      const { guilds } = await apiService.guilds.getGuilds();
-      setGuilds(guilds);
-      setGuildId(guilds[0]?.id);
-    } catch (err) {
-      setError('Failed to fetch guilds.');
-    }
-  };
-
   const handleGuildChange = (guildID: string) => {
     setGuildId(guildID);
   };
 
   useEffect(() => {
-    fetchGuilds();
-  }, []);
+    if (guildsErrored) {
+      setError('Failed to fetch your guilds.');
+    }
+  }, [guildsErrored]);
 
   return (
     <DashboardLayout hasContainer title="Monitored Keywords - Whitelist Channel">
