@@ -9,6 +9,7 @@ export interface IUser {
   updatedAt: Date;
   discordId: string;
   permissions: number;
+  hideThumbnails: boolean;
 };
 
 // I know this is code duplication, but it's pretty much the only way I can do
@@ -22,6 +23,7 @@ export class User implements IUser {
   updatedAt: Date;
   discordId: string;
   permissions: number;
+  hideThumbnails: boolean;
 
   hasPermission(permission: number): boolean {
     return UserPermissionsUtil.hasPermission(this.permissions, permission);
@@ -43,7 +45,7 @@ export class User implements IUser {
     return UserPermissionsUtil.canManageGuildMonitoredKeywords(this.permissions);
   }
 
-  constructor({ id, name, image, discriminator, discordId, createdAt, updatedAt, permissions }: IUser) {
+  constructor({ id, name, image, discriminator, discordId, createdAt, updatedAt, permissions, hideThumbnails }: IUser) {
     this.id = id;
     this.name = name;
     this.image = image;
@@ -52,5 +54,6 @@ export class User implements IUser {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.permissions = permissions;
+    this.hideThumbnails = hideThumbnails;
   }
 }

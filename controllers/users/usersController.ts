@@ -6,9 +6,10 @@ import { getDiscordUser } from './getDiscordUser';
 import { getUser } from './getUser';
 import { getUsers } from './getUsers';
 import { unauthorizeUser } from './unauthorizeUser';
-import { updateUserPermissions } from './updateUser';
+import { updateUser, updateUserPermissions } from './updateUser';
 
 import { captureException } from '@sentry/nextjs';
+import { UpdateUserAPIRequest } from '@/services/apis/users/UsersAPIService';
 
 export const get: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
@@ -97,6 +98,23 @@ export const authorize: NextApiHandler = async (req, res) => {
       });
     }
 
+    captureException(err);
+
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR'
+    });
+  }
+};
+
+export const update: NextApiHandler = async (req, res) => {
+  const { hideThumbnails }: UpdateUserAPIRequest = req.body;
+  const session = await getSession({ req });
+
+  try {
+    const user = await updateUser(session, { hideThumbnails });
+    return res.json({ ok: true, user });
+  } catch (err) {
     captureException(err);
 
     return res.status(500).json({

@@ -2,11 +2,12 @@ import { ProcessingState } from '@/db/common/ProcessingState';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { IKeywordSearchResult } from '@/db/models/keywords/KeywordSearchResult';
 
-import { Clock } from 'react-feather';
+import { Clock, Video } from 'react-feather';
 
 import clsx from 'clsx';
 import truncate from 'lodash.truncate';
 import { format as formatDate } from 'date-fns';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export interface YouTubeVideoEntryProps {
   item: IYouTubeVideoID | IKeywordSearchResult;
@@ -14,6 +15,8 @@ export interface YouTubeVideoEntryProps {
 };
 
 const YouTubeVideoEntry: React.FC<YouTubeVideoEntryProps> = ({ item, onTextClick }) => {
+  const [ currentUser ] = useCurrentUser();
+
   const handleItemClick = onTextClick
     ? () => onTextClick(item.videoId)
     : undefined;
@@ -33,7 +36,15 @@ const YouTubeVideoEntry: React.FC<YouTubeVideoEntryProps> = ({ item, onTextClick
   return (
     <div className="flex justify-center gap-3">
       <div className="w-36 cursor-pointer" onClick={handleItemClick}>
-        {item.thumbnailUrl && <img src={item.thumbnailUrl} alt={item.title} className="w-full rounded-md" />}
+        {item.thumbnailUrl && !currentUser.hideThumbnails && <img src={item.thumbnailUrl} alt={item.title} className="w-full rounded-md" />}
+        {item.thumbnailUrl && currentUser.hideThumbnails && (
+          <div
+            className="h-24 bg-ayame-primary text-white rounded-md flex items-center justify-center text-2xl"
+            title="Thumbnail is hidden because you opted out of seeing thumbnails."
+          >
+            <Video />
+          </div>
+        )}
         {!item.thumbnailUrl && (
           <div className="h-24 bg-ayame-primary text-white rounded-md flex items-center justify-center text-2xl">
             <Clock />

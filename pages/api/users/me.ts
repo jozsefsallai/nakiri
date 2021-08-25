@@ -5,5 +5,6 @@ import { ensureAuthenticated } from '@/middleware/auth';
 import * as usersController from '@/controllers/users/usersController';
 
 export default bar({
-  get: withSentry(ensureAuthenticated(usersController.get, true))
+  get: withSentry(ensureAuthenticated(usersController.get, true)),
+  patch: withSentry(ensureAuthenticated(usersController.update, true)),
 });

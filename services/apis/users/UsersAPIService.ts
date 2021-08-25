@@ -24,6 +24,14 @@ export interface AuthorizeDiscordUserAPIRequest {
 export interface AuthorizeDiscordUserAPIResponse extends APIResponse {
 };
 
+export interface UpdateUserAPIRequest {
+  hideThumbnails?: boolean;
+};
+
+export interface UpdateUserAPIResponse extends APIResponse {
+  user: IUser;
+};
+
 export interface UpdateUserPermissionsAPIRequest {
   id: string;
   permissions: number[];
@@ -44,6 +52,7 @@ export class UsersAPIService {
 
   static AUTHORIZE_DISCORD_USER_URL = '/api/users/authorize';
 
+  static UPDATE_USER_URL = '/api/users/me';
   static UPDATE_USER_PERMISSIONS_URL = '/api/users/:id';
   static UNAUTHORIZE_USER_URL = '/api/users/:id';
 
@@ -64,6 +73,11 @@ export class UsersAPIService {
 
   public async authorizeDiscordUser({ discordId, permissions }: AuthorizeDiscordUserAPIRequest): Promise<AuthorizeDiscordUserAPIResponse> {
     return axiosService.post(UsersAPIService.AUTHORIZE_DISCORD_USER_URL, { discordId, permissions })
+      .then(res => res.data);
+  }
+
+  public async updateUser({ hideThumbnails }: UpdateUserAPIRequest): Promise<UpdateUserAPIResponse> {
+    return axiosService.patch(UsersAPIService.UPDATE_USER_URL, { hideThumbnails })
       .then(res => res.data);
   }
 

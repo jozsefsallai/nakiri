@@ -10,6 +10,7 @@ export interface IAuthorizedUser {
   name: string;
   discriminator: string;
   image?: string;
+  hideThumbnails: boolean;
 };
 
 @Entity()
@@ -37,6 +38,9 @@ export class AuthorizedUser implements IAuthorizedUser {
 
   @Column({ nullable: true })
   image?: string;
+
+  @Column('bool', { default: false })
+  hideThumbnails: boolean;
 
   hasPermission(permission: number): boolean {
     return UserPermissionsUtil.hasPermission(this.permissions, permission);
@@ -67,7 +71,8 @@ export class AuthorizedUser implements IAuthorizedUser {
       permissions: this.permissions,
       name: this.name,
       discriminator: this.discriminator,
-      image: this.image
+      image: this.image,
+      hideThumbnails: this.hideThumbnails,
     };
   }
 }

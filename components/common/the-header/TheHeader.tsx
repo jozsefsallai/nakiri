@@ -61,8 +61,12 @@ const TheHeader = () => {
             ))}
           </nav>
 
-          <div className="text-xs text-gray text-center">
-            {currentUser.name}#{currentUser.discriminator}
+          <div className="text-xs text-center">
+            <Link href="/manage/me">
+              <a>
+                {currentUser.name}#{currentUser.discriminator}
+              </a>
+            </Link>
 
             <div
               className="inline-block px-3 py-2 my-2 lg:my-0 rounded-md text-white bg-ayame-primary hover:bg-ayame-primary-900 cursor-pointer ml-3"
