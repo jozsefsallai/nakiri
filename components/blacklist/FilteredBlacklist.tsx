@@ -1,3 +1,4 @@
+import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 import { ILinkPattern } from '@/db/models/blacklists/LinkPattern';
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
@@ -8,7 +9,9 @@ import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
 import { BlacklistAction } from './BlacklistActions';
 import BlacklistRow from './BlacklistRow';
 
-export type BlacklistItem = ILinkPattern | IYouTubeVideoID | IYouTubeChannelID | IMonitoredKeyword | IKeywordWhitelistedChannel | IKeywordSearchResult;
+export type BlacklistItem = ILinkPattern | IYouTubeVideoID | IYouTubeChannelID
+| IMonitoredKeyword | IKeywordWhitelistedChannel | IKeywordSearchResult
+| IDiscordGuild;
 
 export interface FilteredBlacklistProps {
   items: BlacklistItem[];
@@ -33,6 +36,10 @@ const FilteredBlacklist = ({ items, onTextClick, actions, entryComponent }: Filt
 
     if ('keyword' in item) {
       return item.keyword;
+    }
+
+    if ('blacklistedId' in item) {
+      return item.blacklistedId;
     }
 
     return '<unknown>';

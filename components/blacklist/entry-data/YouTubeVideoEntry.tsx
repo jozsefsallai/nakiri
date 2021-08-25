@@ -56,7 +56,7 @@ const YouTubeVideoEntry: React.FC<YouTubeVideoEntryProps> = ({ item, onTextClick
         {('status' in item && (item.status === ProcessingState.PENDING || item.status === ProcessingState.QUEUED)) && (
           <>
             <h3 className={titleClassNames} onClick={handleItemClick}>{item.videoId}</h3>
-            <small>{item.status === ProcessingState.PENDING ? 'Processing metadata...' : 'Queued to be processed by a worker.'}</small>
+            <small>{item.status === ProcessingState.PENDING ? 'Processing metadata...' : 'Queued for processing.'}</small>
           </>
         )}
 

@@ -1,18 +1,19 @@
 import { IGuild } from '@/controllers/guilds/IGuild';
+import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 import clsx from 'clsx';
 import { HTMLProps, forwardRef } from 'react';
 
 export interface GuildIconProps extends HTMLProps<HTMLDivElement> {
-  guild: IGuild;
+  guild: IGuild | IDiscordGuild;
   compact?: boolean;
 };
 
 const GuildIcon = ({ guild, compact, ...props }: GuildIconProps, ref) => {
   const guildInitials = guild.name
-    .split(' ')
+    ?.split(' ')
     .map(component => component[0])
     .join('')
-    .slice(0, 3);
+    .slice(0, 3) || '...';
 
   const icon = guild.icon
     ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`

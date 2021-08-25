@@ -5,6 +5,7 @@ import { Connection, ConnectionOptions, createConnection, getConnection, getMana
 import { YouTubeVideoID } from '../db/models/blacklists/YouTubeVideoID';
 import { YouTubeChannelID } from '../db/models/blacklists/YouTubeChannelID';
 import { LinkPattern } from '../db/models/blacklists/LinkPattern';
+import { DiscordGuild } from '../db/models/blacklists/DiscordGuild';
 
 import { AuthorizedUser } from '../db/models/auth/AuthorizedUser';
 import { Key } from '../db/models/auth/Key';
@@ -33,6 +34,7 @@ const connectionOptions: ConnectionOptions = {
     YouTubeVideoID,
     YouTubeChannelID,
     LinkPattern,
+    DiscordGuild,
 
     AuthorizedUser,
     Key,
