@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/getsentry/sentry-go"
@@ -11,6 +13,7 @@ import (
 	"github.com/jozsefsallai/nakiri/workers/database"
 	"github.com/jozsefsallai/nakiri/workers/services/cleanup"
 	"github.com/jozsefsallai/nakiri/workers/services/keywordmonitors"
+	"github.com/jozsefsallai/nakiri/workers/utils"
 )
 
 func init() {
@@ -31,9 +34,39 @@ func main() {
 		defer sentry.Flush(time.Second * 2)
 	}
 
+	workersString := flag.String("workers", "keyword_monitors,cleanup", "workers to run")
+	once := flag.Bool("once", false, "run workers only once")
+
+	flag.Parse()
+
+	workers := strings.Split(*workersString, ",")
+
+	shouldRunKeywordMonitors := utils.ArrayContainsString(workers, "keyword_monitors")
+	shouldRunCleanup := utils.ArrayContainsString(workers, "cleanup")
+
+	if *once {
+		if shouldRunKeywordMonitors {
+			keywordmonitors.CreateWorkerPools()
+		}
+
+		if shouldRunCleanup {
+			cleanup.CreateWorkerPools()
+		}
+
+		log.Println("Done!")
+
+		return
+	}
+
 	s := gocron.NewScheduler(time.UTC)
-	s.Every(config.Config.Workers.ScanInterval).Hours().Do(keywordmonitors.CreateWorkerPools)
-	s.Every(config.Config.Workers.CleanupInterval).Hours().Do(cleanup.CreateWorkerPools)
+
+	if shouldRunKeywordMonitors {
+		s.Every(config.Config.Workers.ScanInterval).Hours().Do(keywordmonitors.CreateWorkerPools)
+	}
+
+	if shouldRunCleanup {
+		s.Every(config.Config.Workers.CleanupInterval).Hours().Do(cleanup.CreateWorkerPools)
+	}
 
 	fmt.Println("NakiriAPI worker service is running.")
 
