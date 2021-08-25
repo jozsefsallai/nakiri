@@ -17,6 +17,7 @@ type Client struct {
 }
 
 const YOUTUBE_VIDEO_DATA_API_URL = "https://www.googleapis.com/youtube/v3/videos?id=:videoId&key=:apiKey&part=snippet"
+const YOUTUBE_CHANNEL_DATA_API_URL = "https://www.googleapis.com/youtube/v3/channels?id=:channelId&key=:apiKey&part=snippet"
 const YOUTUBE_SEARCH_API_URL = "https://youtube.googleapis.com/youtube/v3/search?part=snippet&order=date&q=:query&maxResults=:maxResults&safeSearch=none&type=video&key=:apiKey"
 
 func (c *Client) buildSearchUrl(query string, maxResults int) string {
@@ -27,6 +28,11 @@ func (c *Client) buildSearchUrl(query string, maxResults int) string {
 func (c *Client) buildVideoDataUrl(videoId string) string {
 	replacer := strings.NewReplacer(":apiKey", c.APIKey, ":videoId", videoId)
 	return replacer.Replace(YOUTUBE_VIDEO_DATA_API_URL)
+}
+
+func (c *Client) buildChannelDataUrl(channelId string) string {
+	replacer := strings.NewReplacer(":apiKey", c.APIKey, ":channelId", channelId)
+	return replacer.Replace(YOUTUBE_CHANNEL_DATA_API_URL)
 }
 
 // Search will search for a given keyword on YouTube and return the response of
@@ -66,6 +72,7 @@ func (c *Client) Search(query string) (*YTSearchResponse, error) {
 	return &response, nil
 }
 
+// GetVideo will return information about a video with a given ID.
 func (c *Client) GetVideo(id string) (*YTVideoListItem, error) {
 	url := c.buildVideoDataUrl(id)
 
@@ -91,6 +98,44 @@ func (c *Client) GetVideo(id string) (*YTVideoListItem, error) {
 	}
 
 	var response YTListResponse
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(response.Items) == 0 {
+		return nil, nil
+	}
+
+	return response.Items[0], nil
+}
+
+// GetChannel will return information about a channel with a given ID.
+func (c *Client) GetChannel(id string) (*YTChannelListItem, error) {
+	url := c.buildChannelDataUrl(id)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, errors.New("YouTube fetching failed. Probably exceeded quota")
+	}
+
+	var response YTChannelListResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return nil, err

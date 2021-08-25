@@ -44,6 +44,34 @@ func videoWorker(id int, jobs <-chan *models.YouTubeVideoID, throttler *utils.Th
 	}
 }
 
+func channelWorker(id int, jobs <-chan *models.YouTubeChannelID, throttler *utils.Throttler, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	hub := sentry.CurrentHub().Clone()
+	hub.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetTag("scope", "job")
+		scope.SetTag("job_name", "cleanup_channel")
+		scope.SetTag("worker_id", strconv.Itoa(id))
+	})
+
+	for job := range jobs {
+		log.Printf("cleanup started by worker %d for ID %s\n", id, job.ChannelID)
+
+		throttler.Throttle()
+
+		entry, err := youtubeClient.GetChannel(job.ChannelID)
+		if err != nil {
+			log.Printf("cleanup failed by worker %d for ID %s: %v\n", id, job.ChannelID, err)
+			hub.CaptureException(err)
+			continue
+		}
+
+		handleChannel(job, entry)
+
+		log.Printf("cleanup finished by worker %d for ID %s\n", id, job.ChannelID)
+	}
+}
+
 func CreateWorkerPools() {
 	log.Println("Bootstrapping cleanup worker pool.")
 
@@ -56,7 +84,6 @@ func CreateWorkerPools() {
 	var wg sync.WaitGroup
 
 	videoIDs := database.GetAllYouTubeVideoIDs()
-	// channelIDs := database.GetAllYouTubeChannelIDs()
 	videoIDCount := len(videoIDs)
 
 	videoJobs := make(chan *models.YouTubeVideoID, videoIDCount)
@@ -71,5 +98,22 @@ func CreateWorkerPools() {
 	close(videoJobs)
 
 	wg.Wait()
+
+	channelIDs := database.GetAllYouTubeChannelIDs()
+	channelIDCount := len(channelIDs)
+
+	channelJobs := make(chan *models.YouTubeChannelID, channelIDCount)
+	for i := 0; i < config.Config.Workers.Count; i++ {
+		wg.Add(1)
+		go channelWorker(i, channelJobs, &throttler, &wg)
+	}
+
+	for i := 0; i < channelIDCount; i++ {
+		channelJobs <- channelIDs[i]
+	}
+	close(channelJobs)
+
+	wg.Wait()
+
 	log.Println("Cleanup worker pool finished.")
 }

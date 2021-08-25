@@ -34,6 +34,20 @@ go build .
 ./workers
 ```
 
+You can run specific workers:
+
+```
+./workers -workers=keyword_monitors
+./workers -workers=cleanup
+./workers -workers=keyword_monitors,cleanup
+```
+
+You can also run the jobs only once:
+
+```
+./workers -once
+```
+
 For development purposes, you can also use `go run`:
 
 ```

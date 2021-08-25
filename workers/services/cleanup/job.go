@@ -21,3 +21,16 @@ func handleVideo(job *models.YouTubeVideoID, item *youtube.YTVideoListItem) {
 	database.UpdateYouTubeVideoID(job, item)
 	database.UpdateYouTubeVideoIDState(job.ID, dbutils.PSDone)
 }
+
+func handleChannel(job *models.YouTubeChannelID, item *youtube.YTChannelListItem) {
+	database.UpdateYouTubeChannelIDState(job.ID, dbutils.PSPending)
+
+	if item == nil {
+		log.Printf("-> channel %s is no longer available... deleting.\n", job.ChannelID)
+		database.DeleteYouTubeChannelID(job)
+		return
+	}
+
+	database.UpdateYouTubeChannelID(job, item)
+	database.UpdateYouTubeChannelIDState(job.ID, dbutils.PSDone)
+}

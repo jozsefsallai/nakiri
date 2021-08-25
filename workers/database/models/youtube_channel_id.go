@@ -7,21 +7,19 @@ import (
 	"github.com/jozsefsallai/nakiri/workers/database/dbutils"
 )
 
-// YouTubeVideoID represents a single blacklisted video ID entry.
-type YouTubeVideoID struct {
+// YouTubeChannelID represents a single blacklisted channel ID entry.
+type YouTubeChannelID struct {
 	ID           string `gorm:"primaryKey"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
-	VideoID      string
+	ChannelID    string
 	Status       dbutils.ProcessingState
-	Title        sql.NullString
+	Name         sql.NullString
 	Description  sql.NullString
+	PublishedAt  sql.NullTime
 	ThumbnailURL sql.NullString
-	UploadDate   sql.NullTime
-	UploaderID   sql.NullString
-	UploaderName sql.NullString
 }
 
-func (*YouTubeVideoID) TableName() string {
-	return "youTubeVideoIDs"
+func (*YouTubeChannelID) TableName() string {
+	return "youTubeChannelIDs"
 }

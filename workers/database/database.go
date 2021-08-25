@@ -97,7 +97,7 @@ func InsertKeywordSearchResult(keyword *models.MonitoredKeyword, item youtube.YT
 		KeywordID:    keyword.ID,
 		Title:        item.Snippet.Title,
 		VideoID:      item.ID.VideoID,
-		ThumbnailURL: item.Snippet.GetBestThumbnail(),
+		ThumbnailURL: item.Snippet.Thumbnails.Best(),
 		UploadDate:   publishedAt,
 		Uploader:     item.Snippet.ChannelID,
 		UploaderName: item.Snippet.ChannelTitle,
@@ -130,7 +130,7 @@ func UpdateYouTubeVideoID(entry *models.YouTubeVideoID, data *youtube.YTVideoLis
 	}
 
 	entry.ThumbnailURL = sql.NullString{
-		String: data.Snippet.GetBestThumbnail(),
+		String: data.Snippet.Thumbnails.Best(),
 		Valid:  true,
 	}
 
@@ -155,4 +155,51 @@ func UpdateYouTubeVideoID(entry *models.YouTubeVideoID, data *youtube.YTVideoLis
 // DeleteYouTubeVideoID will delete a YouTube video ID entry from the database.
 func DeleteYouTubeVideoID(entry *models.YouTubeVideoID) {
 	db.Model(&models.YouTubeVideoID{}).Delete(entry)
+}
+
+// GetAllYouTubeChannelIDs will return all YouTube channel IDs that are
+// currently in the database.
+func GetAllYouTubeChannelIDs() []*models.YouTubeChannelID {
+	var entries []*models.YouTubeChannelID
+	db.Model(&models.YouTubeChannelID{}).Find(&entries)
+	return entries
+}
+
+// UpdateYouTubeChannelIDState is a utility function for updating the processing
+// state of a YouTube channel ID.
+func UpdateYouTubeChannelIDState(id string, state dbutils.ProcessingState) {
+	db.Model(&models.YouTubeChannelID{}).Where("id = ?", id).Update("status", state)
+}
+
+// UpdateYouTubeChannelID will update a YouTube channel ID entry in the database
+func UpdateYouTubeChannelID(entry *models.YouTubeChannelID, data *youtube.YTChannelListItem) {
+	publishedAt, _ := time.Parse(time.RFC3339, data.Snippet.PublishedAt)
+
+	entry.Name = sql.NullString{
+		String: data.Snippet.Title,
+		Valid:  true,
+	}
+
+	entry.Description = sql.NullString{
+		String: data.Snippet.Description,
+		Valid:  true,
+	}
+
+	entry.ThumbnailURL = sql.NullString{
+		String: data.Snippet.Thumbnails.Best(),
+		Valid:  true,
+	}
+
+	entry.PublishedAt = sql.NullTime{
+		Time:  publishedAt,
+		Valid: true,
+	}
+
+	db.Save(entry)
+}
+
+// DeleteYouTubeChannelID will delete a YouTube channel ID entry from the
+// database.
+func DeleteYouTubeChannelID(entry *models.YouTubeChannelID) {
+	db.Model(&models.YouTubeChannelID{}).Delete(entry)
 }
