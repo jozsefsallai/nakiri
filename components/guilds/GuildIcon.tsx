@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { HTMLProps, forwardRef } from 'react';
 
 export interface GuildIconProps extends HTMLProps<HTMLDivElement> {
-  guild: IGuild | IDiscordGuild;
+  guild: IGuild;
   compact?: boolean;
 };
 
