@@ -7,8 +7,10 @@ import { FindConditions, IsNull, Repository } from 'typeorm';
 import { YouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { YouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { LinkPattern } from '@/db/models/blacklists/LinkPattern';
+import { DiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 
 import { YouTubeAPIService } from '@/services/youtube';
+import { DiscordAPIService } from '@/services/discord';
 import { URLUtils, YouTubeChannelMatch } from '@/lib/url';
 
 import { addYouTubeVideoID } from '@/controllers/youtube-video-ids/addYouTubeVideoID';
@@ -18,6 +20,7 @@ export interface AnalyzerResult {
   problematic: boolean;
   problematicVideoIDs: string[];
   problematicChannelIDs: string[];
+  problematicDiscordInvites: string[];
   problematicLinks: string[];
 };
 
@@ -25,6 +28,7 @@ interface LinkAnalysisResults {
   problematicLinks: string[];
   problematicVideoIDs: string[];
   problematicChannelIDs: string[];
+  problematicDiscordInvites: string[];
 };
 
 export class Analyzer {
@@ -33,6 +37,7 @@ export class Analyzer {
   private analyzeYouTubeVideoIDs: boolean;
   private analyzeYouTubeChannelIDs: boolean;
   private analyzeYouTubeChannelHandles: boolean;
+  private analyzeDiscordInvites: boolean;
   private analyzeLinks: boolean;
   private followRedirects: boolean;
   private preemptiveVideoIDAnalysis: boolean;
@@ -41,9 +46,11 @@ export class Analyzer {
   private strictGuildCheck: boolean;
 
   private youTubeAPI?: YouTubeAPIService;
+  private discordAPI?: DiscordAPIService;
 
   private youTubeVideoIDRepository: Repository<YouTubeVideoID>;
   private youTubeChannelIDRepository: Repository<YouTubeChannelID>;
+  private discordGuildRepository: Repository<DiscordGuild>;
   private linkPatternRepository: Repository<LinkPattern>;
 
   constructor(content: string, options: IAnalyzerOptions) {
@@ -52,6 +59,7 @@ export class Analyzer {
     this.analyzeYouTubeVideoIDs = options.analyzeYouTubeVideoIDs ?? true;
     this.analyzeYouTubeChannelIDs = options.analyzeYouTubeChannelIDs ?? true;
     this.analyzeYouTubeChannelHandles = options.analyzeYouTubeChannelHandles ?? true;
+    this.analyzeDiscordInvites = options.analyzeDiscordInvites ?? true;
     this.analyzeLinks = options.analyzeLinks ?? true;
     this.followRedirects = options.followRedirects ?? true;
     this.preemptiveVideoIDAnalysis = options.preemptiveVideoIDAnalysis ?? true;
@@ -62,6 +70,10 @@ export class Analyzer {
     if (this.preemptiveVideoIDAnalysis && config.youtube?.apiKey) {
       this.youTubeAPI = new YouTubeAPIService(config.youtube.apiKey);
     }
+
+    if (this.analyzeDiscordInvites) {
+      this.discordAPI = new DiscordAPIService();
+    }
   }
 
   public async prepare() {
@@ -69,10 +81,11 @@ export class Analyzer {
     this.youTubeVideoIDRepository = db.getRepository(YouTubeVideoID);
     this.youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
     this.linkPatternRepository = db.getRepository(LinkPattern);
+    this.discordGuildRepository = db.getRepository(DiscordGuild);
   }
 
-  private _makeFindConditions<T = YouTubeVideoID | YouTubeChannelID>(id: string, fieldName: 'videoId' | 'channelId'): FindConditions<T>[] {
-    const conditions: FindConditions<YouTubeVideoID | YouTubeChannelID>[] = [];
+  private _makeFindConditions<T = YouTubeVideoID | YouTubeChannelID | DiscordGuild>(id: string, fieldName: 'videoId' | 'channelId' | 'blacklistedId'): FindConditions<T>[] {
+    const conditions: FindConditions<YouTubeVideoID | YouTubeChannelID | DiscordGuild>[] = [];
 
     const baseCondition = { [`${fieldName}`]: id };
 
@@ -201,6 +214,34 @@ export class Analyzer {
     return problematicIDs;
   }
 
+  private async handleDiscordInvites(invites: string[]): Promise<string[]> {
+    if (!this.analyzeDiscordInvites) {
+      return [];
+    }
+
+    const problemaicInvites = [];
+
+    for await (const invite of invites) {
+      const inviteData = await this.discordAPI.getInvite(invite);
+      if (!inviteData || !inviteData.guild) {
+        continue;
+      }
+
+      const where = this._makeFindConditions<DiscordGuild>(inviteData.guild.id, 'blacklistedId');
+      const entry = this.discordGuildRepository.findOne({ where });
+
+      if (entry) {
+        problemaicInvites.push(invite);
+
+        if (!this.greedy) {
+          break;
+        }
+      }
+    }
+
+    return problemaicInvites;
+  }
+
   private checkLink(link: string, patterns: RegExp[]): boolean {
     let found = false;
 
@@ -223,6 +264,7 @@ export class Analyzer {
     const problematicLinks = [];
     const problematicVideoIDs = [];
     const problematicChannelIDs = [];
+    const problematicDiscordInvites = [];
 
     let patterns = [];
     if (this.analyzeLinks) {
@@ -282,6 +324,20 @@ export class Analyzer {
 
           continue;
         }
+
+        if (urldata.isDiscordInvite()) {
+          const invite = URLUtils.extractDiscordInvite(urldata.url);
+
+          const result = await this.handleDiscordInvites([ invite ]);
+
+          if (result.length && !problematicDiscordInvites.includes(invite)) {
+            problematicDiscordInvites.push(invite);
+
+            if (!this.greedy) {
+              break;
+            }
+          }
+        }
       }
     }
 
@@ -289,6 +345,7 @@ export class Analyzer {
       problematicLinks,
       problematicVideoIDs,
       problematicChannelIDs,
+      problematicDiscordInvites,
     };
   }
 
@@ -300,6 +357,7 @@ export class Analyzer {
         analyzeYouTubeVideoIDs: this.analyzeYouTubeVideoIDs,
         analyzeYouTubeChannelIDs: this.analyzeYouTubeChannelIDs,
         analyzeYouTubeChannelHandles: this.analyzeYouTubeChannelHandles,
+        analyzeDiscordInvites: this.analyzeDiscordInvites,
         analyzeLinks: this.analyzeLinks,
         followRedirects: this.followRedirects,
         preemptiveVideoIDAnalysis: this.preemptiveVideoIDAnalysis,
@@ -312,6 +370,7 @@ export class Analyzer {
 
       problematicVideoIDs: [],
       problematicChannelIDs: [],
+      problematicDiscordInvites: [],
       problematicLinks: []
     };
 
@@ -333,13 +392,26 @@ export class Analyzer {
       return result;
     }
 
+    const discordInvites = URLUtils.extractDiscordInvites(this.content);
+    const problematicDiscordInvites = await this.handleDiscordInvites(discordInvites);
+    result.problematicDiscordInvites.push(...problematicDiscordInvites);
+
+    if (problematicDiscordInvites.length && !this.greedy) {
+      result.problematic = true;
+      return result;
+    }
+
     const links = URLUtils.extractLinks(this.content);
     const problematicLinksResult = await this.handleLinks(links);
     result.problematicLinks.push(...problematicLinksResult.problematicLinks);
     result.problematicVideoIDs.push(...problematicLinksResult.problematicVideoIDs.filter(id => !result.problematicVideoIDs.includes(id)));
     result.problematicChannelIDs.push(...problematicLinksResult.problematicChannelIDs.filter(id => !result.problematicChannelIDs.includes(id)));
+    result.problematicDiscordInvites.push(...problematicLinksResult.problematicDiscordInvites.filter(id => !result.problematicDiscordInvites.includes(id)));
 
-    result.problematic = Object.values(problematicLinksResult).some((value: string[]) => value.length > 0);
+    result.problematic = result.problematicVideoIDs.length > 0
+      || result.problematicChannelIDs.length > 0
+      || result.problematicDiscordInvites.length > 0
+      || result.problematicLinks.length > 0;
 
     return result;
   }

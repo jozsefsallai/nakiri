@@ -4,6 +4,7 @@ import parse from 'url-parse';
 
 export const YOUTUBE_REGEX = /(https?:\/\/)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)\/(watch\?v=|embed\/|v\/|.+\?v=)?(?<id>[A-Za-z0-9\-=_]{11})/g;
 export const YOUTUBE_CHANNEL_REGEX = /(https?:\/\/)?(?:www\.)?youtube.com\/(?:(?:(?:channel\/(?<cid>UC.*?)(?:[^a-zA-Z0-9-_]|$)))|(?:(?:c\/)?(?<chandle>.*?))(?:[^a-zA-Z0-9-_]|$))/g;
+export const DISCORD_INVITE_REGEX = /discord((app)?.(com\/invite|gg))\/(?<id>[A-Za-z0-9-_]+)/g;
 export const LINK_REGEX = /(https?:\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g;
 
 export interface YouTubeChannelMatch {
@@ -63,6 +64,12 @@ export class URLUtils {
     return handle && handle !== 'watch';
   }
 
+  public isDiscordInvite(): boolean {
+    const result = this.url && DISCORD_INVITE_REGEX.test(this.url);
+    DISCORD_INVITE_REGEX.lastIndex = 0;
+    return result;
+  }
+
   static extractYouTubeID(content: string): string | null {
     const match = YOUTUBE_REGEX.exec(content);
     YOUTUBE_REGEX.lastIndex = 0;
@@ -105,6 +112,24 @@ export class URLUtils {
           handle: match.groups.chandle
         };
       });
+  }
+
+  static extractDiscordInvite(content: string): string | null {
+    const match = DISCORD_INVITE_REGEX.exec(content);
+    DISCORD_INVITE_REGEX.lastIndex = 0;
+
+    if (!match || !match.groups?.id) {
+      return null;
+    }
+
+    return match.groups.id;
+  }
+
+  static extractDiscordInvites(content: string): string[] {
+    const matches = content.matchAll(DISCORD_INVITE_REGEX);
+    return Array.from(matches)
+      .filter(m => m.groups?.id)
+      .map(m => m.groups.id);
   }
 
   static extractLinks(content: string): string[] {
