@@ -12,6 +12,29 @@ export interface YouTubeChannelMatch {
   handle?: string;
 };
 
+const RESERVED_YOUTUBE_PATHS = [
+  'about',
+  'account',
+  'ads',
+  'clip',
+  'creators',
+  'embed',
+  'feed',
+  'gaming',
+  'howyoutubeworks',
+  'jobs',
+  'logout',
+  'new',
+  'paid_memberships',
+  'playlist', // uh-oh
+  'premium',
+  'reporthistory',
+  'results',
+  'search',
+  't',
+  'watch',
+];
+
 export class URLUtils {
   url: string | null;
 
@@ -61,7 +84,7 @@ export class URLUtils {
   public isYouTubeChannel(): boolean {
     const handle = this.url && YOUTUBE_CHANNEL_REGEX.exec(this.url)?.groups?.chandle;
     YOUTUBE_CHANNEL_REGEX.lastIndex = 0;
-    return handle && handle !== 'watch';
+    return handle && !RESERVED_YOUTUBE_PATHS.includes(handle);
   }
 
   public isDiscordInvite(): boolean {
@@ -105,7 +128,7 @@ export class URLUtils {
   static extractYouTubeChannels(content: string): YouTubeChannelMatch[] {
     const matches = content.matchAll(YOUTUBE_CHANNEL_REGEX);
     return Array.from(matches)
-      .filter(match => match.groups?.cid)
+      .filter(match => match.groups?.cid || match.groups?.chandle)
       .map(match => {
         return {
           id: match.groups.cid,

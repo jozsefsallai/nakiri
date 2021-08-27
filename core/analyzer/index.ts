@@ -312,6 +312,10 @@ export class Analyzer {
         if (urldata.isYouTubeChannel()) {
           const channel = URLUtils.extractYouTubeChannel(urldata.url);
 
+          if (!channel) {
+            continue;
+          }
+
           const result = await this.handleYouTubeChannels([ channel ]);
 
           if (result.length && !problematicChannelIDs.includes(result[0])) {
