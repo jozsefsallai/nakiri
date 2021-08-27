@@ -17,7 +17,7 @@ export const getDiscordGuilds = async (guildId?: string, strict?: boolean, skip?
   }
 
   const totalCount = await discordGuildRepository.count({ where });
-  const discordGuilds = await discordGuildRepository.find({ where, skip, take, order: { updatedAt: 'DESC' } });
+  const discordGuilds = await discordGuildRepository.find({ where, skip, take, order: { createdAt: 'DESC' } });
 
   return { discordGuilds, totalCount };
 };

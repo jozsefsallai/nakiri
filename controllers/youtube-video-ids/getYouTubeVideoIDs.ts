@@ -17,7 +17,7 @@ export const getYouTubeVideoIDs = async (guildId?: string, strict?: boolean, ski
   }
 
   const totalCount = await youTubeVideoIDRepository.count({ where });
-  const videoIDs = await youTubeVideoIDRepository.find({ where, skip, take, order: { updatedAt: 'DESC' } });
+  const videoIDs = await youTubeVideoIDRepository.find({ where, skip, take, order: { createdAt: 'DESC' } });
 
   return { videoIDs, totalCount };
 };

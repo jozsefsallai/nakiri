@@ -17,7 +17,7 @@ export const getYouTubeChannelIDs = async (guildId?: string, strict?: boolean, s
   }
 
   const totalCount = await youTubeChannelIDRepository.count({ where });
-  const channelIDs = await youTubeChannelIDRepository.find({ where, skip, take, order: { updatedAt: 'DESC' } });
+  const channelIDs = await youTubeChannelIDRepository.find({ where, skip, take, order: { createdAt: 'DESC' } });
 
   return { totalCount, channelIDs };
 };
