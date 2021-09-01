@@ -9,6 +9,8 @@ import { DiscordGuild } from '../db/models/blacklists/DiscordGuild';
 
 import { AuthorizedUser } from '../db/models/auth/AuthorizedUser';
 import { AuthorizedGuild } from '../db/models/auth/AuthorizedGuild';
+import { Group } from '../db/models/groups/Group';
+import { GroupMember } from '../db/models/groups/GroupMember';
 
 import { MonitoredKeyword } from '../db/models/keywords/MonitoredKeyword';
 import { KeywordSearchResult } from '../db/models/keywords/KeywordSearchResult';
@@ -38,6 +40,8 @@ const connectionOptions: ConnectionOptions = {
 
     AuthorizedUser,
     AuthorizedGuild,
+    Group,
+    GroupMember,
 
     MonitoredKeyword,
     KeywordSearchResult,
