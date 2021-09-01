@@ -8,7 +8,7 @@ import { LinkPattern } from '../db/models/blacklists/LinkPattern';
 import { DiscordGuild } from '../db/models/blacklists/DiscordGuild';
 
 import { AuthorizedUser } from '../db/models/auth/AuthorizedUser';
-import { Key } from '../db/models/auth/Key';
+import { AuthorizedGuild } from '../db/models/auth/AuthorizedGuild';
 
 import { MonitoredKeyword } from '../db/models/keywords/MonitoredKeyword';
 import { KeywordSearchResult } from '../db/models/keywords/KeywordSearchResult';
@@ -37,7 +37,7 @@ const connectionOptions: ConnectionOptions = {
     DiscordGuild,
 
     AuthorizedUser,
-    Key,
+    AuthorizedGuild,
 
     MonitoredKeyword,
     KeywordSearchResult,

@@ -1,4 +1,4 @@
-import { Key } from '@/db/models/auth/Key';
+import { AuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 import { APIError } from '@/lib/errors';
 import db from '@/services/db';
 import { Session } from 'next-auth';
@@ -21,9 +21,9 @@ export const addGuild = async (session: Session, guildId: string): Promise<strin
   }
 
   await db.prepare();
-  const keyRepository = db.getRepository(Key);
+  const guildRepository = db.getRepository(AuthorizedGuild);
 
-  const count = await keyRepository.count({ guildId });
+  const count = await guildRepository.count({ guildId });
   if (count > 0) {
     throw new AddGuildError(400, 'GUILD_ALREADY_ADDED');
   }
@@ -32,12 +32,12 @@ export const addGuild = async (session: Session, guildId: string): Promise<strin
 
   do {
     key = uuid();
-  } while((await keyRepository.count({ key })) !== 0);
+  } while((await guildRepository.count({ key })) !== 0);
 
-  const entry = new Key();
+  const entry = new AuthorizedGuild();
   entry.key = key;
   entry.guildId = guildId;
-  await keyRepository.insert(entry);
+  await guildRepository.insert(entry);
 
   return key;
 };

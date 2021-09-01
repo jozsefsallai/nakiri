@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/client';
 
 import db from '@/services/db';
 import { AuthorizedUser } from '@/db/models/auth/AuthorizedUser';
-import { Key } from '@/db/models/auth/Key';
+import { AuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 import { UserPermissions } from '@/lib/UserPermissions';
 
 import firstOf from '@/lib/firstOf';
@@ -63,9 +63,9 @@ export const ensureHasAccessToGuild = (callback: NextApiHandler): NextApiHandler
     }
 
     await db.prepare();
-    const keyRepository = db.getRepository(Key);
+    const guildRepository = db.getRepository(AuthorizedGuild);
 
-    const count = await keyRepository.count({ guildId, key });
+    const count = await guildRepository.count({ guildId, key });
     if (count === 0) {
       return res.status(401).json({
         ok: false,

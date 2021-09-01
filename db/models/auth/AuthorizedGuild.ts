@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-export interface IKey {
+export interface IAuthorizedGuild {
   id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -9,7 +9,7 @@ export interface IKey {
 };
 
 @Entity()
-export class Key implements IKey {
+export class AuthorizedGuild implements IAuthorizedGuild {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,7 +25,7 @@ export class Key implements IKey {
   @Column()
   guildId: string;
 
-  toJSON(): IKey {
+  toJSON(): IAuthorizedGuild {
     return {
       id: this.id,
       createdAt: this.createdAt,

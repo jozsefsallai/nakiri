@@ -1,4 +1,4 @@
-import { Key } from '@/db/models/auth/Key';
+import { AuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 import db from '@/services/db';
 import axios from 'axios';
 import { Session } from 'next-auth';
@@ -21,9 +21,9 @@ export const fetchGuilds = async (session: Session, all?: boolean): Promise<IGui
   }
 
   await db.prepare();
-  const keyRepository = db.getRepository(Key);
+  const guildRepository = db.getRepository(AuthorizedGuild);
 
-  const allGuilds = await keyRepository.find();
+  const allGuilds = await guildRepository.find();
 
   const finalGuilds: IGuildWithKey[] = [];
   guilds.forEach(guild => {
