@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import next from 'next';
 import * as http from 'http';
 import { Gateway } from './services/gateway';
@@ -12,6 +13,10 @@ const nextHandler = nextApp.getRequestHandler();
   await nextApp.prepare();
 
   const app = express();
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
+
   const server = new http.Server(app);
   const gateway = new Gateway(server);
 
