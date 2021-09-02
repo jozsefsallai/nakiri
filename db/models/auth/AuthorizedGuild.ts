@@ -40,7 +40,7 @@ export class AuthorizedGuild implements IAuthorizedGuild {
       updatedAt: this.updatedAt,
       key: this.key,
       guildId: this.guildId,
-      groups: this.groups.map(g => omit(g.toJSON(), 'guilds'))
+      groups: this.groups?.map(g => omit(g.toJSON(), 'guilds'))
     };
   }
 }

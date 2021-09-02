@@ -84,7 +84,7 @@ export class AuthorizedUser implements IAuthorizedUser {
       discriminator: this.discriminator,
       image: this.image,
       hideThumbnails: this.hideThumbnails,
-      memberships: this.memberships.map(m => omit(m.toJSON(), 'user')),
+      memberships: this.memberships?.map(m => omit(m.toJSON(), 'user')),
     };
   }
 }
