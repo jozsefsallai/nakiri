@@ -1,7 +1,12 @@
 import { NextApiHandler } from 'next';
 
-const handler: NextApiHandler = (req, res) => {
-  req.gateway.send('Hello from Next.js!');
+import { queueGatewayMessage } from '@/jobs/queue';
+
+const handler: NextApiHandler = async (req, res) => {
+  await queueGatewayMessage(req.gateway, {
+    message: 'Hello from Next.js!'
+  });
+
   return res.json({ ok: true });
 };
 
