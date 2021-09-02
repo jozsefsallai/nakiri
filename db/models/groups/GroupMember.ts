@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { Group, IGroup } from './Group';
+import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
 
 export interface IGroupMember {
   id: string;
@@ -22,6 +23,26 @@ export class GroupMember implements IGroupMember {
 
   @Column('int', { default: 1 })
   permissions: number;
+
+  canViewGroupBlacklists() {
+    return GroupMemberPermissionsUtil.canViewGroupBlacklists(this.permissions);
+  }
+
+  canManageGroupEntries() {
+    return GroupMemberPermissionsUtil.canManageGroupEntries(this.permissions);
+  }
+
+  canSeeApiKey() {
+    return GroupMemberPermissionsUtil.canSeeApiKey(this.permissions);
+  }
+
+  canManageGroupGuilds() {
+    return GroupMemberPermissionsUtil.canManageGroupGuilds(this.permissions);
+  }
+
+  canManageGroupMembers() {
+    return GroupMemberPermissionsUtil.canManageGroupMembers(this.permissions);
+  }
 
   toJSON() {
     return {

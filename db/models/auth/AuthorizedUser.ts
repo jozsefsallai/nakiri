@@ -69,6 +69,10 @@ export class AuthorizedUser implements IAuthorizedUser {
     return UserPermissionsUtil.canManageGuildMonitoredKeywords(this.permissions);
   }
 
+  canCreateGroups(): boolean {
+    return UserPermissionsUtil.canCreateGroups(this.permissions);
+  }
+
   toJSON(): IAuthorizedUser {
     return {
       id: this.id,
