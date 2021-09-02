@@ -1,3 +1,5 @@
+import config from './config';
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import next from 'next';
@@ -15,7 +17,7 @@ const nextHandler = nextApp.getRequestHandler();
   const app = express();
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(cookieParser());
+  app.use(cookieParser(config.app.cookieSecret));
 
   const server = new http.Server(app);
   const gateway = new Gateway(server);

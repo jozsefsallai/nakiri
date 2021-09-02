@@ -7,6 +7,8 @@ import { AuthorizedUser } from '@/db/models/auth/AuthorizedUser';
 
 export default function (req, res) {
   return NextAuth(req, res, {
+    secret: config.app.sessionSecret,
+
     providers: [
       Providers.Discord({
         clientId: config.discord.clientId,

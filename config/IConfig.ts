@@ -6,6 +6,8 @@ export interface IAppConfig {
   protocol: string;
   domain: string;
   port: number;
+  sessionSecret: string;
+  cookieSecret: string;
   sentry?: ISentryConfig;
 };
 

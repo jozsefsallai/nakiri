@@ -5,6 +5,8 @@ const config: IConfig = {
     protocol: process.env.PROTOCOL,
     domain: process.env.DOMAIN,
     port: process.env.PORT && parseInt(process.env.PORT, 10),
+    sessionSecret: process.env.SESSION_SECRET,
+    cookieSecret: process.env.COOKIE_SECRET,
   },
 
   database: {

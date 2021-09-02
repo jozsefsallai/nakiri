@@ -3,6 +3,7 @@ import toaster from '@/lib/toaster';
 import apiService from '@/services/apis';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useCurrentUser } from './useCurrentUser';
 
 export type IUserGuilds = [
   guilds: IGuildWithKey[] | null,
@@ -15,8 +16,13 @@ export const GuildContext = createContext<IUserGuilds>([ null, (_) => void 0, fa
 export const useUserGuildsState = (): IUserGuilds => {
   const [ guilds, setGuilds ] = useState<IGuildWithKey[] | null>(null);
   const [ errored, setErrored ] = useState(false);
+  const [ currentUser, _ ] = useCurrentUser();
 
   const fetchUserGuilds = async () => {
+    if (!currentUser) {
+      return;
+    }
+
     try {
       setErrored(false);
       const res = await apiService.guilds.getGuilds();
@@ -36,6 +42,12 @@ export const useUserGuildsState = (): IUserGuilds => {
 
     fetchUserGuilds();
   }, []);
+
+  useEffect(() => {
+    if (currentUser && guilds === null) {
+      fetchUserGuilds();
+    }
+  }, [ currentUser ]);
 
   return [ guilds, setGuilds, errored ];
 };
