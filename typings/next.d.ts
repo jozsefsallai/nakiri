@@ -1,5 +1,5 @@
 import { NextApiRequest as DefaultNextApiRequest } from 'next';
-import { Gateway } from '../services/gateway';
+import { Gateway } from '../gateway';
 
 declare module 'next' {
   interface NextApiRequest extends DefaultNextApiRequest {

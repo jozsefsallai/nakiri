@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node server.ts",
+    "dev": "ts-node -r tsconfig-paths/register index.ts",
     "build": "next build",
-    "start": "cross-env NODE_ENV=production ts-node server.ts",
+    "start": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register index.ts",
     "lint": "eslint . --ext .ts --ext .tsx",
     "typeorm": "node ./node_modules/typeorm/cli.js --config ormconfig.cli.js",
     "migration:run": "npm run typeorm -- migration:run",
@@ -75,6 +75,7 @@
     "reflect-metadata": "^0.1.13",
     "tailwindcss": "^2.2.4",
     "ts-node": "^10.1.0",
+    "tsconfig-paths": "^3.11.0",
     "typescript": "^4.3.5"
   }
 }

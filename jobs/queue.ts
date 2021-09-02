@@ -5,7 +5,7 @@ import videoMetadataHandler, { IVideoMetadataRequest } from '@/jobs/handlers/vid
 import channelMetadataHandler, { IChannelMetadataRequest } from '@/jobs/handlers/channelMetadataHandler';
 import gatewayHandler, { IGatewayRequest } from '@/jobs/handlers/gatewayHandler';
 
-import { Gateway } from '@/services/gateway';
+import { Gateway } from '@/gateway';
 
 const collectVideoMetadata = new Queue<IVideoMetadataRequest>('collect video metadata', config.redis.buildRedisUrl(1));
 const collectChannelMetadata = new Queue<IChannelMetadataRequest>('collect channel metadata', config.redis.buildRedisUrl(1));
@@ -23,7 +23,7 @@ const queueGatewayMessage = async (_gateway: Gateway, request: IGatewayRequest) 
 };
 
 sendGatewayMessage.on('completed', (job, result) => {
-  gateway.send(`key: ${result.key}, type: ${result.type}, message: ${result.message}`);
+  gateway.emit('dummy', result);
 });
 
 export {
