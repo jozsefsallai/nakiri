@@ -11,7 +11,13 @@
     "migration:run": "npm run typeorm -- migration:run",
     "migration:rollback": "npm run typeorm -- migration:revert",
     "migration:generate": "npm run typeorm -- migration:generate -n",
-    "migrate": "npm run migration:run"
+    "migrate": "npm run migration:run",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "npm run lint -- --fix"
+    ]
   },
   "dependencies": {
     "@sentry/nextjs": "^6.11.0",
@@ -70,6 +76,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^7.30.0",
     "eslint-config-next": "^11.0.1",
+    "husky": "^7.0.2",
     "inquirer": "^8.1.1",
     "postcss": "^8.3.5",
     "reflect-metadata": "^0.1.13",
