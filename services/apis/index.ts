@@ -9,10 +9,12 @@ import { DiscordGuildsAPIService } from './blacklists/DiscordGuildsAPIService';
 import { MonitoredKeywordsAPIService } from './monitored-keywords/MonitoredKeywordsAPIService';
 import { KeywordWhitelistedChannelsAPIService } from './monitored-keywords/KeywordWhitelistedChannels';
 import { KeywordSearchResultsAPIService } from './monitored-keywords/KeywordSearchResultsAPIService';
+import { GroupsAPIService } from './groups/GroupsAPIService';
 
 class APIService {
   public users = new UsersAPIService();
   public guilds = new GuildsAPIService();
+  public groups = new GroupsAPIService();
 
   public videoIDs = new VideoIDsAPIService();
   public channelIDs = new ChannelIDsAPIService();

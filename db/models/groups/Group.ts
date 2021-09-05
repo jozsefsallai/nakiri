@@ -15,6 +15,8 @@ export interface IGroup {
   creator: Partial<IAuthorizedUser>;
   members?: Partial<IGroupMember>[];
   guilds?: Partial<IAuthorizedGuild>[];
+  myPermissions?: number;
+  isCreator?: boolean;
 };
 
 @Entity()
@@ -55,7 +57,7 @@ export class Group implements IGroup {
       description: this.description,
       apiKey: this.apiKey,
       creator: omit(this.creator.toJSON(), 'groups'),
-      members: this.members.map(m => omit(m.toJSON(), 'groups')),
+      members: this.members.map(m => omit(m.toJSON(), 'group')),
       guilds: this.guilds.map(g => omit(g.toJSON(), 'groups')),
     };
   }

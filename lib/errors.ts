@@ -23,6 +23,8 @@ export const errors = {
   FORBIDDEN_PERMISSIONS: 'You have provided invalid permissions.',
   USER_IDENTIFICATION_FAILED: 'Failed to identify the user.',
 
+  GROUP_NAME_NOT_PROVIDED: 'You have not provided the name of the group.',
+
   MISSING_VIDEO_ID: 'You have not provided the ID of the video.',
   INVALID_VIDEO_ID: 'Invalid YouTube video ID. An ID must be 11 characters long and only contain letters, numbers, dashes, and underscores.',
   ID_ALREADY_EXISTS: 'The provided ID already exists in the database.',
