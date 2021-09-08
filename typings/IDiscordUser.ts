@@ -3,7 +3,7 @@ export interface IDiscordUser {
   username: string;
   discriminator: string;
   avatar?: string;
-  public_flags: number;
+  public_flags?: number;
   banner?: string;
   banner_color?: string;
 };

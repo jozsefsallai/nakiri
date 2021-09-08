@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
 
-import { getGroups } from './getGroups';
+import { getGroup, getGroups } from './getGroups';
 import { createGroup } from './createGroup';
 
 import firstOf from '@/lib/firstOf';
@@ -18,6 +18,32 @@ export const index: NextApiHandler = async (req, res) => {
       groups,
     });
   } catch (err) {
+    captureException(err);
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR',
+    });
+  }
+};
+
+export const get: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+  const session = await getSession({ req });
+
+  try {
+    const group = await getGroup(id, session);
+    return res.json({
+      ok: true,
+      group,
+    });
+  } catch (err) {
+    if (err.name === 'GetGroupError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+      });
+    }
+
     captureException(err);
     return res.status(500).json({
       ok: false,

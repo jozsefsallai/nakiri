@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { Group, IGroup } from './Group';
-import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
+import { GroupMemberPermissionsUtil } from '../../../lib/GroupMemberPermissions';
 
 export interface IGroupMember {
   id: string;
@@ -47,8 +47,8 @@ export class GroupMember implements IGroupMember {
   toJSON() {
     return {
       id: this.id,
-      user: this.user.toJSON(),
-      group: this.group.toJSON(),
+      user: this.user?.toJSON(),
+      group: this.group?.toJSON(),
       permissions: this.permissions,
     };
   }

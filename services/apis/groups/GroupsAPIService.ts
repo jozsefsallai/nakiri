@@ -14,6 +14,10 @@ export interface CreateGroupAPIRequest {
 export interface CreateGroupAPIResponse extends APIResponse {
 };
 
+export interface GetGroupAPIResponse extends APIResponse {
+  group: IGroup;
+};
+
 export interface AddGroupMemberAPIRequest {
   discordId: string;
   permissions: number[];
@@ -60,6 +64,7 @@ export interface DeleteGroupAPIResponse extends APIResponse {
 export class GroupsAPIService {
   static GET_GROUPS_API_URL = '/api/groups';
   static CREATE_GROUP_API_URL = '/api/groups';
+  static GET_GROUP_API_URL = '/api/groups/:id';
   static ADD_GROUP_MEMBER_API_URL = '/api/groups/:id/members';
   static ADD_GUILD_TO_GROUP_API_URL = '/api/groups/:id/guilds';
   static UPDATE_MEMBER_PERMISSIONS_API_URL = '/api/groups/:gid/members/:mid';
@@ -86,13 +91,19 @@ export class GroupsAPIService {
       .then(res => res.data);
   }
 
-  public async addGroupMember(id: string, { discordId, permissions }: AddGroupMemberAPIRequest, groupId: string): Promise<AddGroupMemberAPIResponse> {
+  public async getGroup(groupId: string): Promise<GetGroupAPIResponse> {
+    const url = this.makeGetGroupUrl(groupId);
+    return axiosService.get<GetGroupAPIResponse>(url)
+      .then(res => res.data);
+  }
+
+  public async addGroupMember(id: string, { discordId, permissions }: AddGroupMemberAPIRequest): Promise<AddGroupMemberAPIResponse> {
     const payload: AddGroupMemberAPIRequest = {
       discordId,
       permissions
     };
 
-    const url = this.makeAddGuildToGroupUrl(groupId);
+    const url = this.makeAddGroupMemberUrl(id);
     return axiosService.post<AddGroupMemberAPIResponse>(url, payload)
       .then(res => res.data);
   }
@@ -153,6 +164,10 @@ export class GroupsAPIService {
     const url = this.makeDeleteGroupUrl(id);
     return axiosService.delete<DeleteGroupAPIResponse>(url)
       .then(res => res.data);
+  }
+
+  private makeGetGroupUrl(groupId: string): string {
+    return GroupsAPIService.GET_GROUP_API_URL.replace(':id', groupId);
   }
 
   private makeAddGroupMemberUrl(groupId: string): string {

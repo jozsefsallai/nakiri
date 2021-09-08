@@ -1,14 +1,26 @@
 import { IDiscordUser } from '@/typings/IDiscordUser';
+import clsx from 'clsx';
 import DiscordAvatar from '../common/DiscordAvatar';
 
 export interface DiscordCardProps {
   user: IDiscordUser;
+  small?: boolean;
+  squareCorners?: boolean;
+  noMargins?: boolean;
 }
 
-const DiscordCard = ({ user }: DiscordCardProps) => {
+const DiscordCard = ({ user, small, squareCorners, noMargins }: DiscordCardProps) => {
   return (
-    <section className="flex items-center gap-4 bg-discord-dark text-white px-6 py-4 my-3 rounded-lg">
-      <div className="w-24 h-24">
+    <section className={clsx('flex items-center gap-4 bg-discord-dark text-white px-6 py-4', {
+      'rounded-lg': !squareCorners,
+      'my-3': !noMargins,
+    })}>
+      <div className={clsx({
+        'w-24': !small,
+        'h-24': !small,
+        'w-16': small,
+        'h-16': small,
+      })}>
         <DiscordAvatar
           url={user.avatar}
           id={user.id}
