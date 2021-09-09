@@ -3,12 +3,18 @@ import DiscordCard from '@/components/users/discord-card/DiscordCard';
 import { IGroup } from '@/db/models/groups/Group';
 import { IUser } from '@/lib/User';
 import { IDiscordUser } from '@/typings/IDiscordUser';
-import { Clock, Server, Users } from 'react-feather';
+import { Clock, Key, Server, Users } from 'react-feather';
 import { format as formatDate } from 'date-fns';
+import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
+import Button, { ButtonSize } from '@/components/common/button/Button';
+import { useState } from 'react';
 
 export interface GroupHeaderProps {
   group: IGroup;
 };
+
+const COPY_TEXT = 'Copy';
+const COPIED_TEXT = 'Copied';
 
 const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
   const creatorDiscordUser: IDiscordUser = {
@@ -18,6 +24,17 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
     id: group.creator.discordId,
   };
 
+  const [ copyButtonText, setCopyButtonText ] = useState(COPY_TEXT);
+
+  const handleCopyClick = async () => {
+    await navigator.clipboard.writeText(group.apiKey);
+    setCopyButtonText(COPIED_TEXT);
+
+    setTimeout(() => {
+      setCopyButtonText(COPY_TEXT);
+    }, 2000);
+  };
+
   return (
     <Box title={group.name}>
       <div className="flex justify-between gap-2">
@@ -25,6 +42,20 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
           {group.description && <p>{group.description}</p>}
 
           <div className="text-sm mt-4">
+            {GroupMemberPermissionsUtil.canSeeApiKey(group.myPermissions) && (
+              <div className="flex items-center gap-2 mb-4">
+                <Key />
+
+                <div>
+                  <strong>API Key:</strong> {group.apiKey}
+                </div>
+
+                <Button size={ButtonSize.SMALL} onClick={handleCopyClick}>
+                  {copyButtonText}
+                </Button>
+              </div>
+            )}
+
             <div className="flex items-center gap-2 mb-4">
               <Clock />
 
