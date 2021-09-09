@@ -1,4 +1,16 @@
 :root {
+  --gray: #ababab;
+
+  --discord-dark: #18191c;
+  --discord-gray: #b5b7ba;
+
+  --danger: #940402;
+  --success: #339402;
+  --warning: #945e02;
+  --info: #023a94;
+}
+
+.theme-light {
   --ayame-primary-100: #ffebf5;
   --ayame-primary-200: #ffd7e1;
   --ayame-primary-300: #ffc3cd;
@@ -21,13 +33,43 @@
   --ayame-secondary-900: #ff4e91;
   --ayame-secondary: #ef3a7d;
 
-  --gray: #ababab;
+  --base: #000;
+  --base-invert: #fff;
 
-  --discord-dark: #18191c;
-  --discord-gray: #b5b7ba;
+  --accent: var(--ayame-primary);
+  --accent-hover: var(--ayame-secondary);
 
-  --danger: #940402;
-  --success: #339402;
-  --warning: #945e02;
-  --info: #023a94;
+  --page-background: var(--ayame-primary-100);
+}
+
+.theme-dark {
+  --ayame-primary-100: #23272A;
+  --ayame-primary-200: #373b3e;
+  --ayame-primary-300: #4b4f52;
+  --ayame-primary-400: #5f6366;
+  --ayame-primary-500: #73777a;
+  --ayame-primary-600: #878b8e;
+  --ayame-primary-700: #9b9fa2;
+  --ayame-primary-800: #afb3b6;
+  --ayame-primary-900: #c3c7ca;
+  --ayame-primary: #d7dbde;
+
+  --ayame-secondary-100: #2C2F33;
+  --ayame-secondary-200: #404347;
+  --ayame-secondary-300: #54575b;
+  --ayame-secondary-400: #686b6f;
+  --ayame-secondary-500: #7c7f83;
+  --ayame-secondary-600: #909397;
+  --ayame-secondary-700: #a4a7ab;
+  --ayame-secondary-800: #b8bbbf;
+  --ayame-secondary-900: #cccfd3;
+  --ayame-secondary: #e0e3e7;
+
+  --base: #fff;
+  --base-invert: #36393f;
+
+  --accent: #5865f2;
+  --accent-hover: #4752c4;
+
+  --page-background: #2f3136;
 }

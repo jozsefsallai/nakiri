@@ -12,14 +12,15 @@ html, body, #__next, .app {
 }
 
 body {
-  @apply bg-ayame-primary-100;
+  @apply bg-page-background;
+  @apply text-nakiri-base;
 }
 
 a {
-  @apply text-ayame-primary;
+  @apply text-accent;
 
   &:hover {
-    @apply text-ayame-secondary;
+    @apply text-accent-hover;
   }
 }
 

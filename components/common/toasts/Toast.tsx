@@ -41,7 +41,7 @@ const Toast = ({ idx, level, title, message, dismissable = true, dead, onClick }
 
         {dismissable && <div>
           <div
-            className="inline-block border-2 py-1 px-2 cursor-pointer border-white rounded hover:bg-white hover:text-black"
+            className="inline-block border-2 py-1 px-2 cursor-pointer border-white rounded hover:bg-nakiri-base-invert hover:text-nakiri-base"
             onClick={onClick}
           >OK</div>
         </div>}

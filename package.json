@@ -15,7 +15,7 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": [
+    "*.{ts,tsx}": [
       "npm run lint -- --fix"
     ]
   },

@@ -20,7 +20,7 @@ const GuildIcon = ({ guild, compact, ...props }: GuildIconProps, ref) => {
     : null;
 
   const classNames = clsx(
-    'flex items-center justify-center bg-ayame-secondary text-white rounded-full',
+    'flex items-center justify-center bg-ayame-secondary text-nakiri-base-invert rounded-full',
     {
       'w-10': compact,
       'h-10': compact,

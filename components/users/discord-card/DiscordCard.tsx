@@ -11,7 +11,7 @@ export interface DiscordCardProps {
 
 const DiscordCard = ({ user, small, squareCorners, noMargins }: DiscordCardProps) => {
   return (
-    <section className={clsx('flex items-center gap-4 bg-discord-dark text-white px-6 py-4', {
+    <section className={clsx('flex items-center gap-4 bg-discord-dark text-nakiri-base-invert px-6 py-4', {
       'rounded-lg': !squareCorners,
       'my-3': !noMargins,
     })}>
@@ -30,7 +30,7 @@ const DiscordCard = ({ user, small, squareCorners, noMargins }: DiscordCardProps
         />
       </div>
 
-      <div className="font-bold">
+      <div className="font-bold text-white">
         {user.username}<span className="text-discord-gray">#{user.discriminator}</span>
       </div>
     </section>

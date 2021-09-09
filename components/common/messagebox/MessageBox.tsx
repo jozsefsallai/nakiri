@@ -15,7 +15,7 @@ export interface MessageBoxProps {
 };
 
 const MessageBox = ({ level, message, children }: MessageBoxProps) => {
-  const classNames = clsx('px-5 py-3 text-white', {
+  const classNames = clsx('px-5 py-3 text-nakiri-base-invert', {
     'bg-danger': level === MessageBoxLevel.DANGER,
     'bg-warning': level === MessageBoxLevel.WARNING,
     'bg-success': level === MessageBoxLevel.SUCCESS,

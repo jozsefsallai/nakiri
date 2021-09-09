@@ -58,9 +58,17 @@ module.exports = {
       'discord-dark': 'var(--discord-dark)',
       'discord-gray': 'var(--discord-gray)',
 
+      'nakiri-base': 'var(--base)',
+      'nakiri-base-invert': 'var(--base-invert)',
+
+      accent: 'var(--accent)',
+      'accent-hover': 'var(--accent-hover)',
+
+      'page-background': 'var(--page-background)',
+
       transparent: 'transparent',
+      white: '#fff',
       black: '#000',
-      white: '#fff'
     },
 
     container: {

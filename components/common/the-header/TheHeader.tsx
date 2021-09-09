@@ -45,7 +45,7 @@ const TheHeader = () => {
   const toggleHamburger = () => setHamburgerOpen(hamburgerOpen => !hamburgerOpen);
 
   return (
-    <header className="bg-white p-2 py-4 shadow-sm">
+    <header className="bg-nakiri-base-invert p-2 py-4 shadow-sm">
       <div className="container lg:flex items-center justify-between relative">
         <Link href="/manage/guilds">
           <a className="text-2xl font-bold text-ayame-primary hover:text-ayame-primary px-3 lg:px-0">
@@ -65,13 +65,13 @@ const TheHeader = () => {
 
           <div className="text-xs text-center">
             <Link href="/manage/me">
-              <a>
+              <a className="text-gray hover:text-nakiri-base">
                 {currentUser.name}#{currentUser.discriminator}
               </a>
             </Link>
 
             <div
-              className="inline-block px-3 py-2 my-2 lg:my-0 rounded-md text-white bg-ayame-primary hover:bg-ayame-primary-900 cursor-pointer ml-3"
+              className="inline-block px-3 py-2 my-2 lg:my-0 rounded-md text-white bg-accent hover:bg-accent-hover cursor-pointer ml-3"
               onClick={() => signOut()}
             >
               Log out

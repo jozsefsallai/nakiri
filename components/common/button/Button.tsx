@@ -15,8 +15,8 @@ const Button = ({ size, ...props }: ButtonProps, ref) => {
   const finalSize = size ?? ButtonSize.MEDIUM;
 
   const buttonClasses = clsx(
-    'bg-ayame-primary',
-    'hover:bg-ayame-primary-800',
+    'bg-accent',
+    'hover:bg-accent-hover',
     'disabled:bg-ayame-primary-600',
     'text-white',
     'font-bold',

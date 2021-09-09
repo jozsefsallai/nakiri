@@ -121,10 +121,10 @@ const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOp
             <div
               onClick={() => handleClick(item)}
               className={clsx(
-                'border-2 border-ayame-primary rounded-md px-3 py-2 hover:bg-ayame-primary hover:text-white cursor-pointer select-none text-sm',
+                'border-2 border-ayame-primary rounded-md px-3 py-2 hover:bg-ayame-primary hover:text-nakiri-base-invert cursor-pointer select-none text-sm',
                 {
                   'bg-ayame-primary': item.page === currentPage,
-                  'text-white': item.page === currentPage
+                  'text-nakiri-base-invert': item.page === currentPage
                 }
               )}
             >

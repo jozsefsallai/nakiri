@@ -39,14 +39,14 @@ const YouTubeVideoEntry: React.FC<YouTubeVideoEntryProps> = ({ item, onTextClick
         {item.thumbnailUrl && !currentUser.hideThumbnails && <img src={item.thumbnailUrl} alt={item.title} className="w-full rounded-md" />}
         {item.thumbnailUrl && currentUser.hideThumbnails && (
           <div
-            className="h-24 bg-ayame-primary text-white rounded-md flex items-center justify-center text-2xl"
+            className="h-24 bg-ayame-primary text-nakiri-base-invert rounded-md flex items-center justify-center text-2xl"
             title="Thumbnail is hidden because you opted out of seeing thumbnails."
           >
             <Video />
           </div>
         )}
         {!item.thumbnailUrl && (
-          <div className="h-24 bg-ayame-primary text-white rounded-md flex items-center justify-center text-2xl">
+          <div className="h-24 bg-ayame-primary text-nakiri-base-invert rounded-md flex items-center justify-center text-2xl">
             <Clock />
           </div>
         )}

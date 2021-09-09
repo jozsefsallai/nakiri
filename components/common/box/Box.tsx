@@ -10,7 +10,7 @@ export interface BoxProps extends HTMLProps<HTMLDivElement> {
 
 const Box = ({ title, buttonText, onButtonClick, ...props }: BoxProps, ref) => {
   const classNames = clsx(
-    'px-8 py-5 bg-white shadow-sm rounded-md mb-5',
+    'px-8 py-5 bg-nakiri-base-invert shadow-sm rounded-md mb-5',
     props.className
   );
 

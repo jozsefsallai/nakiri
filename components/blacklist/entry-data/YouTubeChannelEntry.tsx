@@ -30,7 +30,7 @@ const YouTubeChannelEntry: React.FC<YouTubeChannelEntryProps> = ({ item, onTextC
       <div className="w-20 cursor-pointer" onClick={handleItemClick}>
         {item.thumbnailUrl && <img src={item.thumbnailUrl} alt={item.name} className="w-full rounded-md" />}
         {!item.thumbnailUrl && (
-          <div className="h-20 bg-ayame-primary text-white rounded-md flex items-center justify-center text-2xl">
+          <div className="h-20 bg-ayame-primary text-nakiri-base-invert rounded-md flex items-center justify-center text-2xl">
             <Clock />
           </div>
         )}

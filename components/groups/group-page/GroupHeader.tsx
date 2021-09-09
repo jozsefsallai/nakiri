@@ -54,7 +54,7 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
         </div>
 
         <div>
-          <div className="text-center text-xs font-bold uppercase p-2 bg-ayame-primary-900 text-white">Creator</div>
+          <div className="text-center text-xs font-bold uppercase p-2 bg-ayame-primary-900 text-nakiri-base-invert">Creator</div>
           <DiscordCard user={creatorDiscordUser} small squareCorners noMargins />
         </div>
       </div>
