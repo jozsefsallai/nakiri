@@ -98,4 +98,21 @@ input, textarea, select {
   }
 }
 
+.swal2-title {
+  @apply bg-accent;
+  @apply text-white #{!important};
+  @apply p-3 #{!important};
+  @apply rounded-t-[5px];
+  @apply text-2xl #{!important};
+  @apply mb-2 #{!important};
+}
+
+.swal2-modal {
+  @apply bg-nakiri-base-invert #{!important};
+}
+
+.swal2-content, .swal2-html-container {
+  @apply text-nakiri-base #{!important};
+}
+
 @import './progress';

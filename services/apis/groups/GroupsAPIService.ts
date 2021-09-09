@@ -31,6 +31,7 @@ export interface AddGuildToGroupAPIRequest {
 };
 
 export interface AddGuildToGroupAPIResponse extends APIResponse {
+  group: IGroup;
 };
 
 export interface UpdateMemberPermissionsAPIRequest {

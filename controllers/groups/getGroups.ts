@@ -6,6 +6,7 @@ import { Session } from 'next-auth';
 
 import { getUser } from '@/controllers/users/getUser';
 import { APIError } from '@/lib/errors';
+import { fetchGuilds } from '../guilds/fetchGuilds';
 
 export class GetGroupError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -43,6 +44,9 @@ export const getGroups = async (session: Session): Promise<IGroup[]> => {
 };
 
 export const getGroup = async (id: string, session: Session): Promise<IGroup> => {
+  const guilds = await fetchGuilds(session, true)
+    .then(guilds => guilds.map(guild => guild.id));
+
   await db.prepare();
 
   const groupMembersRepository = db.getRepository(GroupMember);
@@ -70,6 +74,8 @@ export const getGroup = async (id: string, session: Session): Promise<IGroup> =>
   if (!membership.canSeeApiKey()) {
     delete group.apiKey;
   }
+
+  group.guilds = group.guilds.filter(guild => guilds.includes(guild.guildId));
 
   return group;
 };

@@ -7,6 +7,7 @@ import { createGroup } from './createGroup';
 import firstOf from '@/lib/firstOf';
 
 import { captureException } from '@sentry/nextjs';
+import { addGuildToGroup } from './updateGroup';
 
 export const index: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
@@ -63,6 +64,40 @@ export const create: NextApiHandler = async (req, res) => {
     });
   } catch (err) {
     if (err.name === 'GroupCreationError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+      });
+    }
+
+    captureException(err);
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR',
+    });
+  }
+};
+
+export const addGuild: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+  const session = await getSession({ req });
+  const guildId = req.body.guildId;
+
+  if (!guildId) {
+    return res.status(400).json({
+      ok: false,
+      error: 'GUILD_NOT_PROVIDED',
+    });
+  }
+
+  try {
+    const group = await addGuildToGroup(session, id, guildId);
+    return res.json({
+      ok: true,
+      group,
+    });
+  } catch (err) {
+    if (err.name === 'UpdateGroupError') {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code,

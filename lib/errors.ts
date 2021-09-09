@@ -16,6 +16,11 @@ export const errors = {
   GUILD_ALREADY_ADDED: 'An API key for this guild has already been generated.',
   GUILD_ID_NOT_PROVIDED: 'You have not specified a guild.',
 
+  GROUP_NOT_FOUND: 'The specified guild coult not be found.',
+  CANNOT_MANAGE_GUILDS_IN_THIS_GROUP: 'You do not have access to managing guilds in this group.',
+  GUILD_NOT_AUTHORIZED: 'The guild has not been authorized yet. Please authorize it first in the "My Guilds" section.',
+  GUILD_ALREADY_IN_GROUP: 'The guild is already in this group.',
+
   MISSING_DISCORD_ID: 'You have not provided the ID of the Discord user.',
   FAILED_TO_FETCH_USER_DATA: 'Failed to fetch the user\'s data from the Discord API.',
   MISSING_PERMISSIONS: 'You have not specified the permissions of this user.',
