@@ -6,18 +6,16 @@ import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 import { IGroup } from '@/db/models/groups/Group';
 import { IGroupMember } from '@/db/models/groups/GroupMember';
 
-import GroupGuildList from './GroupGuildList';
+import GroupGuildList from './guilds/GroupGuildList';
 import GroupHeader from './GroupHeader';
-import GroupMemberList from './GroupMemberList';
+import GroupMemberList from './members/GroupMemberList';
 
 export interface GroupProps {
   group: IGroup;
   setGroup(group: IGroup): void;
-
-  onAddGuildClick: () => void | Promise<void>;
 };
 
-const Group: React.FC<GroupProps> = ({ group, setGroup, onAddGuildClick }) => {
+const Group: React.FC<GroupProps> = ({ group, setGroup }) => {
   return (
     <div>
       <GroupHeader group={group} />
@@ -26,7 +24,8 @@ const Group: React.FC<GroupProps> = ({ group, setGroup, onAddGuildClick }) => {
         <Column>
           <GroupGuildList
             guilds={group.guilds as IAuthorizedGuild[]}
-            onAddGuildClick={onAddGuildClick}
+            group={group}
+            setGroup={setGroup}
           />
         </Column>
 

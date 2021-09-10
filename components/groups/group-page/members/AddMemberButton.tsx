@@ -74,6 +74,7 @@ const AddMemberButton: React.FC<AddMemberButtonProps> = ({ group, onSuccess }) =
       setRequestInProgress(false);
       return res.group;
     } catch (err) {
+      setRequestInProgress(false);
       const message = err?.response?.data?.error;
 
       if (message) {
@@ -82,7 +83,6 @@ const AddMemberButton: React.FC<AddMemberButtonProps> = ({ group, onSuccess }) =
       }
 
       toaster.danger(errors.INTERNAL_SERVER_ERROR);
-      setRequestInProgress(false);
     }
   };
 

@@ -1,12 +1,10 @@
 import Box from '@/components/common/box/Box';
-import Button from '@/components/common/button/Button';
 import ZeroDataState from '@/components/common/zds/ZeroDataState';
 import { IAuthorizedUser } from '@/db/models/auth/AuthorizedUser';
 import { IGroup } from '@/db/models/groups/Group';
 import { IGroupMember } from '@/db/models/groups/GroupMember';
-import toaster from '@/lib/toaster';
 import GroupMemberListItem from './GroupMemberListItem';
-import AddMemberButton from './members/AddMemberButton';
+import AddMemberButton from './AddMemberButton';
 
 export interface GroupMemberListProps {
   group: IGroup;
