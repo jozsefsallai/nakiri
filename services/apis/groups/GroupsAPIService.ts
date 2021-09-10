@@ -24,6 +24,7 @@ export interface AddGroupMemberAPIRequest {
 };
 
 export interface AddGroupMemberAPIResponse extends APIResponse {
+  group: IGroup;
 };
 
 export interface AddGuildToGroupAPIRequest {

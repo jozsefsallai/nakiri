@@ -109,6 +109,7 @@ const GroupPage: React.FC<GroupPageProps> = ({ id }) => {
       {group && (
         <Group
           group={group}
+          setGroup={setGroup}
           onAddGuildClick={handleAddGuildActionClick}
         />
       )}

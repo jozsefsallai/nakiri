@@ -56,9 +56,9 @@ export class Group implements IGroup {
       name: this.name,
       description: this.description,
       apiKey: this.apiKey,
-      creator: this.creator && omit(this.creator.toJSON(), 'groups'),
-      members: this.members?.map(m => omit(m.toJSON(), 'group')),
-      guilds: this.guilds?.map(g => omit(g.toJSON(), 'groups')),
+      creator: this.creator && omit(this.creator, 'memberships').toJSON(),
+      members: this.members?.map(m => omit(m, 'group').toJSON()),
+      guilds: this.guilds?.map(g => omit(g, 'groups').toJSON()),
     };
   }
 }

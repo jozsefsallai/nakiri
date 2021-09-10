@@ -12,11 +12,12 @@ import GroupMemberList from './GroupMemberList';
 
 export interface GroupProps {
   group: IGroup;
+  setGroup(group: IGroup): void;
 
   onAddGuildClick: () => void | Promise<void>;
 };
 
-const Group: React.FC<GroupProps> = ({ group, onAddGuildClick }) => {
+const Group: React.FC<GroupProps> = ({ group, setGroup, onAddGuildClick }) => {
   return (
     <div>
       <GroupHeader group={group} />
@@ -30,7 +31,11 @@ const Group: React.FC<GroupProps> = ({ group, onAddGuildClick }) => {
         </Column>
 
         <Column>
-          <GroupMemberList members={group.members as IGroupMember[]} />
+          <GroupMemberList
+            members={group.members as IGroupMember[]}
+            group={group}
+            setGroup={setGroup}
+          />
         </Column>
       </Columns>
     </div>

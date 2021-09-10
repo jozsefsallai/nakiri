@@ -3,6 +3,8 @@ import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { Group, IGroup } from './Group';
 import { GroupMemberPermissionsUtil } from '../../../lib/GroupMemberPermissions';
 
+import omit from 'lodash.omit';
+
 export interface IGroupMember {
   id: string;
   user: Partial<IAuthorizedUser>;
@@ -47,8 +49,8 @@ export class GroupMember implements IGroupMember {
   toJSON() {
     return {
       id: this.id,
-      user: this.user?.toJSON(),
-      group: this.group?.toJSON(),
+      user: this.user && omit(this.user, 'memberships').toJSON(),
+      group: this.group && omit(this.group, 'members').toJSON(),
       permissions: this.permissions,
     };
   }

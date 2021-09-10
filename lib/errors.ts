@@ -18,8 +18,10 @@ export const errors = {
 
   GROUP_NOT_FOUND: 'The specified guild coult not be found.',
   CANNOT_MANAGE_GUILDS_IN_THIS_GROUP: 'You do not have access to managing guilds in this group.',
+  CANNOT_MANAGE_MEMBERS_IN_THIS_GROUP: 'You do not have access to managing members in this group.',
   GUILD_NOT_AUTHORIZED: 'The guild has not been authorized yet. Please authorize it first in the "My Guilds" section.',
   GUILD_ALREADY_IN_GROUP: 'The guild is already in this group.',
+  USER_ALREADY_IN_GROUP: 'The user is already in this group.',
 
   MISSING_DISCORD_ID: 'You have not provided the ID of the Discord user.',
   FAILED_TO_FETCH_USER_DATA: 'Failed to fetch the user\'s data from the Discord API.',
@@ -27,6 +29,7 @@ export const errors = {
   USER_ALREADY_AUTHORIZED: 'This user is already authorized.',
   FORBIDDEN_PERMISSIONS: 'You have provided invalid permissions.',
   USER_IDENTIFICATION_FAILED: 'Failed to identify the user.',
+  USER_NOT_AUTHORIZED: 'The user has not been authorized yet to access NakiriAPI.',
 
   GROUP_NAME_NOT_PROVIDED: 'You have not provided the name of the group.',
 

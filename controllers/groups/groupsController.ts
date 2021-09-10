@@ -7,7 +7,7 @@ import { createGroup } from './createGroup';
 import firstOf from '@/lib/firstOf';
 
 import { captureException } from '@sentry/nextjs';
-import { addGuildToGroup } from './updateGroup';
+import { addGuildToGroup, addUserToGroup } from './updateGroup';
 
 export const index: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
@@ -108,6 +108,51 @@ export const addGuild: NextApiHandler = async (req, res) => {
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR',
+    });
+  }
+};
+
+export const addMember: NextApiHandler = async (req, res) => {
+  const groupId = firstOf(req.query.id);
+  const session = await getSession({ req });
+  const discordId = req.body.discordId;
+  const permissions: number[] | undefined = req.body.permissions;
+
+  if (!discordId) {
+    return res.status(400).json({
+      ok: false,
+      error: 'MISSING_DISCORD_ID',
+    });
+  }
+
+  if (typeof permissions === 'undefined' || permissions.length === 0) {
+    return res.status(400).json({
+      ok: false,
+      error: 'MISSING_PERMISSIONS'
+    });
+  }
+
+  try {
+    const group = await addUserToGroup(session, groupId, discordId, permissions);
+    return res.json({
+      ok: true,
+      group,
+    });
+  } catch (err) {
+    if (err.name === 'UpdateGroupError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+        ...(err.data && { data: err.data })
+      });
+    }
+
+    captureException(err);
+    console.error(err);
+
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR'
     });
   }
 };
