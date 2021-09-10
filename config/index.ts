@@ -24,13 +24,9 @@ const config: IConfig = {
     password: process.env.REDIS_PASSWORD || undefined,
 
     buildRedisUrl(database?: number): string {
-      const protocol = process.env.NODE_ENV === 'production'
-        ? 'rediss://'
-        : 'redis://';
-
       const password = config.redis.password ? `:${config.redis.password}@` : '';
 
-      const redisUrl = `${protocol}${password}${config.redis.host}:${config.redis.port}`;
+      const redisUrl = `redis://${password}${config.redis.host}:${config.redis.port}`;
       return database ? `${redisUrl}/${database}` : redisUrl;
     }
   },
