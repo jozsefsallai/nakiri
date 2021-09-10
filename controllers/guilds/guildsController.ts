@@ -4,12 +4,13 @@ import { addGuild } from './addGuild';
 import { fetchGuilds } from './fetchGuilds';
 
 import { captureException } from '@sentry/nextjs';
+import firstOf from '@/lib/firstOf';
 
 export const all: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
 
   try {
-    const guilds = await fetchGuilds(session, true);
+    const guilds = await fetchGuilds(session, true, false);
     return res.json({ ok: true, guilds });
   } catch (err) {
     captureException(err);
@@ -23,9 +24,10 @@ export const all: NextApiHandler = async (req, res) => {
 
 export const index: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
+  const skipCache = firstOf(req.query.skipCache) === 'true';
 
   try {
-    const guilds = await fetchGuilds(session);
+    const guilds = await fetchGuilds(session, false, !skipCache);
     return res.json({ ok: true, guilds });
   } catch (err) {
     captureException(err);

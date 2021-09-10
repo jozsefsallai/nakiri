@@ -25,7 +25,7 @@ export const useUserGuildsState = (): IUserGuilds => {
 
     try {
       setErrored(false);
-      const res = await apiService.guilds.getGuilds();
+      const res = await apiService.guilds.getGuilds(true);
       const guilds = res.ok ? res.guilds : null;
       setGuilds(guilds);
     } catch (err) {
