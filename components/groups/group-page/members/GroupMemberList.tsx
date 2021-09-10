@@ -5,6 +5,7 @@ import { IGroup } from '@/db/models/groups/Group';
 import { IGroupMember } from '@/db/models/groups/GroupMember';
 import GroupMemberListItem from './GroupMemberListItem';
 import AddMemberButton from './AddMemberButton';
+import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
 
 export interface GroupMemberListProps {
   group: IGroup;
@@ -26,9 +27,11 @@ const GroupMemberList: React.FC<GroupMemberListProps> = ({ group, setGroup, memb
         />
       ))}
 
-      <div className="text-center mt-5">
-        <AddMemberButton group={group} onSuccess={setGroup} />
-      </div>
+      {GroupMemberPermissionsUtil.canManageGroupMembers(group.myPermissions) && (
+        <div className="text-center mt-5">
+          <AddMemberButton group={group} onSuccess={setGroup} />
+        </div>
+      )}
     </Box>
   );
 };

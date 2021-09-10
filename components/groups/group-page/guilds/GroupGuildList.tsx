@@ -7,6 +7,7 @@ import { useGuilds } from '@/hooks/useGuilds';
 import GroupGuildListItem from './GroupGuildListItem';
 import { IGroup } from '@/db/models/groups/Group';
 import AddGuildButton from './AddGuildButton';
+import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
 
 export interface GroupGuildListProps {
   guilds: IAuthorizedGuild[];
@@ -34,9 +35,11 @@ const GroupGuildList: React.FC<GroupGuildListProps> = ({ guilds, group, setGroup
         />
       ))}
 
-      <div className="text-center mt-5">
-        <AddGuildButton group={group} onSuccess={setGroup} />
-      </div>
+      {GroupMemberPermissionsUtil.canManageGroupGuilds(group.myPermissions) && (
+        <div className="text-center mt-5">
+          <AddGuildButton group={group} onSuccess={setGroup} />
+        </div>
+      )}
     </Box>
   );
 };
