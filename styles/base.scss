@@ -115,4 +115,20 @@ input, textarea, select {
   @apply text-nakiri-base #{!important};
 }
 
+::-webkit-scrollbar {
+  @apply w-3;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-ayame-primary-300;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-ayame-primary-700;
+
+  &:hover {
+    @apply bg-ayame-primary-800;
+  }
+}
+
 @import './progress';
