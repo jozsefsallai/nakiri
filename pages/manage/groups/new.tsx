@@ -10,15 +10,19 @@ import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
 import { CompactDangerMessageBox } from '@/components/common/messagebox/MessageBox';
 import { redirectIfAnonmyous } from '@/lib/redirects';
+import { useUserGroups } from '@/hooks/useGroups';
 
 const CreateGroupPage = () => {
   const router = useRouter();
 
+  const { reloadGroups } = useUserGroups();
+
   const handleFormSubmit = async ({ name, description }: CreateGroupAPIRequest, { setSubmitting }: FormikHelpers<CreateGroupAPIRequest>) => {
     try {
       await apiService.groups.createGroup({ name, description });
-
       toaster.success('Group created successfully.');
+
+      await reloadGroups();
 
       setTimeout(() => {
         router.push('/manage/groups');
