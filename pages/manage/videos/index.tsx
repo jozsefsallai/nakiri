@@ -2,14 +2,14 @@ import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/Mess
 import Loading from '@/components/loading/Loading';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import Blacklist from '@/components/blacklist/Blacklist';
+import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 import YouTubeVideoEntry from '@/components/blacklist/entry-data/YouTubeVideoEntry';
 
 import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useGuilds } from '@/hooks/useGuilds';
+import { useUserGroups } from '@/hooks/useGroups';
 
 import Swal from 'sweetalert2';
 import toaster from '@/lib/toaster';
@@ -17,20 +17,20 @@ import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
 
 const ManageVideosIndexPage = () => {
-  const [ guilds, _, guildsErrored ] = useGuilds();
+  const { groups, errored } = useUserGroups();
   const [ items, setItems ] = useState<IYouTubeVideoID[] | null>(null);
   const [ pagination, setPagination ] = useState<APIPaginationData | null>(null);
   const [ error, setError ] = useState<string>('');
 
   const router = useRouter();
 
-  const fetchItems = async (guild?: string | null, page?: number) => {
+  const fetchItems = async ({ group, guild, page }: IFetcherOptions = {}) => {
     setItems(null);
     setPagination(null);
     setError('');
 
     try {
-      const { videoIDs, pagination } = await apiService.videoIDs.getVideoIDs({ guild, page });
+      const { videoIDs, pagination } = await apiService.videoIDs.getVideoIDs({ group, guild, page });
       setItems(videoIDs);
       setPagination(pagination);
     } catch (err) {
@@ -90,21 +90,21 @@ const ManageVideosIndexPage = () => {
   };
 
   useEffect(() => {
-    if (guildsErrored) {
-      setError('Failed to fetch your guilds.');
+    if (errored) {
+      setError('Failed to fetch your groups.');
     }
-  }, [guildsErrored]);
+  }, [errored]);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted YouTube Video IDs" buttonText="Add video ID" onButtonClick={handleNewButtonClick}>
-      {guilds && (
+      {groups && (
         <Blacklist
           items={items}
           pagination={pagination}
           fetcher={fetchItems}
           error={error}
           zdsMessage="No blacklisted video IDs have been found."
-          guilds={guilds}
+          groups={groups}
           onTextClick={handleTextClick}
           actions={[
             { label: 'Delete', onClick: handleDeleteActionClick }
@@ -113,8 +113,8 @@ const ManageVideosIndexPage = () => {
         />
       )}
 
-      {guilds === null && !error && <Loading />}
-      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && !error && <Loading />}
+      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
 };

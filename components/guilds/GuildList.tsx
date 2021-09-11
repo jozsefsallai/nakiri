@@ -13,7 +13,7 @@ const GuildList = ({ guilds, onGuildClick, activeGuild, compact }: GuildListProp
   return (
     <div>
       {guilds.map(guild => (
-        <div key={guild.id}>
+        <div key={guild.id} className="flex items-center">
           {compact && <CompactGuildListItem guild={guild} onClick={onGuildClick} active={activeGuild?.id === guild.id} />}
           {!compact && <GuildListItem guild={guild} onClick={onGuildClick} />}
         </div>

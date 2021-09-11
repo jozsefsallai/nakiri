@@ -3,7 +3,7 @@ import Button, { ButtonSize } from '@/components/common/button/Button';
 import Loading from '@/components/loading/Loading';
 import { IKeywordWhitelistedChannel } from '@/db/models/keywords/KeywordWhitelistedChannel';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import Blacklist from '@/components/blacklist/Blacklist';
+import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 
 import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
@@ -24,7 +24,7 @@ const ManageWhitelistedChannelsIndexPage = () => {
 
   const router = useRouter();
 
-  const fetchItems = async (guild: string) => {
+  const fetchItems = async ({ guild }: IFetcherOptions = {}) => {
     setItems(null);
     setError('');
 

@@ -2,7 +2,7 @@ import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/Mess
 import Loading from '@/components/loading/Loading';
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import Blacklist from '@/components/blacklist/Blacklist';
+import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 import YouTubeChannelEntry from '@/components/blacklist/entry-data/YouTubeChannelEntry';
 
 import { redirectIfAnonmyous } from '@/lib/redirects';
@@ -24,7 +24,7 @@ const ManageChannelsIndexPage = () => {
 
   const router = useRouter();
 
-  const fetchItems = async (guild?: string | null, page?: number) => {
+  const fetchItems = async ({ guild, page }: IFetcherOptions = {}) => {
     setItems(null);
     setPagination(null);
     setError('');

@@ -10,7 +10,7 @@ export interface CompactGuildListItemProps {
 
 const CompactGuildListItem = ({ guild, active, onClick }: CompactGuildListItemProps) => {
   const classNames = clsx(
-    'flex px-3 py-2 my-2 rounded-md items-center gap-2',
+    'flex flex-1 px-3 py-2 my-1 rounded-md items-center gap-2',
     {
       'hover:bg-ayame-secondary-200': !!onClick,
       'bg-ayame-secondary-200': active,

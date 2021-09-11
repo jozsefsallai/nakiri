@@ -2,7 +2,7 @@ import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/Mess
 import Loading from '@/components/loading/Loading';
 import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import Blacklist from '@/components/blacklist/Blacklist';
+import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 
 import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
@@ -24,7 +24,7 @@ const ManageGuildsIndexPage = () => {
 
   const router = useRouter();
 
-  const fetchItems = async (guild?: string | null, page?: number) => {
+  const fetchItems = async ({ guild, page }: IFetcherOptions = {}) => {
     setItems(null);
     setPagination(null);
     setError('');

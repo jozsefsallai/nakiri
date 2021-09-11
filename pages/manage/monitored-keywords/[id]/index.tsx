@@ -3,7 +3,7 @@ import Loading from '@/components/loading/Loading';
 import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
 import { IKeywordSearchResult } from '@/db/models/keywords/KeywordSearchResult';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import Blacklist from '@/components/blacklist/Blacklist';
+import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 import YouTubeVideoEntry from '@/components/blacklist/entry-data/YouTubeVideoEntry';
 
 import { redirectIfAnonmyous } from '@/lib/redirects';
@@ -63,7 +63,7 @@ const KeywordSearchResultsIndexPage: React.FC<KeywordSearchResultsIndexPageProps
     }
   };
 
-  const fetchItems = async (guild?: string | null, page?: number) => {
+  const fetchItems = async ({ page }: IFetcherOptions = {}) => {
     setItems(null);
     setPagination(null);
     setError('');
