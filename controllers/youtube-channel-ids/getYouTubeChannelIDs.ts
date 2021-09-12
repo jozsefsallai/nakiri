@@ -8,7 +8,7 @@ export const getYouTubeChannelIDs = async (guildId?: string, strict?: boolean, s
 
   const where: FindConditions<YouTubeChannelID>[] = [];
 
-  if (!strict) {
+  if (!guildId || (guildId && !strict)) {
     where.push({ guildId: IsNull() }); // global blacklist (if strict mode is disabled)
   }
 

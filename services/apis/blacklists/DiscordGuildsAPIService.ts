@@ -3,6 +3,7 @@ import axiosService, { APIResponse } from '@/services/axios';
 import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 
 export interface GetDiscordGuildsAPIRequest {
+  group?: string;
   guild?: string;
   page?: number;
   limit?: number;
@@ -26,15 +27,16 @@ export interface DeleteDiscordGuildAPIResponse extends APIResponse {
 
 export class DiscordGuildsAPIService {
   static GET_DISCORD_GUILDS_URL = '/api/lists/discord?compact=false&page=:page&limit=:limit';
-  static GET_DISCORD_GUILDS_WITH_GUILD_URL = '/api/lists/discord?compact=false&guild=:guild&page=:page&limit=:limit';
+  static GET_DISCORD_GUILDS_WITH_GROUP_URL = '/api/lists/discord?compact=false&group=:group&strict=true&page=:page&limit=:limit';
+  static GET_DISCORD_GUILDS_WITH_GUILD_URL = '/api/lists/discord?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
 
   static ADD_DISCORD_GUILD_URL = '/api/lists/discord';
   static ADD_DISCORD_GUILD_WITH_GUILD_URL = '/api/lists/discord?guild=:guild';
 
   static DELETE_DISCORD_GUILD_URL = '/api/lists/discord/:id';
 
-  public async getDiscordGuilds({ guild, page, limit }: GetDiscordGuildsAPIRequest): Promise<GetDiscordGuildsAPIResponse> {
-    const url = this.makeGetDiscordGuildsURL(guild, page, limit);
+  public async getDiscordGuilds({ group, guild, page, limit }: GetDiscordGuildsAPIRequest): Promise<GetDiscordGuildsAPIResponse> {
+    const url = this.makeGetDiscordGuildsURL(group, guild, page, limit);
     return axiosService.get(url).then(res => res.data);
   }
 
@@ -57,10 +59,16 @@ export class DiscordGuildsAPIService {
     return axiosService.delete(url).then(res => res.data);
   }
 
-  private makeGetDiscordGuildsURL(guild?: string, page?: number, limit?: number): string {
-    const url = guild
-      ? DiscordGuildsAPIService.GET_DISCORD_GUILDS_WITH_GUILD_URL.replace(':guild', guild)
-      : DiscordGuildsAPIService.GET_DISCORD_GUILDS_URL;
+  private makeGetDiscordGuildsURL(group?: string, guild?: string, page?: number, limit?: number): string {
+    let url: string;
+
+    if (group) {
+      url = guild
+        ? DiscordGuildsAPIService.GET_DISCORD_GUILDS_WITH_GUILD_URL.replace(':group', group).replace(':guild', guild)
+        : DiscordGuildsAPIService.GET_DISCORD_GUILDS_WITH_GROUP_URL.replace(':group', group);
+    } else {
+      url = DiscordGuildsAPIService.GET_DISCORD_GUILDS_URL;
+    }
 
     return url
       .replace(':page', (page ?? 1).toString())

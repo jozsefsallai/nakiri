@@ -8,7 +8,7 @@ import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useGuilds } from '@/hooks/useGuilds';
+import { useUserGroups } from '@/hooks/useGroups';
 
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -20,20 +20,20 @@ import { APIPaginationData } from '@/services/axios';
 const MySwal = withReactContent(Swal);
 
 const ManageLinkPatternsIndexPage = () => {
-  const [guilds, _, guildsErrored] = useGuilds();
+  const { groups, errored } = useUserGroups();
   const [items, setItems] = useState<ILinkPattern[] | null>(null);
   const [pagination, setPagination] = useState<APIPaginationData | null>(null);
   const [error, setError] = useState<string>('');
 
   const router = useRouter();
 
-  const fetchItems = async ({ guild, page }: IFetcherOptions = {}) => {
+  const fetchItems = async ({ group, guild, page }: IFetcherOptions = {}) => {
     setItems(null);
     setPagination(null);
     setError('');
 
     try {
-      const { patterns } = await apiService.patterns.getLinkPatterns({ guild, page });
+      const { patterns } = await apiService.patterns.getLinkPatterns({ group, guild, page });
       setItems(patterns);
       setPagination(pagination);
     } catch (err) {
@@ -86,21 +86,21 @@ const ManageLinkPatternsIndexPage = () => {
   };
 
   useEffect(() => {
-    if (guildsErrored) {
-      setError('Failed to fetch your guilds.');
+    if (errored) {
+      setError('Failed to fetch your groups.');
     }
-  }, [guildsErrored]);
+  }, [errored]);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted Link Patterns" buttonText="Add pattern" onButtonClick={handleNewButtonClick}>
-      {guilds && (
+      {groups && (
         <Blacklist
           items={items}
           pagination={pagination}
           fetcher={fetchItems}
           error={error}
           zdsMessage="No blacklisted link patterns have been found."
-          guilds={guilds}
+          groups={groups}
           actions={[
             { label: 'Test', onClick: handleTestActionClick },
             { label: 'Delete', onClick: handleDeleteActionClick }
@@ -108,8 +108,8 @@ const ManageLinkPatternsIndexPage = () => {
         />
       )}
 
-      {guilds === null && !error && <Loading />}
-      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && !error && <Loading />}
+      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
 };

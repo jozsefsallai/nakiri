@@ -8,7 +8,7 @@ export const getLinkPatterns = async (guildId?: string, strict?: boolean, skip?:
 
   const where: FindConditions<LinkPattern>[] = [];
 
-  if (!strict) {
+  if (!guildId || (guildId && !strict)) {
     where.push({ guildId: IsNull() }); // global blacklist (if strict mode is disabled)
   }
 

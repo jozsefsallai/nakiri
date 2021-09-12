@@ -8,7 +8,7 @@ export const getDiscordGuilds = async (guildId?: string, strict?: boolean, skip?
 
   const where: FindConditions<DiscordGuild>[] = [];
 
-  if (!strict) {
+  if (!guildId || (guildId && !strict)) {
     where.push({ guildId: IsNull() }); // global blacklist (if strict mode is disabled)
   }
 

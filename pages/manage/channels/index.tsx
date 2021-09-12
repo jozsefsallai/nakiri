@@ -9,7 +9,7 @@ import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useGuilds } from '@/hooks/useGuilds';
+import { useUserGroups } from '@/hooks/useGroups';
 
 import Swal from 'sweetalert2';
 import toaster from '@/lib/toaster';
@@ -17,20 +17,20 @@ import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
 
 const ManageChannelsIndexPage = () => {
-  const [guilds, _, guildsErrored] = useGuilds();
+  const { groups, errored } = useUserGroups();
   const [items, setItems] = useState<IYouTubeChannelID[] | null>(null);
   const [pagination, setPagination] = useState<APIPaginationData | null>(null);
   const [error, setError] = useState<string>('');
 
   const router = useRouter();
 
-  const fetchItems = async ({ guild, page }: IFetcherOptions = {}) => {
+  const fetchItems = async ({ group, guild, page }: IFetcherOptions = {}) => {
     setItems(null);
     setPagination(null);
     setError('');
 
     try {
-      const { channelIDs, pagination } = await apiService.channelIDs.getChannelIDs({ guild, page });
+      const { channelIDs, pagination } = await apiService.channelIDs.getChannelIDs({ group, guild, page });
       setItems(channelIDs);
       setPagination(pagination);
     } catch (err) {
@@ -90,21 +90,21 @@ const ManageChannelsIndexPage = () => {
   };
 
   useEffect(() => {
-    if (guildsErrored) {
-      setError('Failed to fetch your guilds.');
+    if (errored) {
+      setError('Failed to fetch your groups.');
     }
-  }, [ guildsErrored ]);
+  }, [ errored ]);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted YouTube Channel IDs" buttonText="Add channel ID" onButtonClick={handleNewButtonClick}>
-      {guilds && (
+      {groups && (
         <Blacklist
           items={items}
           pagination={pagination}
           fetcher={fetchItems}
           error={error}
           zdsMessage="No blacklisted channel IDs have been found."
-          guilds={guilds}
+          groups={groups}
           onTextClick={handleTextClick}
           actions={[
             { label: 'Delete', onClick: handleDeleteActionClick }
@@ -113,8 +113,8 @@ const ManageChannelsIndexPage = () => {
         />
       )}
 
-      {guilds === null && !error && <Loading />}
-      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && !error && <Loading />}
+      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
 };

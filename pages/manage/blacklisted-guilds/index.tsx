@@ -8,7 +8,7 @@ import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useGuilds } from '@/hooks/useGuilds';
+import { useUserGroups } from '@/hooks/useGroups';
 
 import Swal from 'sweetalert2';
 import toaster from '@/lib/toaster';
@@ -17,20 +17,20 @@ import { APIPaginationData } from '@/services/axios';
 import DiscordGuildEntry from '@/components/blacklist/entry-data/DiscordGuildEntry';
 
 const ManageGuildsIndexPage = () => {
-  const [ guilds, _, guildsErrored ] = useGuilds();
+  const { groups, errored } = useUserGroups();
   const [ items, setItems ] = useState<IDiscordGuild[] | null>(null);
   const [ pagination, setPagination ] = useState<APIPaginationData | null>(null);
   const [ error, setError ] = useState<string>('');
 
   const router = useRouter();
 
-  const fetchItems = async ({ guild, page }: IFetcherOptions = {}) => {
+  const fetchItems = async ({ group, guild, page }: IFetcherOptions = {}) => {
     setItems(null);
     setPagination(null);
     setError('');
 
     try {
-      const { discordGuilds, pagination } = await apiService.guildIDs.getDiscordGuilds({ guild, page });
+      const { discordGuilds, pagination } = await apiService.guildIDs.getDiscordGuilds({ group, guild, page });
       setItems(discordGuilds);
       setPagination(pagination);
     } catch (err) {
@@ -74,21 +74,21 @@ const ManageGuildsIndexPage = () => {
   };
 
   useEffect(() => {
-    if (guildsErrored) {
-      setError('Failed to fetch your guilds.');
+    if (errored) {
+      setError('Failed to fetch your groups.');
     }
-  }, [guildsErrored]);
+  }, [errored]);
 
   return (
     <DashboardLayout hasContainer title="Blacklisted Discord Guilds" buttonText="Add guild ID" onButtonClick={handleNewButtonClick}>
-      {guilds && (
+      {groups && (
         <Blacklist
           items={items}
           pagination={pagination}
           fetcher={fetchItems}
           error={error}
           zdsMessage="No blacklisted guilds have been found."
-          guilds={guilds}
+          groups={groups}
           actions={[
             { label: 'Delete', onClick: handleDeleteActionClick }
           ]}
@@ -96,8 +96,8 @@ const ManageGuildsIndexPage = () => {
         />
       )}
 
-      {guilds === null && !error && <Loading />}
-      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && !error && <Loading />}
+      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
     </DashboardLayout>
   );
 };
