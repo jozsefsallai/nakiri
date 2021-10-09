@@ -3,24 +3,24 @@ import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { Group, IGroup } from './Group';
 import { GroupMemberPermissionsUtil } from '../../../lib/GroupMemberPermissions';
 
-import omit from 'lodash.omit';
+import omit from '@/lib/omit';
 
 export interface IGroupMember {
   id: string;
   user: Partial<IAuthorizedUser>;
   group: Partial<IGroup>;
   permissions: number;
-};
+}
 
 @Entity()
 export class GroupMember implements IGroupMember {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => AuthorizedUser, user => user.memberships)
+  @ManyToOne(() => AuthorizedUser, (user) => user.memberships)
   user: Partial<AuthorizedUser>;
 
-  @ManyToOne(() => Group, group => group.members)
+  @ManyToOne(() => Group, (group) => group.members)
   group: Partial<Group>;
 
   @Column('int', { default: 1 })

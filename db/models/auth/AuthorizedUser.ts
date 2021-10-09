@@ -1,8 +1,15 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserPermissionsUtil } from '../../../lib/UserPermissions';
 import { GroupMember, IGroupMember } from '../groups/GroupMember';
 
-import omit from 'lodash.omit';
+import omit from '@/lib/omit';
 
 export interface IAuthorizedUser {
   id: string;
@@ -15,7 +22,7 @@ export interface IAuthorizedUser {
   image?: string;
   hideThumbnails: boolean;
   memberships?: Partial<IGroupMember>[];
-};
+}
 
 @Entity()
 export class AuthorizedUser implements IAuthorizedUser {
@@ -46,7 +53,7 @@ export class AuthorizedUser implements IAuthorizedUser {
   @Column('bool', { default: false })
   hideThumbnails: boolean;
 
-  @OneToMany(() => GroupMember, member => member.user)
+  @OneToMany(() => GroupMember, (member) => member.user)
   memberships: Partial<GroupMember>[];
 
   hasPermission(permission: number): boolean {
@@ -66,7 +73,9 @@ export class AuthorizedUser implements IAuthorizedUser {
   }
 
   canManageGuildMonitoredKeywords(): boolean {
-    return UserPermissionsUtil.canManageGuildMonitoredKeywords(this.permissions);
+    return UserPermissionsUtil.canManageGuildMonitoredKeywords(
+      this.permissions,
+    );
   }
 
   canCreateGroups(): boolean {
@@ -84,7 +93,7 @@ export class AuthorizedUser implements IAuthorizedUser {
       discriminator: this.discriminator,
       image: this.image,
       hideThumbnails: this.hideThumbnails,
-      memberships: this.memberships?.map(m => omit(m.toJSON(), 'user')),
+      memberships: this.memberships?.map((m) => omit(m.toJSON(), 'user')),
     };
   }
 }

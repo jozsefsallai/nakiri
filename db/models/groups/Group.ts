@@ -1,9 +1,18 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { AuthorizedGuild, IAuthorizedGuild } from '../auth/AuthorizedGuild';
 import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { GroupMember, IGroupMember } from './GroupMember';
 
-import omit from 'lodash.omit';
+import omit from '@/lib/omit';
 
 export interface IGroup {
   id: string;
@@ -17,7 +26,7 @@ export interface IGroup {
   guilds?: Partial<IAuthorizedGuild>[];
   myPermissions?: number;
   isCreator?: boolean;
-};
+}
 
 @Entity()
 export class Group implements IGroup {
@@ -42,10 +51,10 @@ export class Group implements IGroup {
   @ManyToOne(() => AuthorizedUser)
   creator: Partial<AuthorizedUser>;
 
-  @OneToMany(() => GroupMember, member => member.group)
+  @OneToMany(() => GroupMember, (member) => member.group)
   members: Partial<GroupMember>[];
 
-  @ManyToMany(() => AuthorizedGuild, guild => guild.groups)
+  @ManyToMany(() => AuthorizedGuild, (guild) => guild.groups)
   guilds: Partial<AuthorizedGuild>[];
 
   toJSON(): IGroup {
@@ -57,8 +66,8 @@ export class Group implements IGroup {
       description: this.description,
       apiKey: this.apiKey,
       creator: this.creator && omit(this.creator, 'memberships').toJSON(),
-      members: this.members?.map(m => omit(m, 'group').toJSON()),
-      guilds: this.guilds?.map(g => omit(g, 'groups').toJSON()),
+      members: this.members?.map((m) => omit(m, 'group').toJSON()),
+      guilds: this.guilds?.map((g) => omit(g, 'groups').toJSON()),
     };
   }
 }
