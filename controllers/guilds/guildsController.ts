@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/client';
 import { addGuild } from './addGuild';
 import { fetchGuilds } from './fetchGuilds';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 import firstOf from '@/lib/firstOf';
 
 export const all: NextApiHandler = async (req, res) => {
@@ -13,11 +13,11 @@ export const all: NextApiHandler = async (req, res) => {
     const guilds = await fetchGuilds(session, true, false);
     return res.json({ ok: true, guilds });
   } catch (err) {
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -30,11 +30,11 @@ export const index: NextApiHandler = async (req, res) => {
     const guilds = await fetchGuilds(session, false, !skipCache);
     return res.json({ ok: true, guilds });
   } catch (err) {
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -47,7 +47,7 @@ export const insert: NextApiHandler = async (req, res) => {
   if (typeof guildId === 'undefined' || guildId.length === 0) {
     return res.status(400).json({
       ok: false,
-      error: 'GUILD_ID_NOT_PROVIDED'
+      error: 'GUILD_ID_NOT_PROVIDED',
     });
   }
 
@@ -58,15 +58,15 @@ export const insert: NextApiHandler = async (req, res) => {
     if (err.name === 'AddGuildError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };

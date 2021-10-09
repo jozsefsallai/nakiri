@@ -6,7 +6,7 @@ import { removeWhitelistedChannel } from './removeWhitelistedChannel';
 
 import firstOf from '@/lib/firstOf';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 
 export const index: NextApiHandler = async (req, res) => {
   const guild = firstOf(req.query.guild);
@@ -15,7 +15,7 @@ export const index: NextApiHandler = async (req, res) => {
 
   return res.json({
     ok: true,
-    channels
+    channels,
   });
 };
 
@@ -26,7 +26,7 @@ export const create: NextApiHandler = async (req, res) => {
   if (!channelId) {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_CHANNEL_ID'
+      error: 'MISSING_CHANNEL_ID',
     });
   }
 
@@ -37,15 +37,15 @@ export const create: NextApiHandler = async (req, res) => {
     if (err.name === 'AddKeywordWhitelistedChannelError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -61,15 +61,15 @@ export const destroy: NextApiHandler = async (req, res) => {
     if (err.name === 'RemoveKeywordWhitelistedChannelError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };

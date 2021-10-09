@@ -8,7 +8,7 @@ import { getUsers } from './getUsers';
 import { unauthorizeUser } from './unauthorizeUser';
 import { updateUser, updateUserPermissions } from './updateUser';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 import { UpdateUserAPIRequest } from '@/services/apis/users/UsersAPIService';
 
 export const get: NextApiHandler = async (req, res) => {
@@ -18,13 +18,13 @@ export const get: NextApiHandler = async (req, res) => {
   if (user === null) {
     return res.status(500).json({
       ok: false,
-      error: 'USER_IDENTIFICATION_FAILED'
+      error: 'USER_IDENTIFICATION_FAILED',
     });
   }
 
   return res.json({
     ok: true,
-    user
+    user,
   });
 };
 
@@ -34,7 +34,7 @@ export const getData: NextApiHandler = async (req, res) => {
   if (typeof discordId === 'undefined' || discordId.length === 0) {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_DISCORD_ID'
+      error: 'MISSING_DISCORD_ID',
     });
   }
 
@@ -42,14 +42,14 @@ export const getData: NextApiHandler = async (req, res) => {
     const data = await getDiscordUser(discordId);
     return res.json({
       ok: true,
-      data
+      data,
     });
   } catch (err) {
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'FAILED_TO_FETCH_USER_DATA'
+      error: 'FAILED_TO_FETCH_USER_DATA',
     });
   }
 };
@@ -59,11 +59,11 @@ export const index: NextApiHandler = async (req, res) => {
     const users = await getUsers();
     return res.json({ ok: true, users });
   } catch (err) {
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -75,14 +75,14 @@ export const authorize: NextApiHandler = async (req, res) => {
   if (typeof discordId === 'undefined') {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_DISCORD_ID'
+      error: 'MISSING_DISCORD_ID',
     });
   }
 
   if (typeof permissions === 'undefined' || permissions.length === 0) {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_PERMISSIONS'
+      error: 'MISSING_PERMISSIONS',
     });
   }
 
@@ -94,15 +94,15 @@ export const authorize: NextApiHandler = async (req, res) => {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code,
-        ...(err.data && { data: err.data })
+        ...(err.data && { data: err.data }),
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -115,11 +115,11 @@ export const update: NextApiHandler = async (req, res) => {
     const user = await updateUser(session, { hideThumbnails });
     return res.json({ ok: true, user });
   } catch (err) {
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -131,7 +131,7 @@ export const updatePermissions: NextApiHandler = async (req, res) => {
   if (typeof permissions === 'undefined' || permissions.length === 0) {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_PERMISSIONS'
+      error: 'MISSING_PERMISSIONS',
     });
   }
 
@@ -143,15 +143,15 @@ export const updatePermissions: NextApiHandler = async (req, res) => {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code,
-        ...(err.data && { data: err.data })
+        ...(err.data && { data: err.data }),
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -166,15 +166,15 @@ export const destroy: NextApiHandler = async (req, res) => {
     if (err.name === 'UnauthorizeUserError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };

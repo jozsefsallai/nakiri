@@ -6,7 +6,7 @@ import { createGroup } from './createGroup';
 
 import firstOf from '@/lib/firstOf';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 import { addGuildToGroup, addUserToGroup } from './updateGroup';
 
 export const index: NextApiHandler = async (req, res) => {
@@ -19,7 +19,8 @@ export const index: NextApiHandler = async (req, res) => {
       groups,
     });
   } catch (err) {
-    captureException(err);
+    handleError(err);
+    console.error(err);
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR',
@@ -45,7 +46,7 @@ export const get: NextApiHandler = async (req, res) => {
       });
     }
 
-    captureException(err);
+    handleError(err);
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR',
@@ -70,7 +71,7 @@ export const create: NextApiHandler = async (req, res) => {
       });
     }
 
-    captureException(err);
+    handleError(err);
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR',
@@ -104,7 +105,7 @@ export const addGuild: NextApiHandler = async (req, res) => {
       });
     }
 
-    captureException(err);
+    handleError(err);
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR',
@@ -128,12 +129,17 @@ export const addMember: NextApiHandler = async (req, res) => {
   if (typeof permissions === 'undefined' || permissions.length === 0) {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_PERMISSIONS'
+      error: 'MISSING_PERMISSIONS',
     });
   }
 
   try {
-    const group = await addUserToGroup(session, groupId, discordId, permissions);
+    const group = await addUserToGroup(
+      session,
+      groupId,
+      discordId,
+      permissions,
+    );
     return res.json({
       ok: true,
       group,
@@ -143,16 +149,16 @@ export const addMember: NextApiHandler = async (req, res) => {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code,
-        ...(err.data && { data: err.data })
+        ...(err.data && { data: err.data }),
       });
     }
 
-    captureException(err);
+    handleError(err);
     console.error(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };

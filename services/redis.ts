@@ -1,7 +1,7 @@
 import * as _redis from 'redis';
 import config from '@/config';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 
 class Redis {
   private static instance: Redis;
@@ -10,9 +10,9 @@ class Redis {
   constructor() {
     this.client = _redis.createClient(config.redis.buildRedisUrl(0));
 
-    this.client.on('error', err => {
+    this.client.on('error', (err) => {
       console.error(err);
-      captureException(err);
+      handleError(err);
     });
   }
 
@@ -56,7 +56,11 @@ class Redis {
     });
   }
 
-  public async set<T = string>(key: string, value: T, expiry?: number): Promise<void> {
+  public async set<T = string>(
+    key: string,
+    value: T,
+    expiry?: number,
+  ): Promise<void> {
     const serializedValue = this.serialize<T>(value);
 
     return new Promise((resolve, reject) => {

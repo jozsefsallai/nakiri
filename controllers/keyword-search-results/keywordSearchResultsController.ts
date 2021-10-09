@@ -1,13 +1,17 @@
 import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
 
-import { getPagination, hasNextPages, hasPreviousPages } from 'next-api-paginate';
+import {
+  getPagination,
+  hasNextPages,
+  hasPreviousPages,
+} from 'next-api-paginate';
 
 import { getKeywordSearchResults } from './getKeywordSearchResults';
 
 import firstOf from '@/lib/firstOf';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 
 export const index: NextApiHandler = async (req, res) => {
   const id = firstOf(req.query.id);
@@ -19,7 +23,12 @@ export const index: NextApiHandler = async (req, res) => {
   const take = limit !== Infinity ? limit : undefined;
 
   try {
-    const { keywordSearchResults, totalCount } = await getKeywordSearchResults(session, id, skip, take);
+    const { keywordSearchResults, totalCount } = await getKeywordSearchResults(
+      session,
+      id,
+      skip,
+      take,
+    );
 
     const pageCount = limit !== Infinity ? Math.ceil(totalCount / limit) : 1;
 
@@ -29,27 +38,27 @@ export const index: NextApiHandler = async (req, res) => {
       pageCount,
       totalCount,
       hasPrevious: hasPreviousPages(req),
-      hasNext: hasNextPages(req)(pageCount)
+      hasNext: hasNextPages(req)(pageCount),
     };
 
     return res.json({
       ok: true,
       pagination,
-      keywordSearchResults
+      keywordSearchResults,
     });
   } catch (err) {
     if (err.name === 'GetKeywordSearchResultsError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };

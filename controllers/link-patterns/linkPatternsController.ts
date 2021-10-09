@@ -1,6 +1,10 @@
 import { NextApiHandler } from 'next';
 
-import { getPagination, hasNextPages, hasPreviousPages } from 'next-api-paginate';
+import {
+  getPagination,
+  hasNextPages,
+  hasPreviousPages,
+} from 'next-api-paginate';
 
 import firstOf from '@/lib/firstOf';
 
@@ -9,7 +13,7 @@ import { addLinkPattern } from './addLinkPattern';
 import { deleteLinkPattern } from './deleteLinkPattern';
 import { getSession } from 'next-auth/client';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 
 export const index: NextApiHandler = async (req, res) => {
   const strict = firstOf(req.query.strict) === 'true';
@@ -20,7 +24,12 @@ export const index: NextApiHandler = async (req, res) => {
   const skip = limit !== Infinity ? (page - 1) * limit : undefined;
   const take = limit !== Infinity ? limit : undefined;
 
-  const { patterns, totalCount } = await getLinkPatterns(firstOf(req.query.guild), strict, skip, take);
+  const { patterns, totalCount } = await getLinkPatterns(
+    firstOf(req.query.guild),
+    strict,
+    skip,
+    take,
+  );
   const pageCount = limit !== Infinity ? Math.ceil(totalCount / limit) : 1;
 
   const pagination = {
@@ -29,21 +38,21 @@ export const index: NextApiHandler = async (req, res) => {
     pageCount,
     totalCount,
     hasPrevious: hasPreviousPages(req),
-    hasNext: hasNextPages(req)(pageCount)
+    hasNext: hasNextPages(req)(pageCount),
   };
 
   if (compact) {
     return res.json({
       ok: true,
       pagination,
-      patterns: patterns.map(entry => entry.pattern)
+      patterns: patterns.map((entry) => entry.pattern),
     });
   }
 
   return res.json({
     ok: true,
     pagination,
-    patterns
+    patterns,
   });
 };
 
@@ -54,7 +63,7 @@ export const create: NextApiHandler = async (req, res) => {
   if (typeof pattern === 'undefined') {
     return res.status(400).json({
       ok: false,
-      error: 'MISSING_REGEX_PATTERN'
+      error: 'MISSING_REGEX_PATTERN',
     });
   }
 
@@ -65,15 +74,15 @@ export const create: NextApiHandler = async (req, res) => {
     if (err.name === 'LinkPatternCreationError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -89,15 +98,15 @@ export const destroy: NextApiHandler = async (req, res) => {
     if (err.name === 'LinkPatternDeletionError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };

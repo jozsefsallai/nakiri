@@ -1,14 +1,17 @@
 import { NextApiHandler } from 'next';
 
 import { createMonitoredKeyword } from './createMonitoredKeyword';
-import { getMonitoredKeywords, getMonitoredKeyword } from './getMonitoredKeywords';
+import {
+  getMonitoredKeywords,
+  getMonitoredKeyword,
+} from './getMonitoredKeywords';
 import { updateMonitoredKeyword } from './updateMonitoredKeyword';
 import { getSession } from 'next-auth/client';
 import { deleteMonitoredKeyword } from './deleteMonitoredKeyword';
 
 import firstOf from '@/lib/firstOf';
 
-import { captureException } from '@sentry/nextjs';
+import { handleError } from '@/lib/errors';
 
 export const index: NextApiHandler = async (req, res) => {
   const guild = firstOf(req.query.guild);
@@ -17,7 +20,7 @@ export const index: NextApiHandler = async (req, res) => {
 
   return res.json({
     ok: true,
-    entries
+    entries,
   });
 };
 
@@ -29,13 +32,13 @@ export const get: NextApiHandler = async (req, res) => {
   if (!entry) {
     return res.status(404).json({
       ok: false,
-      error: 'ENTRY_NOT_FOUND'
+      error: 'ENTRY_NOT_FOUND',
     });
   }
 
   return res.json({
     ok: true,
-    entry
+    entry,
   });
 };
 
@@ -47,21 +50,21 @@ export const create: NextApiHandler = async (req, res) => {
   if (!keyword) {
     return res.status(400).json({
       ok: false,
-      error: 'KEYWORD_NOT_PROVIDED'
+      error: 'KEYWORD_NOT_PROVIDED',
     });
   }
 
   if (!guildId) {
     return res.status(400).json({
       ok: false,
-      error: 'GUILD_NOT_PROVIDED'
+      error: 'GUILD_NOT_PROVIDED',
     });
   }
 
   if (!webhookUrl) {
     return res.status(400).json({
       ok: false,
-      error: 'WEBHOOK_URL_NOT_PROVIDED'
+      error: 'WEBHOOK_URL_NOT_PROVIDED',
     });
   }
 
@@ -72,15 +75,15 @@ export const create: NextApiHandler = async (req, res) => {
     if (err.name === 'MonitoredKeywordCreationError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -95,21 +98,25 @@ export const update: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
 
   try {
-    const entry = await updateMonitoredKeyword(session, id, { keyword, guildId, webhookUrl });
+    const entry = await updateMonitoredKeyword(session, id, {
+      keyword,
+      guildId,
+      webhookUrl,
+    });
     return res.json({ ok: true, entry });
   } catch (err) {
     if (err.name === 'MonitoredKeywordUpdateError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
@@ -126,15 +133,15 @@ export const destroy: NextApiHandler = async (req, res) => {
     if (err.name === 'MonitoredKeywordDeletionError') {
       return res.status(err.statusCode).json({
         ok: false,
-        error: err.code
+        error: err.code,
       });
     }
 
-    captureException(err);
+    handleError(err);
 
     return res.status(500).json({
       ok: false,
-      error: 'INTERNAL_SERVER_ERROR'
+      error: 'INTERNAL_SERVER_ERROR',
     });
   }
 };
