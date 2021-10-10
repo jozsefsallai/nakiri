@@ -11,10 +11,10 @@ import { UserPermissions } from '@/lib/UserPermissions';
 export default bar({
   post: withSentry(
     ensureAuthenticated(
-      ensureUserHasPermissions(
-        usersController.authorize,
-        [ UserPermissions.MANAGE_AUTHORIZED_USERS ]
-      ), true
-    )
-  )
+      ensureUserHasPermissions(usersController.authorize, [
+        UserPermissions.MANAGE_AUTHORIZED_USERS,
+      ]),
+      true,
+    ),
+  ),
 });

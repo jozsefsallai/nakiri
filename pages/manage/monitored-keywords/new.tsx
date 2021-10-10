@@ -10,7 +10,10 @@ import * as NewMonitoredKeywordFormValidator from '@/validators/NewMonitoredKeyw
 import { CreateMonitoredKeywordAPIRequest } from '@/services/apis/monitored-keywords/MonitoredKeywordsAPIService';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
-import MessageBox, { CompactDangerMessageBox, MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  CompactDangerMessageBox,
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 
@@ -21,9 +24,16 @@ const CreateMonitoredKeywordPage = () => {
 
   const router = useRouter();
 
-  const handleFormSubmit = async ({ keyword, webhookUrl }: CreateMonitoredKeywordAPIRequest, { setSubmitting }: FormikHelpers<CreateMonitoredKeywordAPIRequest>) => {
+  const handleFormSubmit = async (
+    { keyword, webhookUrl }: CreateMonitoredKeywordAPIRequest,
+    { setSubmitting }: FormikHelpers<CreateMonitoredKeywordAPIRequest>,
+  ) => {
     try {
-      await apiService.monitoredKeywords.createMonitoredKeyword({ keyword, guildId, webhookUrl });
+      await apiService.monitoredKeywords.createMonitoredKeyword({
+        keyword,
+        guildId,
+        webhookUrl,
+      });
 
       toaster.success(`Added keyword "${keyword}".`);
 
@@ -56,7 +66,9 @@ const CreateMonitoredKeywordPage = () => {
 
   return (
     <DashboardLayout hasContainer title="Create Monitored Keyword">
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
 
       <Formik
         initialValues={{ keyword: '', webhookUrl: '', guildId: '' }}
@@ -68,27 +80,41 @@ const CreateMonitoredKeywordPage = () => {
             <div className="input-group">
               <label htmlFor="keyword">Keyword:</label>
               <Field name="keyword" />
-              <ErrorMessage name="keyword" component={CompactDangerMessageBox} />
+              <ErrorMessage
+                name="keyword"
+                component={CompactDangerMessageBox}
+              />
             </div>
 
             <div className="input-group">
               <label htmlFor="guild">Guild</label>
-              <select onChange={e => handleGuildChange(e.currentTarget.value)} name="guild">
-                {guilds === null && <option disabled>--- loading guilds ---</option>}
-                {guilds && guilds.map(guild => (
-                  <option value={guild.id}>{guild.name}</option>
-                ))}
+              <select
+                onChange={(e) => handleGuildChange(e.currentTarget.value)}
+                name="guild"
+              >
+                {guilds === null && (
+                  <option disabled>--- loading guilds ---</option>
+                )}
+                {guilds &&
+                  guilds.map((guild) => (
+                    <option value={guild.id}>{guild.name}</option>
+                  ))}
               </select>
             </div>
 
             <div className="input-group">
               <label htmlFor="webhookUrl">Webhook URL:</label>
               <Field name="webhookUrl" />
-              <ErrorMessage name="webhookUrl" component={CompactDangerMessageBox} />
+              <ErrorMessage
+                name="webhookUrl"
+                component={CompactDangerMessageBox}
+              />
             </div>
 
             <div className="input-group">
-              <Button type="submit" disabled={isSubmitting}>Create</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Create
+              </Button>
             </div>
           </Form>
         )}
@@ -98,10 +124,14 @@ const CreateMonitoredKeywordPage = () => {
 };
 
 export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(req, res, UserPermissions.MANAGE_MONITORED_KEYWORDS);
+  await redirectIfDoesNotHavePermission(
+    req,
+    res,
+    UserPermissions.MANAGE_MONITORED_KEYWORDS,
+  );
 
   return {
-    props: {}
+    props: {},
   };
 };
 

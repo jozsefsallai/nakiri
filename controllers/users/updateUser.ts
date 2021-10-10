@@ -1,5 +1,8 @@
 import db from '@/services/db';
-import { AuthorizedUser, IAuthorizedUser } from '@/db/models/auth/AuthorizedUser';
+import {
+  AuthorizedUser,
+  IAuthorizedUser,
+} from '@/db/models/auth/AuthorizedUser';
 import { UserPermissions } from '@/lib/UserPermissions';
 import { APIError } from '@/lib/errors';
 import { Session } from 'next-auth';
@@ -15,11 +18,16 @@ export class UserUpdateError extends APIError {
   }
 }
 
-export const updateUser = async (session: Session, attributes: UpdateUserAPIRequest): Promise<IAuthorizedUser> => {
+export const updateUser = async (
+  session: Session,
+  attributes: UpdateUserAPIRequest,
+): Promise<IAuthorizedUser> => {
   await db.prepare();
   const authorizedUserRepository = db.getRepository(AuthorizedUser);
 
-  const user = await authorizedUserRepository.findOne({ discordId: session.user.id });
+  const user = await authorizedUserRepository.findOne({
+    discordId: session.user.id,
+  });
 
   if (typeof attributes.hideThumbnails !== 'undefined') {
     user.hideThumbnails = attributes.hideThumbnails;
@@ -29,7 +37,10 @@ export const updateUser = async (session: Session, attributes: UpdateUserAPIRequ
   return user;
 };
 
-export const updateUserPermissions = async (id: string, permissionsList: number[]): Promise<IAuthorizedUser> => {
+export const updateUserPermissions = async (
+  id: string,
+  permissionsList: number[],
+): Promise<IAuthorizedUser> => {
   await db.prepare();
   const authorizedUserRepository = db.getRepository(AuthorizedUser);
 
@@ -39,7 +50,7 @@ export const updateUserPermissions = async (id: string, permissionsList: number[
   }
 
   const forbiddenPermissions = [];
-  permissionsList.forEach(permission => {
+  permissionsList.forEach((permission) => {
     if (!(permission in UserPermissions)) {
       forbiddenPermissions.push(permission);
     }
@@ -47,7 +58,7 @@ export const updateUserPermissions = async (id: string, permissionsList: number[
 
   if (forbiddenPermissions.length > 0) {
     throw new UserUpdateError(400, 'FORBIDDEN_PERMISSIONS', {
-      forbiddenPermissions
+      forbiddenPermissions,
     });
   }
 

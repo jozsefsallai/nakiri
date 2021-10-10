@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import Button, { ButtonSize } from '@/components/common/button/Button';
 import Loading from '@/components/loading/Loading';
 import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
@@ -29,7 +31,8 @@ const ManageMonitoredKeywordsIndexPage = () => {
     setError('');
 
     try {
-      const { entries } = await apiService.monitoredKeywords.getMonitoredKeywords(guild);
+      const { entries } =
+        await apiService.monitoredKeywords.getMonitoredKeywords(guild);
       setItems(entries);
     } catch (err) {
       setError('Failed to load monitored keywords.');
@@ -39,7 +42,7 @@ const ManageMonitoredKeywordsIndexPage = () => {
   const deleteItem = async (id: string) => {
     try {
       await apiService.monitoredKeywords.deleteMonitoredKeyword(id);
-      setItems(items => items.filter(item => item.id !== id));
+      setItems((items) => items.filter((item) => item.id !== id));
       toaster.success('Monitored keyword deleted successfully.');
     } catch (err) {
       const message = err?.response?.data?.error;
@@ -71,7 +74,7 @@ const ManageMonitoredKeywordsIndexPage = () => {
       text: 'You are about to delete this monitored keyword AND every entry associated to it. This cannot be undone!',
       showCancelButton: true,
       confirmButtonText: 'Delete keyword and entries',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
     });
 
     if (result.isConfirmed) {
@@ -80,7 +83,7 @@ const ManageMonitoredKeywordsIndexPage = () => {
   };
 
   const handleTextClick = async (text: string) => {
-    const entry = items.find(item => item.keyword === text);
+    const entry = items.find((item) => item.keyword === text);
     await router.push(`/manage/monitored-keywords/${entry.id}`);
   };
 
@@ -91,8 +94,15 @@ const ManageMonitoredKeywordsIndexPage = () => {
   }, [guildsErrored]);
 
   return (
-    <DashboardLayout hasContainer title="Monitored Keywords" buttonText="Add keyword" onButtonClick={handleNewButtonClick}>
-      <Button size={ButtonSize.SMALL} onClick={handleWhitelistsClick}>Manage Whitelisted Channels</Button>
+    <DashboardLayout
+      hasContainer
+      title="Monitored Keywords"
+      buttonText="Add keyword"
+      onButtonClick={handleNewButtonClick}
+    >
+      <Button size={ButtonSize.SMALL} onClick={handleWhitelistsClick}>
+        Manage Whitelisted Channels
+      </Button>
 
       {guilds && (
         <Blacklist
@@ -105,21 +115,27 @@ const ManageMonitoredKeywordsIndexPage = () => {
           hideGlobal
           actions={[
             { label: 'Edit', onClick: handleEditActionClick },
-            { label: 'Delete', onClick: handleDeleteActionClick }
+            { label: 'Delete', onClick: handleDeleteActionClick },
           ]}
         />
       )}
 
       {guilds === null && !error && <Loading />}
-      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {guilds === null && error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
     </DashboardLayout>
   );
 };
 
 export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(req, res, UserPermissions.MANAGE_MONITORED_KEYWORDS);
+  await redirectIfDoesNotHavePermission(
+    req,
+    res,
+    UserPermissions.MANAGE_MONITORED_KEYWORDS,
+  );
   return {
-    props: {}
+    props: {},
   };
 };
 

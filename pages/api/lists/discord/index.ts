@@ -13,14 +13,12 @@ export default bar({
       ensureHasAccessToGuild(
         withPagination({
           defaultLimit: Infinity,
-          maxLimit: Infinity
-        })(discordGuildsController.index)
-      )
-    )
+          maxLimit: Infinity,
+        })(discordGuildsController.index),
+      ),
+    ),
   ),
   post: withSentry(
-    ensureAuthenticated(
-      ensureHasAccessToGuild(discordGuildsController.create)
-    )
-  )
+    ensureAuthenticated(ensureHasAccessToGuild(discordGuildsController.create)),
+  ),
 });

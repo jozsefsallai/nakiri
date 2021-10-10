@@ -3,7 +3,9 @@ import { AddChannelIDAPIRequest } from '@/services/apis/blacklists/ChannelIDsAPI
 
 import { errors as _errors } from '@/lib/errors';
 
-export const validate = (fields: AddChannelIDAPIRequest): Partial<AddChannelIDAPIRequest> => {
+export const validate = (
+  fields: AddChannelIDAPIRequest,
+): Partial<AddChannelIDAPIRequest> => {
   const errors: Partial<AddChannelIDAPIRequest> = {};
 
   if (!isValidYouTubeChannelID(fields.channelID)) {

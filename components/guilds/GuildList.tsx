@@ -7,14 +7,25 @@ export interface GuildListProps {
   onGuildClick?(guild: IGuild);
   activeGuild?: IGuild;
   compact?: boolean;
-};
+}
 
-const GuildList = ({ guilds, onGuildClick, activeGuild, compact }: GuildListProps) => {
+const GuildList = ({
+  guilds,
+  onGuildClick,
+  activeGuild,
+  compact,
+}: GuildListProps) => {
   return (
     <div>
-      {guilds.map(guild => (
+      {guilds.map((guild) => (
         <div key={guild.id} className="flex items-center">
-          {compact && <CompactGuildListItem guild={guild} onClick={onGuildClick} active={activeGuild?.id === guild.id} />}
+          {compact && (
+            <CompactGuildListItem
+              guild={guild}
+              onClick={onGuildClick}
+              active={activeGuild?.id === guild.id}
+            />
+          )}
           {!compact && <GuildListItem guild={guild} onClick={onGuildClick} />}
         </div>
       ))}

@@ -14,7 +14,10 @@ export class YouTubeChannelIDCreationError extends APIError {
   }
 }
 
-export const addYouTubeChannelID = async (channelId: string, guildId?: string) => {
+export const addYouTubeChannelID = async (
+  channelId: string,
+  guildId?: string,
+) => {
   await db.prepare();
   const youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
 
@@ -24,7 +27,7 @@ export const addYouTubeChannelID = async (channelId: string, guildId?: string) =
   }
 
   const where: FindConditions<YouTubeChannelID>[] = [
-    { channelId, guildId: IsNull() }
+    { channelId, guildId: IsNull() },
   ];
 
   if (guildId) {

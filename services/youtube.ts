@@ -7,19 +7,22 @@ export interface YouTubeVideoData {
   uploadDate: Date;
   uploaderId: string;
   uploaderName: string;
-};
+}
 
 export interface YouTubeChannelData {
   name: string;
   description?: string;
   publishedAt: Date;
   thumbnailUrl?: string;
-};
+}
 
 export class YouTubeAPIService {
-  static VIDEO_DATA_API_URL = 'https://www.googleapis.com/youtube/v3/videos?id=:videoId&key=:apiKey&part=snippet';
-  static CHANNEL_DATA_API_URL = 'https://www.googleapis.com/youtube/v3/channels?id=:channelId&key=:apiKey&part=snippet';
-  static CHANNEL_SEARCH_API_URL = 'https://www.googleapis.com/youtube/v3/search?q=:handle&part=snippet&type=channel&key=:apiKey';
+  static VIDEO_DATA_API_URL =
+    'https://www.googleapis.com/youtube/v3/videos?id=:videoId&key=:apiKey&part=snippet';
+  static CHANNEL_DATA_API_URL =
+    'https://www.googleapis.com/youtube/v3/channels?id=:channelId&key=:apiKey&part=snippet';
+  static CHANNEL_SEARCH_API_URL =
+    'https://www.googleapis.com/youtube/v3/search?q=:handle&part=snippet&type=channel&key=:apiKey';
 
   private apiKey: string;
 
@@ -36,10 +39,18 @@ export class YouTubeAPIService {
     }
 
     const video = data.items[0];
-    const { publishedAt, channelId, title, description, thumbnails, channelTitle } = video.snippet;
+    const {
+      publishedAt,
+      channelId,
+      title,
+      description,
+      thumbnails,
+      channelTitle,
+    } = video.snippet;
 
-    const thumbnailEntries = thumbnails && Object.values(thumbnails) as any;
-    const thumbnailUrl = thumbnailEntries?.length > 0 && thumbnailEntries.pop().url;
+    const thumbnailEntries = thumbnails && (Object.values(thumbnails) as any);
+    const thumbnailUrl =
+      thumbnailEntries?.length > 0 && thumbnailEntries.pop().url;
 
     const metadata: YouTubeVideoData = {
       title,
@@ -47,13 +58,15 @@ export class YouTubeAPIService {
       thumbnailUrl,
       uploadDate: new Date(publishedAt),
       uploaderId: channelId,
-      uploaderName: channelTitle
+      uploaderName: channelTitle,
     };
 
     return metadata;
   }
 
-  async getChannelMetadata(channelId: string): Promise<YouTubeChannelData | null> {
+  async getChannelMetadata(
+    channelId: string,
+  ): Promise<YouTubeChannelData | null> {
     const url = this.makeChannelDataAPIUrl(channelId);
     const response = await axios.get(url);
     const data = response.data;
@@ -65,14 +78,15 @@ export class YouTubeAPIService {
 
     const { publishedAt, description, thumbnails, title } = channel.snippet;
 
-    const thumbnailEntries = thumbnails && Object.values(thumbnails) as any;
-    const thumbnailUrl = thumbnailEntries?.length > 0 && thumbnailEntries.pop().url;
+    const thumbnailEntries = thumbnails && (Object.values(thumbnails) as any);
+    const thumbnailUrl =
+      thumbnailEntries?.length > 0 && thumbnailEntries.pop().url;
 
     const metadata: YouTubeChannelData = {
       name: title,
       description,
       publishedAt: new Date(publishedAt),
-      thumbnailUrl
+      thumbnailUrl,
     };
 
     return metadata;
@@ -93,20 +107,23 @@ export class YouTubeAPIService {
   }
 
   private makeVideoDataAPIUrl(videoId: string): string {
-    return YouTubeAPIService.VIDEO_DATA_API_URL
-      .replace(':videoId', videoId)
-      .replace(':apiKey', this.apiKey);
+    return YouTubeAPIService.VIDEO_DATA_API_URL.replace(
+      ':videoId',
+      videoId,
+    ).replace(':apiKey', this.apiKey);
   }
 
   private makeChannelDataAPIUrl(channelId: string): string {
-    return YouTubeAPIService.CHANNEL_DATA_API_URL
-      .replace(':channelId', channelId)
-      .replace(':apiKey', this.apiKey);
+    return YouTubeAPIService.CHANNEL_DATA_API_URL.replace(
+      ':channelId',
+      channelId,
+    ).replace(':apiKey', this.apiKey);
   }
 
   private makeChannelSearchAPIUrl(handle: string): string {
-    return YouTubeAPIService.CHANNEL_SEARCH_API_URL
-      .replace(':handle', handle)
-      .replace(':apiKey', this.apiKey);
+    return YouTubeAPIService.CHANNEL_SEARCH_API_URL.replace(
+      ':handle',
+      handle,
+    ).replace(':apiKey', this.apiKey);
   }
 }

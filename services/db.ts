@@ -1,6 +1,13 @@
 import config from '../config';
 
-import { Connection, ConnectionOptions, createConnection, getConnection, getManager, getRepository } from 'typeorm';
+import {
+  Connection,
+  ConnectionOptions,
+  createConnection,
+  getConnection,
+  getManager,
+  getRepository,
+} from 'typeorm';
 
 import { YouTubeVideoID } from '../db/models/blacklists/YouTubeVideoID';
 import { YouTubeChannelID } from '../db/models/blacklists/YouTubeChannelID';
@@ -27,7 +34,7 @@ const connectionOptions: ConnectionOptions = {
   database: config.database.name,
 
   extra: {
-    charset: 'utf8mb4_unicode_ci'
+    charset: 'utf8mb4_unicode_ci',
   },
 
   namingStrategy: new CamelCaseNamingStrategy(),
@@ -45,8 +52,8 @@ const connectionOptions: ConnectionOptions = {
 
     MonitoredKeyword,
     KeywordSearchResult,
-    KeywordWhitelistedChannel
-  ]
+    KeywordWhitelistedChannel,
+  ],
 };
 
 let connectionReadyPromise: Promise<void> | null = null;
@@ -78,11 +85,9 @@ const db = {
 
   getConnection,
   getManager,
-  getRepository
+  getRepository,
 };
 
 export default db;
 
-export {
-  connectionOptions
-};
+export { connectionOptions };

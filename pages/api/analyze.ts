@@ -8,8 +8,6 @@ import * as analyzerController from '@/controllers/analyzer/analyzerController';
 
 export default bar({
   post: withSentry(
-    ensureAuthenticated(
-      ensureHasAccessToGuild(analyzerController.analyze)
-    )
-  )
+    ensureAuthenticated(ensureHasAccessToGuild(analyzerController.analyze)),
+  ),
 });

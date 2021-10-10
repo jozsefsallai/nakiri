@@ -11,20 +11,26 @@ import * as NewChannelIDFormValidator from '@/validators/NewChannelIDFormValidat
 import { AddChannelIDAPIRequest } from '@/services/apis/blacklists/ChannelIDsAPIService';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
-import MessageBox, { CompactDangerMessageBox, MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  CompactDangerMessageBox,
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import { redirectIfDoesNotHaveOneOfPermissions } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 
 const NewChannelIDPage = () => {
-  const [ currentUser, _ ] = useCurrentUser();
+  const [currentUser, _] = useCurrentUser();
 
-  const [ guilds, , guildsErrored ] = useGuilds();
-  const [ guildID, setGuildID ] = useState<string | undefined>(undefined);
-  const [ error, setError ] = useState('');
+  const [guilds, , guildsErrored] = useGuilds();
+  const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [error, setError] = useState('');
 
   const router = useRouter();
 
-  const handleFormSubmit = async ({ channelID }: AddChannelIDAPIRequest, { setSubmitting }: FormikHelpers<AddChannelIDAPIRequest>) => {
+  const handleFormSubmit = async (
+    { channelID }: AddChannelIDAPIRequest,
+    { setSubmitting }: FormikHelpers<AddChannelIDAPIRequest>,
+  ) => {
     try {
       await apiService.channelIDs.addChannelID({ channelID, guild: guildID });
 
@@ -64,7 +70,9 @@ const NewChannelIDPage = () => {
 
   return (
     <DashboardLayout hasContainer title="Add YouTube channel ID">
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
 
       <Formik
         initialValues={{ channelID: '' }}
@@ -76,22 +84,36 @@ const NewChannelIDPage = () => {
             <div className="input-group">
               <label htmlFor="channelID">Channel ID:</label>
               <Field name="channelID" />
-              <ErrorMessage name="channelID" component={CompactDangerMessageBox} />
+              <ErrorMessage
+                name="channelID"
+                component={CompactDangerMessageBox}
+              />
             </div>
 
             <div className="input-group">
               <label htmlFor="guild">Guild</label>
-              <select onChange={e => handleGuildChange(e.currentTarget.value)} name="guild">
-                {currentUser?.canManageGlobalBlacklists() && <option value="">Global</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && !guilds && <option disabled>--- loading guilds ---</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && guilds && guilds.map(guild => (
-                  <option value={guild.id}>{guild.name}</option>
-                ))}
+              <select
+                onChange={(e) => handleGuildChange(e.currentTarget.value)}
+                name="guild"
+              >
+                {currentUser?.canManageGlobalBlacklists() && (
+                  <option value="">Global</option>
+                )}
+                {currentUser?.canManageOwnGuildBlacklists() && !guilds && (
+                  <option disabled>--- loading guilds ---</option>
+                )}
+                {currentUser?.canManageOwnGuildBlacklists() &&
+                  guilds &&
+                  guilds.map((guild) => (
+                    <option value={guild.id}>{guild.name}</option>
+                  ))}
               </select>
             </div>
 
             <div className="input-group">
-              <Button type="submit" disabled={isSubmitting}>Add</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Add
+              </Button>
             </div>
           </Form>
         )}
@@ -107,7 +129,7 @@ export const getServerSideProps = async ({ req, res }) => {
   ]);
 
   return {
-    props: {}
+    props: {},
   };
 };
 

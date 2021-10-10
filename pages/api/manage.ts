@@ -12,5 +12,5 @@ export default bar({
     }
 
     res.redirect(302, '/manage/login');
-  }
+  },
 });

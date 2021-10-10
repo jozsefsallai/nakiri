@@ -7,40 +7,50 @@ export interface GetDiscordGuildsAPIRequest {
   guild?: string;
   page?: number;
   limit?: number;
-};
+}
 
 export interface GetDiscordGuildsAPIResponse extends APIResponse {
   discordGuilds: IDiscordGuild[];
-};
+}
 
 export interface AddDiscordGuildAPIRequest {
   id: string;
   name?: string;
   guild?: string;
-};
+}
 
-export interface AddDiscordGuildAPIResponse extends APIResponse {
-};
+export interface AddDiscordGuildAPIResponse extends APIResponse {}
 
-export interface DeleteDiscordGuildAPIResponse extends APIResponse {
-};
+export interface DeleteDiscordGuildAPIResponse extends APIResponse {}
 
 export class DiscordGuildsAPIService {
-  static GET_DISCORD_GUILDS_URL = '/api/lists/discord?compact=false&page=:page&limit=:limit';
-  static GET_DISCORD_GUILDS_WITH_GROUP_URL = '/api/lists/discord?compact=false&group=:group&strict=true&page=:page&limit=:limit';
-  static GET_DISCORD_GUILDS_WITH_GUILD_URL = '/api/lists/discord?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
+  static GET_DISCORD_GUILDS_URL =
+    '/api/lists/discord?compact=false&page=:page&limit=:limit';
+  static GET_DISCORD_GUILDS_WITH_GROUP_URL =
+    '/api/lists/discord?compact=false&group=:group&strict=true&page=:page&limit=:limit';
+  static GET_DISCORD_GUILDS_WITH_GUILD_URL =
+    '/api/lists/discord?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
 
   static ADD_DISCORD_GUILD_URL = '/api/lists/discord';
   static ADD_DISCORD_GUILD_WITH_GUILD_URL = '/api/lists/discord?guild=:guild';
 
   static DELETE_DISCORD_GUILD_URL = '/api/lists/discord/:id';
 
-  public async getDiscordGuilds({ group, guild, page, limit }: GetDiscordGuildsAPIRequest): Promise<GetDiscordGuildsAPIResponse> {
+  public async getDiscordGuilds({
+    group,
+    guild,
+    page,
+    limit,
+  }: GetDiscordGuildsAPIRequest): Promise<GetDiscordGuildsAPIResponse> {
     const url = this.makeGetDiscordGuildsURL(group, guild, page, limit);
-    return axiosService.get(url).then(res => res.data);
+    return axiosService.get(url).then((res) => res.data);
   }
 
-  public async addDiscordGuild({ id, guild, name }: AddDiscordGuildAPIRequest): Promise<AddDiscordGuildAPIResponse> {
+  public async addDiscordGuild({
+    id,
+    guild,
+    name,
+  }: AddDiscordGuildAPIRequest): Promise<AddDiscordGuildAPIResponse> {
     const url = this.makeAddDiscordGuildURL(guild);
 
     const payload: Partial<AddDiscordGuildAPIRequest> = {
@@ -51,21 +61,34 @@ export class DiscordGuildsAPIService {
       payload.name = name;
     }
 
-    return axiosService.post(url, payload).then(res => res.data);
+    return axiosService.post(url, payload).then((res) => res.data);
   }
 
-  public async deleteDiscordGuild(id: string): Promise<DeleteDiscordGuildAPIResponse> {
+  public async deleteDiscordGuild(
+    id: string,
+  ): Promise<DeleteDiscordGuildAPIResponse> {
     const url = this.makeDeleteDiscordGuildURL(id);
-    return axiosService.delete(url).then(res => res.data);
+    return axiosService.delete(url).then((res) => res.data);
   }
 
-  private makeGetDiscordGuildsURL(group?: string, guild?: string, page?: number, limit?: number): string {
+  private makeGetDiscordGuildsURL(
+    group?: string,
+    guild?: string,
+    page?: number,
+    limit?: number,
+  ): string {
     let url: string;
 
     if (group) {
       url = guild
-        ? DiscordGuildsAPIService.GET_DISCORD_GUILDS_WITH_GUILD_URL.replace(':group', group).replace(':guild', guild)
-        : DiscordGuildsAPIService.GET_DISCORD_GUILDS_WITH_GROUP_URL.replace(':group', group);
+        ? DiscordGuildsAPIService.GET_DISCORD_GUILDS_WITH_GUILD_URL.replace(
+            ':group',
+            group,
+          ).replace(':guild', guild)
+        : DiscordGuildsAPIService.GET_DISCORD_GUILDS_WITH_GROUP_URL.replace(
+            ':group',
+            group,
+          );
     } else {
       url = DiscordGuildsAPIService.GET_DISCORD_GUILDS_URL;
     }
@@ -77,7 +100,10 @@ export class DiscordGuildsAPIService {
 
   private makeAddDiscordGuildURL(guild?: string): string {
     return guild
-      ? DiscordGuildsAPIService.ADD_DISCORD_GUILD_WITH_GUILD_URL.replace(':guild', guild)
+      ? DiscordGuildsAPIService.ADD_DISCORD_GUILD_WITH_GUILD_URL.replace(
+          ':guild',
+          guild,
+        )
       : DiscordGuildsAPIService.ADD_DISCORD_GUILD_URL;
   }
 

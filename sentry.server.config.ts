@@ -3,6 +3,6 @@ import config from './config';
 
 if (config.app.sentry) {
   Sentry.init({
-    dsn: config.app.sentry.dsn
+    dsn: config.app.sentry.dsn,
   });
 }

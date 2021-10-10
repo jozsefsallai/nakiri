@@ -10,29 +10,36 @@ export interface BlacklistRowProps {
   entryComponent?: React.FC<any> | React.ComponentClass<any>;
   onTextClick?(text: string): void;
   actions?: BlacklistAction[];
-};
+}
 
-const BlacklistRow = ({ id, text, item, onTextClick, actions, entryComponent }: BlacklistRowProps) => {
-  const handleTextClick = onTextClick
-    ? () => onTextClick(text)
-    : undefined;
+const BlacklistRow = ({
+  id,
+  text,
+  item,
+  onTextClick,
+  actions,
+  entryComponent,
+}: BlacklistRowProps) => {
+  const handleTextClick = onTextClick ? () => onTextClick(text) : undefined;
 
-  const textClassNames = clsx(
-    'font-bold',
-    {
-      'cursor-pointer': !!onTextClick,
-      'hover:text-ayame-primary': !!onTextClick
-    }
-  );
+  const textClassNames = clsx('font-bold', {
+    'cursor-pointer': !!onTextClick,
+    'hover:text-ayame-primary': !!onTextClick,
+  });
 
   return (
     <div className="blacklist-item flex gap-4 items-center justify-between px-4 py-3">
       <div>
-        {entryComponent && createElement(entryComponent, { item, text, onTextClick })}
-        {!entryComponent && <GenericEntry text={text} onTextClick={handleTextClick} />}
+        {entryComponent &&
+          createElement(entryComponent, { item, text, onTextClick })}
+        {!entryComponent && (
+          <GenericEntry text={text} onTextClick={handleTextClick} />
+        )}
       </div>
 
-      {actions && actions.length > 0 && <BlacklistActions id={id} actions={actions} />}
+      {actions && actions.length > 0 && (
+        <BlacklistActions id={id} actions={actions} />
+      )}
     </div>
   );
 };

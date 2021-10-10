@@ -13,8 +13,8 @@ export default function (req, res) {
       Providers.Discord({
         clientId: config.discord.clientId,
         clientSecret: config.discord.clientSecret,
-        scope: 'identify guilds'
-      })
+        scope: 'identify guilds',
+      }),
     ],
 
     callbacks: {
@@ -27,7 +27,7 @@ export default function (req, res) {
         }
 
         const authorizedUser = await authorizedUserRepository.findOne({
-          discordId: (profile.id as string)
+          discordId: profile.id as string,
         });
 
         return !!authorizedUser;
@@ -60,7 +60,7 @@ export default function (req, res) {
         }
 
         return sess;
-      }
-    }
+      },
+    },
   });
-};
+}

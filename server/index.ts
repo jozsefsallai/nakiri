@@ -7,7 +7,7 @@ import middleware from './core/middleware';
 import routes from './core/routes';
 import boot from './core/boot';
 
-export default async function server () {
+export default async function server() {
   const dev = process.env.NODE_ENV !== 'production';
 
   const nextApp = next({ dev });
@@ -22,4 +22,4 @@ export default async function server () {
   middleware(app, gateway);
   routes(app, nextHandler);
   boot(server);
-};
+}

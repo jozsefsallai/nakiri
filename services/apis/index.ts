@@ -22,9 +22,10 @@ class APIService {
   public guildIDs = new DiscordGuildsAPIService();
 
   public monitoredKeywords = new MonitoredKeywordsAPIService();
-  public keywordWhitelistedChannels = new KeywordWhitelistedChannelsAPIService();
+  public keywordWhitelistedChannels =
+    new KeywordWhitelistedChannelsAPIService();
   public keywordSearchResults = new KeywordSearchResultsAPIService();
-};
+}
 
 const apiService = new APIService();
 export default apiService;

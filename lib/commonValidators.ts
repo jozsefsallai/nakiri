@@ -46,7 +46,7 @@ export const isValidUrl = (input: string): boolean => {
 
   try {
     const url = new URL(input);
-    return [ 'http:', 'https:' ].includes(url.protocol);
+    return ['http:', 'https:'].includes(url.protocol);
   } catch (_) {
     return false;
   }

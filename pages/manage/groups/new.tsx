@@ -17,7 +17,10 @@ const CreateGroupPage = () => {
 
   const { reloadGroups } = useUserGroups();
 
-  const handleFormSubmit = async ({ name, description }: CreateGroupAPIRequest, { setSubmitting }: FormikHelpers<CreateGroupAPIRequest>) => {
+  const handleFormSubmit = async (
+    { name, description }: CreateGroupAPIRequest,
+    { setSubmitting }: FormikHelpers<CreateGroupAPIRequest>,
+  ) => {
     try {
       await apiService.groups.createGroup({ name, description });
       toaster.success('Group created successfully.');
@@ -62,7 +65,9 @@ const CreateGroupPage = () => {
             </div>
 
             <div className="input-group">
-              <Button type="submit" disabled={isSubmitting}>Create</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Create
+              </Button>
             </div>
           </Form>
         )}
@@ -75,7 +80,7 @@ export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAnonmyous(req, res);
 
   return {
-    props: {}
+    props: {},
   };
 };
 

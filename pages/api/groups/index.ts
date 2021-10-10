@@ -6,11 +6,7 @@ import { ensureAuthenticated } from '@/middleware/auth';
 import * as groupsController from '@/controllers/groups/groupsController';
 
 export default bar({
-  get: withSentry(
-    ensureAuthenticated(groupsController.index, true)
-  ),
+  get: withSentry(ensureAuthenticated(groupsController.index, true)),
 
-  post: withSentry(
-    ensureAuthenticated(groupsController.create, true)
-  ),
+  post: withSentry(ensureAuthenticated(groupsController.create, true)),
 });

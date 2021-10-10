@@ -2,15 +2,19 @@ import axios from 'axios';
 
 import parse from 'url-parse';
 
-export const YOUTUBE_REGEX = /(https?:\/\/)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)\/(watch\?v=|embed\/|v\/|.+\?v=)?(?<id>[A-Za-z0-9\-=_]{11})/g;
-export const YOUTUBE_CHANNEL_REGEX = /(https?:\/\/)?(?:www\.)?youtube.com\/(?:(?:(?:channel\/(?<cid>UC.*?)(?:[^a-zA-Z0-9-_]|$)))|(?:(?:c\/)?(?<chandle>.*?))(?:[^a-zA-Z0-9-_]|$))/g;
-export const DISCORD_INVITE_REGEX = /discord((app)?.(com\/invite|gg))\/(?<id>[A-Za-z0-9-_]+)/g;
-export const LINK_REGEX = /(https?:\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g;
+export const YOUTUBE_REGEX =
+  /(https?:\/\/)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)\/(watch\?v=|embed\/|v\/|.+\?v=)?(?<id>[A-Za-z0-9\-=_]{11})/g;
+export const YOUTUBE_CHANNEL_REGEX =
+  /(https?:\/\/)?(?:www\.)?youtube.com\/(?:(?:(?:channel\/(?<cid>UC.*?)(?:[^a-zA-Z0-9-_]|$)))|(?:(?:c\/)?(?<chandle>.*?))(?:[^a-zA-Z0-9-_]|$))/g;
+export const DISCORD_INVITE_REGEX =
+  /discord((app)?.(com\/invite|gg))\/(?<id>[A-Za-z0-9-_]+)/g;
+export const LINK_REGEX =
+  /(https?:\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g;
 
 export interface YouTubeChannelMatch {
   id?: string;
   handle?: string;
-};
+}
 
 const RESERVED_YOUTUBE_PATHS = [
   'about',
@@ -82,7 +86,8 @@ export class URLUtils {
   }
 
   public isYouTubeChannel(): boolean {
-    const handle = this.url && YOUTUBE_CHANNEL_REGEX.exec(this.url)?.groups?.chandle;
+    const handle =
+      this.url && YOUTUBE_CHANNEL_REGEX.exec(this.url)?.groups?.chandle;
     YOUTUBE_CHANNEL_REGEX.lastIndex = 0;
     return handle && !RESERVED_YOUTUBE_PATHS.includes(handle);
   }
@@ -107,8 +112,8 @@ export class URLUtils {
   static extractYouTubeIDs(content: string): string[] {
     const matches = content.matchAll(YOUTUBE_REGEX);
     return Array.from(matches)
-      .filter(match => match.groups?.id)
-      .map(match => match.groups.id);
+      .filter((match) => match.groups?.id)
+      .map((match) => match.groups.id);
   }
 
   static extractYouTubeChannel(content: string): YouTubeChannelMatch | null {
@@ -121,18 +126,18 @@ export class URLUtils {
 
     return {
       id: match.groups.cid,
-      handle: match.groups.chandle
+      handle: match.groups.chandle,
     };
   }
 
   static extractYouTubeChannels(content: string): YouTubeChannelMatch[] {
     const matches = content.matchAll(YOUTUBE_CHANNEL_REGEX);
     return Array.from(matches)
-      .filter(match => match.groups?.cid || match.groups?.chandle)
-      .map(match => {
+      .filter((match) => match.groups?.cid || match.groups?.chandle)
+      .map((match) => {
         return {
           id: match.groups.cid,
-          handle: match.groups.chandle
+          handle: match.groups.chandle,
         };
       });
   }
@@ -151,12 +156,12 @@ export class URLUtils {
   static extractDiscordInvites(content: string): string[] {
     const matches = content.matchAll(DISCORD_INVITE_REGEX);
     return Array.from(matches)
-      .filter(m => m.groups?.id)
-      .map(m => m.groups.id);
+      .filter((m) => m.groups?.id)
+      .map((m) => m.groups.id);
   }
 
   static extractLinks(content: string): string[] {
     const matches = content.matchAll(LINK_REGEX);
-    return Array.from(matches).map(match => match[0]);
+    return Array.from(matches).map((match) => match[0]);
   }
 }

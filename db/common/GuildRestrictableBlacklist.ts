@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, DeleteDateColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Group, IGroup } from '../models/groups/Group';
 
 export interface IGuildRestrictableBlacklist {
@@ -8,7 +15,7 @@ export interface IGuildRestrictableBlacklist {
   deletedAt: Date;
   guildId?: string;
   group?: IGroup;
-};
+}
 
 export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
   @PrimaryGeneratedColumn('uuid')

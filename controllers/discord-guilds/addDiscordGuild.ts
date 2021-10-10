@@ -11,12 +11,16 @@ export class DiscordGuildCreationError extends APIError {
   }
 }
 
-export const addDiscordGuild = async (blacklistedId: string, name?: string, guildId?: string) => {
+export const addDiscordGuild = async (
+  blacklistedId: string,
+  name?: string,
+  guildId?: string,
+) => {
   await db.prepare();
   const discordGuildsRepository = db.getRepository(DiscordGuild);
 
   const where: FindConditions<DiscordGuild>[] = [
-    { blacklistedId, guildId: IsNull() }
+    { blacklistedId, guildId: IsNull() },
   ];
 
   if (guildId) {

@@ -5,7 +5,7 @@ export interface NavigationItemProps {
   url: string;
   label: string;
   active?: boolean;
-};
+}
 
 const NavigationItem = ({ url, label, active }: NavigationItemProps) => {
   const classNames = clsx(
@@ -13,15 +13,13 @@ const NavigationItem = ({ url, label, active }: NavigationItemProps) => {
     {
       'text-nakiri-base': !active,
       'text-white': active,
-      'bg-accent': active
-    }
+      'bg-accent': active,
+    },
   );
 
   return (
     <Link href={url}>
-      <a className={classNames}>
-        {label}
-      </a>
+      <a className={classNames}>{label}</a>
     </Link>
   );
 };

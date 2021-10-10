@@ -6,8 +6,8 @@ export interface IGuild {
   permissions: number;
   features: string[];
   permissions_new: string;
-};
+}
 
 export interface IGuildWithKey extends IGuild {
   key: string;
-};
+}

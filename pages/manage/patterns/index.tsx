@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import Loading from '@/components/loading/Loading';
 import { ILinkPattern } from '@/db/models/blacklists/LinkPattern';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -33,7 +35,11 @@ const ManageLinkPatternsIndexPage = () => {
     setError('');
 
     try {
-      const { patterns } = await apiService.patterns.getLinkPatterns({ group, guild, page });
+      const { patterns } = await apiService.patterns.getLinkPatterns({
+        group,
+        guild,
+        page,
+      });
       setItems(patterns);
       setPagination(pagination);
     } catch (err) {
@@ -44,7 +50,7 @@ const ManageLinkPatternsIndexPage = () => {
   const deleteItem = async (id: string) => {
     try {
       await apiService.patterns.deleteLinkPattern(id);
-      setItems(items => items.filter(pattern => pattern.id !== id));
+      setItems((items) => items.filter((pattern) => pattern.id !== id));
       toaster.success('Link pattern deleted successfully!');
     } catch (err) {
       const message = err?.response?.data?.error;
@@ -68,7 +74,7 @@ const ManageLinkPatternsIndexPage = () => {
       text: 'You are about to delete this link pattern. This cannot be undone!',
       showCancelButton: true,
       confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
     });
 
     if (result.isConfirmed) {
@@ -77,11 +83,11 @@ const ManageLinkPatternsIndexPage = () => {
   };
 
   const handleTestActionClick = async (id: string) => {
-    const targetPattern = items.find(pattern => pattern.id === id);
+    const targetPattern = items.find((pattern) => pattern.id === id);
 
     await MySwal.fire({
       title: 'Regex Tester',
-      html: <RegexTester pattern={targetPattern.pattern} />
+      html: <RegexTester pattern={targetPattern.pattern} />,
     });
   };
 
@@ -92,7 +98,12 @@ const ManageLinkPatternsIndexPage = () => {
   }, [errored]);
 
   return (
-    <DashboardLayout hasContainer title="Blacklisted Link Patterns" buttonText="Add pattern" onButtonClick={handleNewButtonClick}>
+    <DashboardLayout
+      hasContainer
+      title="Blacklisted Link Patterns"
+      buttonText="Add pattern"
+      onButtonClick={handleNewButtonClick}
+    >
       {groups && (
         <Blacklist
           items={items}
@@ -103,13 +114,15 @@ const ManageLinkPatternsIndexPage = () => {
           groups={groups}
           actions={[
             { label: 'Test', onClick: handleTestActionClick },
-            { label: 'Delete', onClick: handleDeleteActionClick }
+            { label: 'Delete', onClick: handleDeleteActionClick },
           ]}
         />
       )}
 
       {groups === null && !error && <Loading />}
-      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
     </DashboardLayout>
   );
 };
@@ -117,7 +130,7 @@ const ManageLinkPatternsIndexPage = () => {
 export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAnonmyous(req, res);
   return {
-    props: {}
+    props: {},
   };
 };
 

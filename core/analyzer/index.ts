@@ -92,7 +92,7 @@ export class Analyzer {
     fieldName: 'videoId' | 'channelId' | 'blacklistedId',
   ): FindConditions<T>[] {
     const conditions: FindConditions<
-    YouTubeVideoID | YouTubeChannelID | DiscordGuild
+      YouTubeVideoID | YouTubeChannelID | DiscordGuild
     >[] = [];
 
     const baseCondition = { [`${fieldName}`]: id };
@@ -304,8 +304,8 @@ export class Analyzer {
       const where: FindConditions<LinkPattern>[] = !this.guildId
         ? [{ guildId: IsNull() }]
         : this.strictGuildCheck
-          ? [{ guildId: this.guildId }]
-          : [{ guildId: IsNull() }, { guildId: this.guildId }];
+        ? [{ guildId: this.guildId }]
+        : [{ guildId: IsNull() }, { guildId: this.guildId }];
 
       const allEntries = await this.linkPatternRepository.find({ where });
       patterns = allEntries.map((entry) => new RegExp(entry.pattern, 'gm'));

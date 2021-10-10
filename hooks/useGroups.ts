@@ -10,7 +10,7 @@ export interface IUserGroups {
   setGroups: (groups: IGroup[]) => void;
   reloadGroups: () => Promise<void>;
   errored: boolean;
-};
+}
 
 export const GroupContext = createContext<IUserGroups>({
   groups: null,
@@ -20,9 +20,9 @@ export const GroupContext = createContext<IUserGroups>({
 });
 
 export const useUserGroupsState = (): IUserGroups => {
-  const [ groups, setGroups ] = useState<IGroup[] | null>(null);
-  const [ errored, setErrored ] = useState(false);
-  const [ currentUser ] = useCurrentUser();
+  const [groups, setGroups] = useState<IGroup[] | null>(null);
+  const [errored, setErrored] = useState(false);
+  const [currentUser] = useCurrentUser();
 
   const fetchGroups = async () => {
     if (!currentUser) {
@@ -53,7 +53,7 @@ export const useUserGroupsState = (): IUserGroups => {
     if (currentUser && groups === null) {
       fetchGroups();
     }
-  }, [ currentUser ]);
+  }, [currentUser]);
 
   const reloadGroups = async () => {
     await fetchGroups();

@@ -31,19 +31,28 @@ export const deleteYouTubeChannelID = async (session: Session, id: string) => {
 
   if (entry.guildId) {
     if (!user.canManageOwnGuildBlacklists()) {
-      throw new YouTubeChannelIDDeletionError(403, 'CANNOT_MANAGE_OWN_BLACKLISTS');
+      throw new YouTubeChannelIDDeletionError(
+        403,
+        'CANNOT_MANAGE_OWN_BLACKLISTS',
+      );
     }
 
     const userGuilds = await fetchGuilds(session);
-    const guild = userGuilds.find(g => g.id === entry.guildId);
+    const guild = userGuilds.find((g) => g.id === entry.guildId);
 
     if (!guild) {
-      throw new YouTubeChannelIDDeletionError(403, 'CANNOT_DELETE_ENTRY_FROM_THIS_GUILD');
+      throw new YouTubeChannelIDDeletionError(
+        403,
+        'CANNOT_DELETE_ENTRY_FROM_THIS_GUILD',
+      );
     }
   }
 
   if (!entry.guildId && !user.canManageGlobalBlacklists()) {
-    throw new YouTubeChannelIDDeletionError(403, 'CANNOT_MANAGE_GLOBAL_BLACKLISTS');
+    throw new YouTubeChannelIDDeletionError(
+      403,
+      'CANNOT_MANAGE_GLOBAL_BLACKLISTS',
+    );
   }
 
   await youTubeChannelIDRepository.delete({ id });

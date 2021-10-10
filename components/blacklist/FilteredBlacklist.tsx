@@ -9,18 +9,28 @@ import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
 import { BlacklistAction } from './BlacklistActions';
 import BlacklistRow from './BlacklistRow';
 
-export type BlacklistItem = ILinkPattern | IYouTubeVideoID | IYouTubeChannelID
-| IMonitoredKeyword | IKeywordWhitelistedChannel | IKeywordSearchResult
-| IDiscordGuild;
+export type BlacklistItem =
+  | ILinkPattern
+  | IYouTubeVideoID
+  | IYouTubeChannelID
+  | IMonitoredKeyword
+  | IKeywordWhitelistedChannel
+  | IKeywordSearchResult
+  | IDiscordGuild;
 
 export interface FilteredBlacklistProps {
   items: BlacklistItem[];
   onTextClick?(text: string): void;
   actions?: BlacklistAction[];
   entryComponent?: React.FC<any> | React.ComponentClass<any>;
-};
+}
 
-const FilteredBlacklist = ({ items, onTextClick, actions, entryComponent }: FilteredBlacklistProps) => {
+const FilteredBlacklist = ({
+  items,
+  onTextClick,
+  actions,
+  entryComponent,
+}: FilteredBlacklistProps) => {
   const getItemText = (item: BlacklistItem) => {
     if ('videoId' in item) {
       return item.videoId;
@@ -48,22 +58,20 @@ const FilteredBlacklist = ({ items, onTextClick, actions, entryComponent }: Filt
   const renderItem = (item: BlacklistItem) => {
     const text = getItemText(item);
 
-    return <BlacklistRow
-      key={item.id}
-      id={item.id}
-      item={item}
-      text={text}
-      entryComponent={entryComponent}
-      onTextClick={onTextClick}
-      actions={actions}
-    />;
+    return (
+      <BlacklistRow
+        key={item.id}
+        id={item.id}
+        item={item}
+        text={text}
+        entryComponent={entryComponent}
+        onTextClick={onTextClick}
+        actions={actions}
+      />
+    );
   };
 
-  return (
-    <div className="py-4">
-      {items.map(renderItem)}
-    </div>
-  );
+  return <div className="py-4">{items.map(renderItem)}</div>;
 };
 
 export default FilteredBlacklist;

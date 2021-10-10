@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import Loading from '@/components/loading/Loading';
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -30,7 +32,8 @@ const ManageChannelsIndexPage = () => {
     setError('');
 
     try {
-      const { channelIDs, pagination } = await apiService.channelIDs.getChannelIDs({ group, guild, page });
+      const { channelIDs, pagination } =
+        await apiService.channelIDs.getChannelIDs({ group, guild, page });
       setItems(channelIDs);
       setPagination(pagination);
     } catch (err) {
@@ -41,7 +44,7 @@ const ManageChannelsIndexPage = () => {
   const deleteItem = async (id: string) => {
     try {
       await apiService.channelIDs.deleteChannelID(id);
-      setItems(items => items.filter(channel => channel.id !== id));
+      setItems((items) => items.filter((channel) => channel.id !== id));
       toaster.success('Channel ID deleted successfully!');
     } catch (err) {
       const message = err?.response?.data?.error;
@@ -65,7 +68,7 @@ const ManageChannelsIndexPage = () => {
       text: 'You are about to delete this channel ID. This cannot be undone!',
       showCancelButton: true,
       confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
     });
 
     if (result.isConfirmed) {
@@ -81,7 +84,7 @@ const ManageChannelsIndexPage = () => {
       text: `Are you sure you want to open the following URL: ${url}?`,
       showCancelButton: true,
       confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
+      cancelButtonText: 'No',
     });
 
     if (result.isConfirmed) {
@@ -93,10 +96,15 @@ const ManageChannelsIndexPage = () => {
     if (errored) {
       setError('Failed to fetch your groups.');
     }
-  }, [ errored ]);
+  }, [errored]);
 
   return (
-    <DashboardLayout hasContainer title="Blacklisted YouTube Channel IDs" buttonText="Add channel ID" onButtonClick={handleNewButtonClick}>
+    <DashboardLayout
+      hasContainer
+      title="Blacklisted YouTube Channel IDs"
+      buttonText="Add channel ID"
+      onButtonClick={handleNewButtonClick}
+    >
       {groups && (
         <Blacklist
           items={items}
@@ -106,15 +114,15 @@ const ManageChannelsIndexPage = () => {
           zdsMessage="No blacklisted channel IDs have been found."
           groups={groups}
           onTextClick={handleTextClick}
-          actions={[
-            { label: 'Delete', onClick: handleDeleteActionClick }
-          ]}
+          actions={[{ label: 'Delete', onClick: handleDeleteActionClick }]}
           entryComponent={YouTubeChannelEntry}
         />
       )}
 
       {groups === null && !error && <Loading />}
-      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
     </DashboardLayout>
   );
 };
@@ -122,7 +130,7 @@ const ManageChannelsIndexPage = () => {
 export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAnonmyous(req, res);
   return {
-    props: {}
+    props: {},
   };
 };
 

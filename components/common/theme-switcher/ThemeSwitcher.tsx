@@ -3,7 +3,7 @@ import { useTheme, Theme } from '@/hooks/useTheme';
 import { Moon, Sun } from 'react-feather';
 
 const ThemeSwitcher = () => {
-  const [ currentTheme, toggleTheme ] = useTheme();
+  const [currentTheme, toggleTheme] = useTheme();
 
   return (
     <div className="cursor-pointer" onClick={toggleTheme}>

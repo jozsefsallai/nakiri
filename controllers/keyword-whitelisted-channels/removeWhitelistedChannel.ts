@@ -12,11 +12,19 @@ export class RemoveKeywordWhitelistedChannelError extends APIError {
 
 export const removeWhitelistedChannel = async (id: string, guildId: string) => {
   await db.prepare();
-  const keywordWhitelistedChannelsRepository = db.getRepository(KeywordWhitelistedChannel);
+  const keywordWhitelistedChannelsRepository = db.getRepository(
+    KeywordWhitelistedChannel,
+  );
 
-  const entry = await keywordWhitelistedChannelsRepository.findOne({ id, guildId });
+  const entry = await keywordWhitelistedChannelsRepository.findOne({
+    id,
+    guildId,
+  });
   if (!entry) {
-    throw new RemoveKeywordWhitelistedChannelError(404, 'WHITELISTED_CHANNEL_NOT_FOUND');
+    throw new RemoveKeywordWhitelistedChannelError(
+      404,
+      'WHITELISTED_CHANNEL_NOT_FOUND',
+    );
   }
 
   await keywordWhitelistedChannelsRepository.delete({ id });

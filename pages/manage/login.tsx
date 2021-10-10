@@ -30,7 +30,7 @@ const LoginPage = () => {
 export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAuthenticated(req, res);
   return {
-    props: {}
+    props: {},
   };
 };
 

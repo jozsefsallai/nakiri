@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 
 export interface GroupListItemProps {
   group: IGroup;
-};
+}
 
 const GroupListItem: React.FC<GroupListItemProps> = ({ group }) => {
   const router = useRouter();
@@ -14,26 +14,26 @@ const GroupListItem: React.FC<GroupListItemProps> = ({ group }) => {
     const baseClassNames = clsx('border-2 rounded-lg text-xs px-2 py-1');
 
     if (group.isCreator) {
-      return <div className={clsx(
-        baseClassNames,
-        'border-danger',
-        'text-danger'
-      )}>Creator</div>;
+      return (
+        <div className={clsx(baseClassNames, 'border-danger', 'text-danger')}>
+          Creator
+        </div>
+      );
     }
 
     if (group.myPermissions === ALL_PERMISSIONS) {
-      return <div className={clsx(
-        baseClassNames,
-        'border-warning',
-        'text-warning'
-      )}>Admin</div>;
+      return (
+        <div className={clsx(baseClassNames, 'border-warning', 'text-warning')}>
+          Admin
+        </div>
+      );
     }
 
-    return <div className={clsx(
-      baseClassNames,
-      'border-info',
-      'text-info'
-    )}>Member</div>;
+    return (
+      <div className={clsx(baseClassNames, 'border-info', 'text-info')}>
+        Member
+      </div>
+    );
   };
 
   const handleItemClick = (): void => {
@@ -47,7 +47,9 @@ const GroupListItem: React.FC<GroupListItemProps> = ({ group }) => {
     >
       <div className="flex-1">
         <h2 className="text-lg my-0">{group.name}</h2>
-        {group.description?.length > 0 && <div className="text-sm mt-2">{group.description}</div>}
+        {group.description?.length > 0 && (
+          <div className="text-sm mt-2">{group.description}</div>
+        )}
       </div>
 
       {getUserStatus()}

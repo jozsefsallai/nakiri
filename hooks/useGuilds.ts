@@ -11,12 +11,16 @@ export type IUserGuilds = [
   errored: boolean,
 ];
 
-export const GuildContext = createContext<IUserGuilds>([ null, (_) => void 0, false ]);
+export const GuildContext = createContext<IUserGuilds>([
+  null,
+  (_) => void 0,
+  false,
+]);
 
 export const useUserGuildsState = (): IUserGuilds => {
-  const [ guilds, setGuilds ] = useState<IGuildWithKey[] | null>(null);
-  const [ errored, setErrored ] = useState(false);
-  const [ currentUser, _ ] = useCurrentUser();
+  const [guilds, setGuilds] = useState<IGuildWithKey[] | null>(null);
+  const [errored, setErrored] = useState(false);
+  const [currentUser, _] = useCurrentUser();
 
   const fetchUserGuilds = async () => {
     if (!currentUser) {
@@ -31,7 +35,10 @@ export const useUserGuildsState = (): IUserGuilds => {
     } catch (err) {
       setErrored(true);
       setGuilds(null);
-      toaster.danger('Failed to fetch your guilds. Please try logging out and back in.', 'Fatal error');
+      toaster.danger(
+        'Failed to fetch your guilds. Please try logging out and back in.',
+        'Fatal error',
+      );
     }
   };
 
@@ -47,9 +54,9 @@ export const useUserGuildsState = (): IUserGuilds => {
     if (currentUser && guilds === null) {
       fetchUserGuilds();
     }
-  }, [ currentUser ]);
+  }, [currentUser]);
 
-  return [ guilds, setGuilds, errored ];
+  return [guilds, setGuilds, errored];
 };
 
 export const useGuilds = () => useContext(GuildContext);

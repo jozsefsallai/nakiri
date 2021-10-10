@@ -3,7 +3,7 @@ import express, { Express } from 'express';
 import { Gateway } from '@/gateway';
 import cookieParser from 'cookie-parser';
 
-export default function middleware (app: Express, gateway: Gateway) {
+export default function middleware(app: Express, gateway: Gateway) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser(config.app.cookieSecret));
@@ -17,4 +17,4 @@ export default function middleware (app: Express, gateway: Gateway) {
     res.setHeader('X-Ayame', 'Konnakiri! Hope you are doing Great');
     next();
   });
-};
+}

@@ -18,7 +18,10 @@ export class GroupCreationError extends APIError {
   }
 }
 
-export const createGroup = async (session: Session, { name, description }: CreateGroupAPIRequest) => {
+export const createGroup = async (
+  session: Session,
+  { name, description }: CreateGroupAPIRequest,
+) => {
   if (!name?.length) {
     throw new GroupCreationError(400, 'GROUP_NAME_NOT_PROVIDED');
   }
@@ -28,7 +31,9 @@ export const createGroup = async (session: Session, { name, description }: Creat
   const authorizedUsersRepository = db.getRepository(AuthorizedUser);
   const groupMembersRepository = db.getRepository(GroupMember);
 
-  const authorizedUser = await authorizedUsersRepository.findOne({ discordId: session.user.id });
+  const authorizedUser = await authorizedUsersRepository.findOne({
+    discordId: session.user.id,
+  });
 
   const group = new Group();
   group.name = name;
@@ -39,7 +44,7 @@ export const createGroup = async (session: Session, { name, description }: Creat
 
   do {
     apiKey = uuid();
-  } while (await groupsRepository.count({ apiKey }) !== 0);
+  } while ((await groupsRepository.count({ apiKey })) !== 0);
 
   group.apiKey = apiKey;
 

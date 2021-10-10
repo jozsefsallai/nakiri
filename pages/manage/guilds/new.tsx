@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import ZeroDataState from '@/components/common/zds/ZeroDataState';
 import GuildList from '@/components/guilds/GuildList';
 import Loading from '@/components/loading/Loading';
@@ -16,12 +18,12 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 const ManageGuildsIndexPage = () => {
-  const [ currentGuilds, setCurrentGuilds ] = useGuilds();
+  const [currentGuilds, setCurrentGuilds] = useGuilds();
 
-  const [ guilds, setGuilds ] = useState<IGuild[] | null>(null);
-  const [ error, setError ] = useState('');
+  const [guilds, setGuilds] = useState<IGuild[] | null>(null);
+  const [error, setError] = useState('');
 
-  const [ requestInProgress, setRequestInProgress ] = useState(false);
+  const [requestInProgress, setRequestInProgress] = useState(false);
 
   const router = useRouter();
 
@@ -47,7 +49,7 @@ const ManageGuildsIndexPage = () => {
       const finalGuild: IGuildWithKey = { ...guild, key };
 
       if (!currentGuilds) {
-        setCurrentGuilds([ finalGuild ]);
+        setCurrentGuilds([finalGuild]);
       } else {
         const newGuilds = currentGuilds.slice(0);
         newGuilds.push(finalGuild);
@@ -80,7 +82,7 @@ const ManageGuildsIndexPage = () => {
       text: `Are you sure you want to add the guild "${guild.name}" and generate an API key for it?`,
       showCancelButton: true,
       confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
+      cancelButtonText: 'No',
     });
 
     if (result.isConfirmed) {
@@ -94,11 +96,17 @@ const ManageGuildsIndexPage = () => {
 
   return (
     <DashboardLayout hasContainer title="Add Guild">
-      {guilds && guilds.length > 0 && <GuildList guilds={guilds} onGuildClick={handleGuildClick} />}
-      {guilds && guilds.length === 0 && <ZeroDataState message="You do not have access to any guilds." />}
+      {guilds && guilds.length > 0 && (
+        <GuildList guilds={guilds} onGuildClick={handleGuildClick} />
+      )}
+      {guilds && guilds.length === 0 && (
+        <ZeroDataState message="You do not have access to any guilds." />
+      )}
 
       {!guilds && !error && <Loading />}
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
     </DashboardLayout>
   );
 };
@@ -106,7 +114,7 @@ const ManageGuildsIndexPage = () => {
 export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAnonmyous(req, res);
   return {
-    props: {}
+    props: {},
   };
 };
 

@@ -9,8 +9,10 @@ import { ensureAuthenticated } from '@/middleware/auth';
 export default bar({
   get: withSentry(
     ensureAuthenticated(async (req, res) => {
-      const insomniaFile = fs.createReadStream(path.join(process.cwd(), 'insomnia.json'));
+      const insomniaFile = fs.createReadStream(
+        path.join(process.cwd(), 'insomnia.json'),
+      );
       insomniaFile.pipe(res);
-    }, true)
-  )
+    }, true),
+  ),
 });

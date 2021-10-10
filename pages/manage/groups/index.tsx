@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import Loading from '@/components/loading/Loading';
 import DashboardLayout from '@/layouts/DashboardLayout';
 
@@ -18,10 +20,20 @@ const ManageGroupsPage: React.FC = () => {
   };
 
   return (
-    <DashboardLayout hasContainer title="Groups" buttonText="Create Group" onButtonClick={handleNewButtonClick}>
+    <DashboardLayout
+      hasContainer
+      title="Groups"
+      buttonText="Create Group"
+      onButtonClick={handleNewButtonClick}
+    >
       {groups && <GroupList groups={groups} />}
       {groups === null && !errored && <Loading />}
-      {errored && <MessageBox level={MessageBoxLevel.DANGER} message="Failed to fetch your groups." />}
+      {errored && (
+        <MessageBox
+          level={MessageBoxLevel.DANGER}
+          message="Failed to fetch your groups."
+        />
+      )}
     </DashboardLayout>
   );
 };

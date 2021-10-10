@@ -3,7 +3,7 @@ import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 export interface DiscordGuildEntryProps {
   item: IDiscordGuild;
   onTextClick?: (id: string) => void;
-};
+}
 
 const DiscordGuildEntry: React.FC<DiscordGuildEntryProps> = ({ item }) => {
   const name = item.name

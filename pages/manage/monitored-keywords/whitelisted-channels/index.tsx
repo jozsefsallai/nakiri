@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import Button, { ButtonSize } from '@/components/common/button/Button';
 import Loading from '@/components/loading/Loading';
 import { IKeywordWhitelistedChannel } from '@/db/models/keywords/KeywordWhitelistedChannel';
@@ -29,7 +31,10 @@ const ManageWhitelistedChannelsIndexPage = () => {
     setError('');
 
     try {
-      const { channels } = await apiService.keywordWhitelistedChannels.getWhitelistedChannels(guild);
+      const { channels } =
+        await apiService.keywordWhitelistedChannels.getWhitelistedChannels(
+          guild,
+        );
       setItems(channels);
     } catch (err) {
       setError('Failed to load whitelisted channels.');
@@ -46,8 +51,11 @@ const ManageWhitelistedChannelsIndexPage = () => {
 
   const unwhitelistChannel = async (entry: IKeywordWhitelistedChannel) => {
     try {
-      await apiService.keywordWhitelistedChannels.deleteWhitelistedChannel(entry.guildId, entry.id);
-      setItems(items.filter(i => i.id !== entry.id));
+      await apiService.keywordWhitelistedChannels.deleteWhitelistedChannel(
+        entry.guildId,
+        entry.id,
+      );
+      setItems(items.filter((i) => i.id !== entry.id));
       toaster.success('Channel ID unwhitelisted successfully!');
     } catch (err) {
       const message = err?.response?.data?.error;
@@ -62,7 +70,7 @@ const ManageWhitelistedChannelsIndexPage = () => {
   };
 
   const handleDeleteActionClick = async (id: string) => {
-    const entry = items.find(i => i.id === id);
+    const entry = items.find((i) => i.id === id);
     if (!entry) {
       return;
     }
@@ -87,8 +95,15 @@ const ManageWhitelistedChannelsIndexPage = () => {
   }, [guildsErrored]);
 
   return (
-    <DashboardLayout hasContainer title="Monitored Keywords - Whitelisted Channels" buttonText="Add channel" onButtonClick={handleNewButtonClick}>
-      <Button size={ButtonSize.SMALL} onClick={handleKeywordsClick}>Manage Monitored Keywords</Button>
+    <DashboardLayout
+      hasContainer
+      title="Monitored Keywords - Whitelisted Channels"
+      buttonText="Add channel"
+      onButtonClick={handleNewButtonClick}
+    >
+      <Button size={ButtonSize.SMALL} onClick={handleKeywordsClick}>
+        Manage Monitored Keywords
+      </Button>
 
       {guilds && (
         <Blacklist
@@ -98,22 +113,26 @@ const ManageWhitelistedChannelsIndexPage = () => {
           zdsMessage="No whitelisted channels have been found."
           guilds={guilds}
           hideGlobal
-          actions={[
-            { label: 'Unwhitelist', onClick: handleDeleteActionClick }
-          ]}
+          actions={[{ label: 'Unwhitelist', onClick: handleDeleteActionClick }]}
         />
       )}
 
       {guilds === null && !error && <Loading />}
-      {guilds === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {guilds === null && error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
     </DashboardLayout>
   );
 };
 
 export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(req, res, UserPermissions.MANAGE_MONITORED_KEYWORDS);
+  await redirectIfDoesNotHavePermission(
+    req,
+    res,
+    UserPermissions.MANAGE_MONITORED_KEYWORDS,
+  );
   return {
-    props: {}
+    props: {},
   };
 };
 

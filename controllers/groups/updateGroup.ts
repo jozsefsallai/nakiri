@@ -19,7 +19,11 @@ export class UpdateGroupError extends APIError {
   }
 }
 
-export const addGuildToGroup = async (session: Session, id: string, guildId: string): Promise<IGroup> => {
+export const addGuildToGroup = async (
+  session: Session,
+  id: string,
+  guildId: string,
+): Promise<IGroup> => {
   await db.prepare();
 
   const groupMembersRepository = db.getRepository(GroupMember);
@@ -33,9 +37,9 @@ export const addGuildToGroup = async (session: Session, id: string, guildId: str
       group: {
         id,
       },
-      user
+      user,
     },
-    relations: ['group', 'user', 'group.guilds']
+    relations: ['group', 'user', 'group.guilds'],
   });
 
   if (!membership) {
@@ -46,8 +50,9 @@ export const addGuildToGroup = async (session: Session, id: string, guildId: str
     throw new UpdateGroupError(403, 'CANNOT_MANAGE_GUILDS_IN_THIS_GROUP');
   }
 
-  const guilds = await fetchGuilds(session, true)
-    .then(guilds => guilds.filter(guild => guild.id === guildId));
+  const guilds = await fetchGuilds(session, true).then((guilds) =>
+    guilds.filter((guild) => guild.id === guildId),
+  );
 
   if (guilds.length === 0) {
     throw new UpdateGroupError(403, 'CANNOT_MANAGE_GUILD');
@@ -58,7 +63,7 @@ export const addGuildToGroup = async (session: Session, id: string, guildId: str
     throw new UpdateGroupError(404, 'GUILD_NOT_AUTHORIZED');
   }
 
-  if (membership.group.guilds.find(guild => guild.guildId === guildId)) {
+  if (membership.group.guilds.find((guild) => guild.guildId === guildId)) {
     throw new UpdateGroupError(400, 'GUILD_ALREADY_IN_GROUP');
   }
 
@@ -68,7 +73,12 @@ export const addGuildToGroup = async (session: Session, id: string, guildId: str
   return membership.group.toJSON();
 };
 
-export const addUserToGroup = async (session: Session, groupId: string, discordId: string, permissionsList: number[]): Promise<IGroup> => {
+export const addUserToGroup = async (
+  session: Session,
+  groupId: string,
+  discordId: string,
+  permissionsList: number[],
+): Promise<IGroup> => {
   await db.prepare();
 
   const groupMembersRepository = db.getRepository(GroupMember);
@@ -82,9 +92,9 @@ export const addUserToGroup = async (session: Session, groupId: string, discordI
       group: {
         id: groupId,
       },
-      user
+      user,
     },
-    relations: ['group', 'user', 'group.members', 'group.members.user']
+    relations: ['group', 'user', 'group.members', 'group.members.user'],
   });
 
   if (!membership) {
@@ -103,9 +113,9 @@ export const addUserToGroup = async (session: Session, groupId: string, discordI
   const targetMembership = await groupMembersRepository.count({
     where: {
       group: membership.group,
-      user: targetUser
+      user: targetUser,
     },
-    relations: ['group', 'user', 'group.members']
+    relations: ['group', 'user', 'group.members'],
   });
 
   if (targetMembership > 0) {
@@ -113,7 +123,7 @@ export const addUserToGroup = async (session: Session, groupId: string, discordI
   }
 
   const forbiddenPermissions = [];
-  permissionsList.forEach(permission => {
+  permissionsList.forEach((permission) => {
     if (!(permission in GroupMemberPermissions)) {
       forbiddenPermissions.push(permission);
     }
@@ -121,7 +131,7 @@ export const addUserToGroup = async (session: Session, groupId: string, discordI
 
   if (forbiddenPermissions.length > 0) {
     throw new UpdateGroupError(400, 'FORBIDDEN_PERMISSIONS', {
-      forbiddenPermissions
+      forbiddenPermissions,
     });
   }
 

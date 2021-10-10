@@ -6,5 +6,7 @@ import { ensureAuthenticated } from '@/middleware/auth';
 import * as keywordWhitelistedChannelsController from '@/controllers/keyword-whitelisted-channels/keywordWhitelistedChannelsController';
 
 export default bar({
-  delete: withSentry(ensureAuthenticated(keywordWhitelistedChannelsController.destroy, true)),
+  delete: withSentry(
+    ensureAuthenticated(keywordWhitelistedChannelsController.destroy, true),
+  ),
 });

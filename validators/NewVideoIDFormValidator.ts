@@ -3,7 +3,9 @@ import { AddVideoIDAPIRequest } from '@/services/apis/blacklists/VideoIDsAPIServ
 
 import { errors as _errors } from '@/lib/errors';
 
-export const validate = (fields: AddVideoIDAPIRequest): Partial<AddVideoIDAPIRequest> => {
+export const validate = (
+  fields: AddVideoIDAPIRequest,
+): Partial<AddVideoIDAPIRequest> => {
   const errors: Partial<AddVideoIDAPIRequest> = {};
 
   if (!isValidYouTubeVideoID(fields.videoID)) {

@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { KeywordSearchResult } from './KeywordSearchResult';
 
 export interface IMonitoredKeyword {
@@ -8,7 +15,7 @@ export interface IMonitoredKeyword {
   keyword: string;
   guildId: string;
   webhookUrl: string;
-};
+}
 
 @Entity()
 export class MonitoredKeyword implements IMonitoredKeyword {
@@ -30,7 +37,10 @@ export class MonitoredKeyword implements IMonitoredKeyword {
   @Column()
   webhookUrl: string;
 
-  @OneToMany(() => KeywordSearchResult, keywordSearchResult => keywordSearchResult.keyword)
+  @OneToMany(
+    () => KeywordSearchResult,
+    (keywordSearchResult) => keywordSearchResult.keyword,
+  )
   results: Partial<KeywordSearchResult[]>;
 
   toJSON(): IMonitoredKeyword {
@@ -40,7 +50,7 @@ export class MonitoredKeyword implements IMonitoredKeyword {
       updatedAt: this.updatedAt,
       keyword: this.keyword,
       guildId: this.guildId,
-      webhookUrl: this.webhookUrl
+      webhookUrl: this.webhookUrl,
     };
   }
 }

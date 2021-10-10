@@ -23,45 +23,47 @@ type PermissionsMap = {
 };
 
 const NewUserPage = () => {
-  const [ discordId, setDiscordId ] = useState('');
-  const [ permissions, setPermissions ] = useState<PermissionsMap>({
+  const [discordId, setDiscordId] = useState('');
+  const [permissions, setPermissions] = useState<PermissionsMap>({
     [UserPermissions.MANAGE_OWN_GUILD_BLACKLISTS]: {
       label: 'Manage own guild blacklists',
-      checked: true
+      checked: true,
     },
 
     [UserPermissions.MANAGE_GLOBAL_BLACKLISTS]: {
       label: 'Manage global blacklists',
-      checked: false
+      checked: false,
     },
 
     [UserPermissions.MANAGE_MONITORED_KEYWORDS]: {
       label: 'Manage monitored keywords in own guilds',
-      checked: false
+      checked: false,
     },
 
     [UserPermissions.MANAGE_AUTHORIZED_USERS]: {
       label: 'Manage authorized users',
-      checked: false
-    }
+      checked: false,
+    },
   });
 
-  const [ requestInProgress, setRequestInProgress ] = useState(false);
+  const [requestInProgress, setRequestInProgress] = useState(false);
 
   const router = useRouter();
 
   const authorizeUser = async (user: IDiscordUser) => {
     const finalPermissions = Object.keys(permissions)
-      .filter(permission => permissions[permission].checked)
-      .map(permission => parseInt(permission, 10));
+      .filter((permission) => permissions[permission].checked)
+      .map((permission) => parseInt(permission, 10));
 
     try {
       await apiService.users.authorizeDiscordUser({
         discordId,
-        permissions: finalPermissions
+        permissions: finalPermissions,
       });
 
-      toaster.success(`User ${user.username}#${user.discriminator} authorized successfully.`);
+      toaster.success(
+        `User ${user.username}#${user.discriminator} authorized successfully.`,
+      );
 
       setTimeout(() => {
         router.push('/manage/users');
@@ -125,13 +127,16 @@ const NewUserPage = () => {
     }
   };
 
-  const handlePermissionUpdate = (permission: UserPermissions, state: boolean) => {
+  const handlePermissionUpdate = (
+    permission: UserPermissions,
+    state: boolean,
+  ) => {
     setPermissions({
       ...permissions,
       [permission]: {
         ...permissions[permission],
-        checked: state
-      }
+        checked: state,
+      },
     });
   };
 
@@ -144,28 +149,38 @@ const NewUserPage = () => {
             name="discordId"
             id="discordId"
             placeholder="Discord ID"
-            onChange={e => setDiscordId(e.currentTarget.value)}
+            onChange={(e) => setDiscordId(e.currentTarget.value)}
             required
           />
         </div>
 
         <div className="input-group">
-          {(Object.keys as (o: PermissionsMap) => Extract<keyof PermissionsMap, string>[])(permissions).map((permission: UserPermissions) => (
+          {(
+            Object.keys as (
+              o: PermissionsMap,
+            ) => Extract<keyof PermissionsMap, string>[]
+          )(permissions).map((permission: UserPermissions) => (
             <div className="checkbox" key={permission}>
               <input
                 type="checkbox"
                 id={`permission-${permission}`}
-                onChange={e => handlePermissionUpdate(permission, e.target.checked)}
+                onChange={(e) =>
+                  handlePermissionUpdate(permission, e.target.checked)
+                }
                 checked={permissions[permission].checked}
               />
 
-              <label htmlFor={`permission-${permission}`}>{permissions[permission].label}</label>
+              <label htmlFor={`permission-${permission}`}>
+                {permissions[permission].label}
+              </label>
             </div>
           ))}
         </div>
 
         <div className="input-group buttons">
-          <Button type="submit" disabled={requestInProgress}>Add</Button>
+          <Button type="submit" disabled={requestInProgress}>
+            Add
+          </Button>
         </div>
       </form>
     </DashboardLayout>
@@ -173,9 +188,13 @@ const NewUserPage = () => {
 };
 
 export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(req, res, UserPermissions.MANAGE_AUTHORIZED_USERS);
+  await redirectIfDoesNotHavePermission(
+    req,
+    res,
+    UserPermissions.MANAGE_AUTHORIZED_USERS,
+  );
   return {
-    props: {}
+    props: {},
   };
 };
 

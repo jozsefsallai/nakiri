@@ -12,25 +12,47 @@ export interface DashboardLayoutProps {
   title?: string;
   buttonText?: string;
   onButtonClick?();
-};
+}
 
-const DashboardLayout = ({ children, hasContainer, buttonText, onButtonClick, title }: DashboardLayoutProps) => {
+const DashboardLayout = ({
+  children,
+  hasContainer,
+  buttonText,
+  onButtonClick,
+  title,
+}: DashboardLayoutProps) => {
   return (
     <>
       <Head>
-        <title>{title ? `${title} - NakiriAPI Panel` : 'NakiriAPI Panel'}</title>
+        <title>
+          {title ? `${title} - NakiriAPI Panel` : 'NakiriAPI Panel'}
+        </title>
       </Head>
       <section>
         <TheHeader />
 
         <div className="container py-10">
           {!hasContainer && children}
-          {hasContainer && <Box title={title} buttonText={buttonText} onButtonClick={onButtonClick}>{children}</Box>}
+          {hasContainer && (
+            <Box
+              title={title}
+              buttonText={buttonText}
+              onButtonClick={onButtonClick}
+            >
+              {children}
+            </Box>
+          )}
         </div>
 
         <footer className="p-4 text-center text-xs">
           <div>
-            <a href="/docs" target="_blank" className="text-gray hover:text-nakiri-base">API docs</a>
+            <a
+              href="/docs"
+              target="_blank"
+              className="text-gray hover:text-nakiri-base"
+            >
+              API docs
+            </a>
           </div>
 
           <div className="flex justify-center py-4">

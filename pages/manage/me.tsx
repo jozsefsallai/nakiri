@@ -9,17 +9,17 @@ import { UpdateUserAPIRequest } from '@/services/apis/users/UsersAPIService';
 import { useEffect, useState } from 'react';
 
 const UpdateUserPage = () => {
-  const [ currentUser, setCurrentUser ] = useCurrentUser();
-  const [ requestInProgress, setRequestInProgress ] = useState(false);
+  const [currentUser, setCurrentUser] = useCurrentUser();
+  const [requestInProgress, setRequestInProgress] = useState(false);
 
   // Display preferences
-  const [ hideThumbnails, setHideThumbnails ] = useState(false);
+  const [hideThumbnails, setHideThumbnails] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
       setHideThumbnails(currentUser.hideThumbnails);
     }
-  }, [ currentUser ]);
+  }, [currentUser]);
 
   const handleSubmit = async (settings: UpdateUserAPIRequest) => {
     setRequestInProgress(true);
@@ -35,7 +35,9 @@ const UpdateUserPage = () => {
     setRequestInProgress(false);
   };
 
-  const handleDisplayPreferencesSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDisplayPreferencesSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
     await handleSubmit({
       hideThumbnails,
@@ -55,13 +57,13 @@ const UpdateUserPage = () => {
             onChange={(e) => setHideThumbnails(e.target.checked)}
           />
 
-          <label htmlFor="hideThumbnails">
-            Hide thumbnails
-          </label>
+          <label htmlFor="hideThumbnails">Hide thumbnails</label>
         </div>
 
         <div className="input-group">
-          <Button type="submit" disabled={requestInProgress}>Save</Button>
+          <Button type="submit" disabled={requestInProgress}>
+            Save
+          </Button>
         </div>
       </form>
     </DashboardLayout>
@@ -72,7 +74,7 @@ export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAnonmyous(req, res);
 
   return {
-    props: {}
+    props: {},
   };
 };
 

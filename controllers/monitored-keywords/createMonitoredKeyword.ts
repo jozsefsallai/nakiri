@@ -12,7 +12,11 @@ export class MonitoredKeywordCreationError extends APIError {
   }
 }
 
-export const createMonitoredKeyword = async ({ keyword, guildId, webhookUrl }: CreateMonitoredKeywordAPIRequest) => {
+export const createMonitoredKeyword = async ({
+  keyword,
+  guildId,
+  webhookUrl,
+}: CreateMonitoredKeywordAPIRequest) => {
   if (!isValidUrl(webhookUrl)) {
     throw new MonitoredKeywordCreationError(400, 'INVALID_WEBHOOK_URL');
   }

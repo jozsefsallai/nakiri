@@ -12,7 +12,7 @@ export const analyze: NextApiHandler = async (req, res) => {
     preemptiveVideoIDAnalysis,
     greedy,
     guildId,
-    strictGuildCheck
+    strictGuildCheck,
   } = req.body;
 
   const result = await performAnalysis(content, {
@@ -24,11 +24,11 @@ export const analyze: NextApiHandler = async (req, res) => {
     preemptiveVideoIDAnalysis,
     greedy,
     guildId,
-    strictGuildCheck
+    strictGuildCheck,
   });
 
   return res.json({
     ok: true,
-    result
+    result,
   });
 };

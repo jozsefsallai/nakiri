@@ -12,9 +12,12 @@ export class AddGuildError extends APIError {
   }
 }
 
-export const addGuild = async (session: Session, guildId: string): Promise<string> => {
+export const addGuild = async (
+  session: Session,
+  guildId: string,
+): Promise<string> => {
   const userGuilds = await fetchGuilds(session, true);
-  const targetGuild = userGuilds.find(guild => guild.id === guildId);
+  const targetGuild = userGuilds.find((guild) => guild.id === guildId);
 
   if (!targetGuild) {
     throw new AddGuildError(401, 'CANNOT_MANAGE_GUILD');
@@ -32,7 +35,7 @@ export const addGuild = async (session: Session, guildId: string): Promise<strin
 
   do {
     key = uuid();
-  } while((await guildRepository.count({ key })) !== 0);
+  } while ((await guildRepository.count({ key })) !== 0);
 
   const entry = new AuthorizedGuild();
   entry.key = key;

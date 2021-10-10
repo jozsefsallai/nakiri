@@ -5,9 +5,12 @@ import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 export interface GroupGuildListItemProps {
   guild: IAuthorizedGuild;
   metadata?: IGuildWithKey;
-};
+}
 
-const GroupGuildListItem: React.FC<GroupGuildListItemProps> = ({ guild, metadata }) => {
+const GroupGuildListItem: React.FC<GroupGuildListItemProps> = ({
+  guild,
+  metadata,
+}) => {
   if (!metadata) {
     return <div>{guild.guildId}</div>;
   }

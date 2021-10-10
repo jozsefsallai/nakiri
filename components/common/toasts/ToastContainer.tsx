@@ -9,18 +9,18 @@ const ToastContainer = () => {
   const [toasts, setToasts] = useState<IToast[]>([]);
 
   const handleCreate = () => {
-    setToasts(toasts => {
+    setToasts((toasts) => {
       const newToasts = toasts.slice(0);
 
-      toaster.all().forEach(toast => {
-        if (!toasts.find(t => t.id === toast.id)) {
+      toaster.all().forEach((toast) => {
+        if (!toasts.find((t) => t.id === toast.id)) {
           newToasts.unshift(toast);
         }
       });
 
       let idx = 0;
 
-      newToasts.forEach(toast => {
+      newToasts.forEach((toast) => {
         if (!toast.dead) {
           toast.id = idx++;
         }
@@ -31,9 +31,9 @@ const ToastContainer = () => {
   };
 
   const handleDismiss = (removed: IToast) => {
-    setToasts(toasts => {
+    setToasts((toasts) => {
       let newToasts = toasts.slice(0);
-      const removedToast = newToasts.find(toast => toast.id === removed.id);
+      const removedToast = newToasts.find((toast) => toast.id === removed.id);
 
       if (removedToast) {
         remove(newToasts, { id: removed.id });
@@ -41,7 +41,7 @@ const ToastContainer = () => {
 
       let idx = 0;
 
-      newToasts.forEach(toast => {
+      newToasts.forEach((toast) => {
         if (!toast.dead) {
           toast.id = idx++;
         }
@@ -59,8 +59,12 @@ const ToastContainer = () => {
   }, []);
 
   return (
-    <div id="toast-container" className="fixed bottom-0 left-1/2 w-full md:w-[400px]" style={{ transform: 'translateX(-50%)' }}>
-      {toasts.map(toast => (
+    <div
+      id="toast-container"
+      className="fixed bottom-0 left-1/2 w-full md:w-[400px]"
+      style={{ transform: 'translateX(-50%)' }}
+    >
+      {toasts.map((toast) => (
         <Toast
           key={toast.id}
           idx={toast.id}

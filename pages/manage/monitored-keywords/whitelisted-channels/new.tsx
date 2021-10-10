@@ -10,7 +10,10 @@ import * as NewKeywordWhitelistedChannelFormValidator from '@/validators/NewKeyw
 import { AddKeywordWhitelistedChannelAPIRequest } from '@/services/apis/monitored-keywords/KeywordWhitelistedChannels';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
-import MessageBox, { CompactDangerMessageBox, MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  CompactDangerMessageBox,
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 
@@ -21,9 +24,15 @@ const AddKeywordWhitelistedChannelPage = () => {
 
   const router = useRouter();
 
-  const handleFormSubmit = async ({ channelId }: AddKeywordWhitelistedChannelAPIRequest, { setSubmitting }: FormikHelpers<AddKeywordWhitelistedChannelAPIRequest>) => {
+  const handleFormSubmit = async (
+    { channelId }: AddKeywordWhitelistedChannelAPIRequest,
+    { setSubmitting }: FormikHelpers<AddKeywordWhitelistedChannelAPIRequest>,
+  ) => {
     try {
-      await apiService.keywordWhitelistedChannels.addWhitelistedChannel({ guildId, channelId });
+      await apiService.keywordWhitelistedChannels.addWhitelistedChannel({
+        guildId,
+        channelId,
+      });
 
       toaster.success(`Added channel "${channelId} to the whitelist".`);
 
@@ -55,8 +64,13 @@ const AddKeywordWhitelistedChannelPage = () => {
   }, [guildsErrored]);
 
   return (
-    <DashboardLayout hasContainer title="Monitored Keywords - Whitelist Channel">
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+    <DashboardLayout
+      hasContainer
+      title="Monitored Keywords - Whitelist Channel"
+    >
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
 
       <Formik
         initialValues={{ channelId: '', guildId: '' }}
@@ -68,21 +82,32 @@ const AddKeywordWhitelistedChannelPage = () => {
             <div className="input-group">
               <label htmlFor="channelId">Channel ID:</label>
               <Field name="channelId" />
-              <ErrorMessage name="channelId" component={CompactDangerMessageBox} />
+              <ErrorMessage
+                name="channelId"
+                component={CompactDangerMessageBox}
+              />
             </div>
 
             <div className="input-group">
               <label htmlFor="guild">Guild</label>
-              <select onChange={e => handleGuildChange(e.currentTarget.value)} name="guild">
-                {guilds === null && <option disabled>--- loading guilds ---</option>}
-                {guilds && guilds.map(guild => (
-                  <option value={guild.id}>{guild.name}</option>
-                ))}
+              <select
+                onChange={(e) => handleGuildChange(e.currentTarget.value)}
+                name="guild"
+              >
+                {guilds === null && (
+                  <option disabled>--- loading guilds ---</option>
+                )}
+                {guilds &&
+                  guilds.map((guild) => (
+                    <option value={guild.id}>{guild.name}</option>
+                  ))}
               </select>
             </div>
 
             <div className="input-group">
-              <Button type="submit" disabled={isSubmitting}>Add</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Add
+              </Button>
             </div>
           </Form>
         )}
@@ -92,10 +117,14 @@ const AddKeywordWhitelistedChannelPage = () => {
 };
 
 export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(req, res, UserPermissions.MANAGE_MONITORED_KEYWORDS);
+  await redirectIfDoesNotHavePermission(
+    req,
+    res,
+    UserPermissions.MANAGE_MONITORED_KEYWORDS,
+  );
 
   return {
-    props: {}
+    props: {},
   };
 };
 

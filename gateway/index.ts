@@ -10,25 +10,25 @@ export class Gateway {
   constructor(server: HTTPServer) {
     this.wss = new Server({
       server,
-      path: '/gateway'
+      path: '/gateway',
     });
 
-    this.wss.on('connection', ws => {
+    this.wss.on('connection', (ws) => {
       const client = new GatewayClient(ws);
       this.clients.push(client);
 
-      client.on<{ message: string }>('reverseMessage', message => {
+      client.on<{ message: string }>('reverseMessage', (message) => {
         client.emit('messageReversed', {
-          message: message.message.split('').reverse().join('')
+          message: message.message.split('').reverse().join(''),
         });
       });
     });
 
     this.pingInterval = setInterval(() => {
-      this.clients.forEach(client => {
+      this.clients.forEach((client) => {
         if (!client.isAlive) {
           client.terminate();
-          this.clients = this.clients.filter(c => c !== client);
+          this.clients = this.clients.filter((c) => c !== client);
           return;
         }
 
@@ -43,7 +43,7 @@ export class Gateway {
   }
 
   emit<T = any>(event: string, data: T) {
-    this.clients.forEach(client => {
+    this.clients.forEach((client) => {
       if (client.isAlive) {
         client.emit(event, data);
       }

@@ -9,7 +9,7 @@ export interface UserListItemProps {
   user: IAuthorizedUser;
   onUpdateUserPermissions(id: string, permissions: number[]);
   onUnauthorizeUser(user: IAuthorizedUser);
-};
+}
 
 type PermissionsMap = {
   [permission in UserPermissions]: {
@@ -18,51 +18,64 @@ type PermissionsMap = {
   };
 };
 
-const UserListItem = ({ user, onUpdateUserPermissions, onUnauthorizeUser }: UserListItemProps) => {
+const UserListItem = ({
+  user,
+  onUpdateUserPermissions,
+  onUnauthorizeUser,
+}: UserListItemProps) => {
   const permissions = Object.keys(UserPermissions)
-    .filter(permission => {
-      return typeof permission === 'string' && (user.permissions & UserPermissions[permission]) === UserPermissions[permission];
+    .filter((permission) => {
+      return (
+        typeof permission === 'string' &&
+        (user.permissions & UserPermissions[permission]) ===
+          UserPermissions[permission]
+      );
     })
     .join(', ');
 
-  const [ editMode, setEditMode ] = useState(false);
-  const [ requestInProgress, setRequestInProgress ] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [requestInProgress, setRequestInProgress] = useState(false);
 
-  const [ newPermissions, setNewPermissions ] = useState<PermissionsMap>({
+  const [newPermissions, setNewPermissions] = useState<PermissionsMap>({
     [UserPermissions.MANAGE_OWN_GUILD_BLACKLISTS]: {
       label: 'Manage own guild blacklists',
-      checked: UserPermissionsUtil.canManageOwnGuildBlacklists(user.permissions)
+      checked: UserPermissionsUtil.canManageOwnGuildBlacklists(
+        user.permissions,
+      ),
     },
 
     [UserPermissions.MANAGE_GLOBAL_BLACKLISTS]: {
       label: 'Manage global blacklists',
-      checked: UserPermissionsUtil.canManageGlobalBlacklists(user.permissions)
+      checked: UserPermissionsUtil.canManageGlobalBlacklists(user.permissions),
     },
 
     [UserPermissions.MANAGE_MONITORED_KEYWORDS]: {
       label: 'Manage monitored keywords in own guilds',
-      checked: false
+      checked: false,
     },
 
     [UserPermissions.MANAGE_AUTHORIZED_USERS]: {
       label: 'Manage authorized users',
-      checked: UserPermissionsUtil.canManageAuthorizedUsers(user.permissions)
-    }
+      checked: UserPermissionsUtil.canManageAuthorizedUsers(user.permissions),
+    },
   });
 
-  const handlePermissionUpdate = (permission: UserPermissions, state: boolean) => {
+  const handlePermissionUpdate = (
+    permission: UserPermissions,
+    state: boolean,
+  ) => {
     setNewPermissions({
       ...newPermissions,
       [permission]: {
         ...newPermissions[permission],
-        checked: state
-      }
+        checked: state,
+      },
     });
   };
 
   const handlePermsButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setEditMode(editMode => !editMode);
+    setEditMode((editMode) => !editMode);
   };
 
   const handleUpdatePermsFormSubmit = async (e: FormEvent) => {
@@ -71,8 +84,8 @@ const UserListItem = ({ user, onUpdateUserPermissions, onUnauthorizeUser }: User
     setRequestInProgress(true);
 
     const permissions = Object.keys(newPermissions)
-      .filter(permission => newPermissions[permission].checked)
-      .map(permission => parseInt(permission, 10));
+      .filter((permission) => newPermissions[permission].checked)
+      .map((permission) => parseInt(permission, 10));
 
     await onUpdateUserPermissions(user.id, permissions);
 
@@ -105,35 +118,57 @@ const UserListItem = ({ user, onUpdateUserPermissions, onUnauthorizeUser }: User
               <span className="text-gray">#{user.discriminator}</span>
             </div>
 
-            <div className="text-xs"><strong>Permissions:</strong> {permissions}</div>
+            <div className="text-xs">
+              <strong>Permissions:</strong> {permissions}
+            </div>
           </div>
         </div>
 
         <div className="flex gap-2 my-4 lg:my-0">
-          <Button size={ButtonSize.SMALL} onClick={handlePermsButtonClick}>Perms</Button>
-          <Button size={ButtonSize.SMALL} onClick={handleUnauthorizeButtonClick}>Unauthorize</Button>
+          <Button size={ButtonSize.SMALL} onClick={handlePermsButtonClick}>
+            Perms
+          </Button>
+          <Button
+            size={ButtonSize.SMALL}
+            onClick={handleUnauthorizeButtonClick}
+          >
+            Unauthorize
+          </Button>
         </div>
       </div>
 
       {editMode && (
-        <form onSubmit={handleUpdatePermsFormSubmit} className="px-6 py-3 border-2 rounded-md border-ayame-primary">
+        <form
+          onSubmit={handleUpdatePermsFormSubmit}
+          className="px-6 py-3 border-2 rounded-md border-ayame-primary"
+        >
           <div className="input-group">
-            {(Object.keys as (o: PermissionsMap) => Extract<keyof PermissionsMap, string>[])(newPermissions).map((permission: UserPermissions) => (
+            {(
+              Object.keys as (
+                o: PermissionsMap,
+              ) => Extract<keyof PermissionsMap, string>[]
+            )(newPermissions).map((permission: UserPermissions) => (
               <div className="checkbox" key={permission}>
                 <input
                   type="checkbox"
                   id={`permission-${permission}`}
-                  onChange={e => handlePermissionUpdate(permission, e.target.checked)}
+                  onChange={(e) =>
+                    handlePermissionUpdate(permission, e.target.checked)
+                  }
                   checked={newPermissions[permission].checked}
                 />
 
-                <label htmlFor={`permission-${permission}`}>{newPermissions[permission].label}</label>
+                <label htmlFor={`permission-${permission}`}>
+                  {newPermissions[permission].label}
+                </label>
               </div>
             ))}
           </div>
 
           <div className="input-group buttons">
-            <Button type="submit" disabled={requestInProgress}>Save</Button>
+            <Button type="submit" disabled={requestInProgress}>
+              Save
+            </Button>
           </div>
         </form>
       )}

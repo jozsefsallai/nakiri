@@ -11,16 +11,34 @@ export interface ToastProps {
   dismissable?: boolean;
   dead?: boolean;
   onClick(): void;
-};
+}
 
-const Toast = ({ idx, level, title, message, dismissable = true, dead, onClick }: ToastProps) => {
-  const classNames = clsx('right-0', 'left-0', 'mx-auto', 'py-4', 'px-6', 'flex', 'items-center', 'justify-between', {
-    'bg-info': level === 'info',
-    'bg-success': level === 'success',
-    'bg-warning': level === 'warning',
-    'bg-danger': level === 'danger',
-    'opacity-0': dead
-  });
+const Toast = ({
+  idx,
+  level,
+  title,
+  message,
+  dismissable = true,
+  dead,
+  onClick,
+}: ToastProps) => {
+  const classNames = clsx(
+    'right-0',
+    'left-0',
+    'mx-auto',
+    'py-4',
+    'px-6',
+    'flex',
+    'items-center',
+    'justify-between',
+    {
+      'bg-info': level === 'info',
+      'bg-success': level === 'success',
+      'bg-warning': level === 'warning',
+      'bg-danger': level === 'danger',
+      'opacity-0': dead,
+    },
+  );
 
   return (
     <div className="text-white z-50 mb-3" role="alert">
@@ -34,17 +52,26 @@ const Toast = ({ idx, level, title, message, dismissable = true, dead, onClick }
           </div>
 
           <div className="pr-2">
-            {title && <strong>{title}<br /></strong>}
+            {title && (
+              <strong>
+                {title}
+                <br />
+              </strong>
+            )}
             <span>{message}</span>
           </div>
         </div>
 
-        {dismissable && <div>
-          <div
-            className="inline-block border-2 py-1 px-2 cursor-pointer border-white rounded hover:bg-nakiri-base-invert hover:text-nakiri-base"
-            onClick={onClick}
-          >OK</div>
-        </div>}
+        {dismissable && (
+          <div>
+            <div
+              className="inline-block border-2 py-1 px-2 cursor-pointer border-white rounded hover:bg-nakiri-base-invert hover:text-nakiri-base"
+              onClick={onClick}
+            >
+              OK
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

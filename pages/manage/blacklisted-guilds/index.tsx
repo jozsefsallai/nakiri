@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import Loading from '@/components/loading/Loading';
 import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -18,9 +20,9 @@ import DiscordGuildEntry from '@/components/blacklist/entry-data/DiscordGuildEnt
 
 const ManageGuildsIndexPage = () => {
   const { groups, errored } = useUserGroups();
-  const [ items, setItems ] = useState<IDiscordGuild[] | null>(null);
-  const [ pagination, setPagination ] = useState<APIPaginationData | null>(null);
-  const [ error, setError ] = useState<string>('');
+  const [items, setItems] = useState<IDiscordGuild[] | null>(null);
+  const [pagination, setPagination] = useState<APIPaginationData | null>(null);
+  const [error, setError] = useState<string>('');
 
   const router = useRouter();
 
@@ -30,7 +32,8 @@ const ManageGuildsIndexPage = () => {
     setError('');
 
     try {
-      const { discordGuilds, pagination } = await apiService.guildIDs.getDiscordGuilds({ group, guild, page });
+      const { discordGuilds, pagination } =
+        await apiService.guildIDs.getDiscordGuilds({ group, guild, page });
       setItems(discordGuilds);
       setPagination(pagination);
     } catch (err) {
@@ -41,7 +44,7 @@ const ManageGuildsIndexPage = () => {
   const deleteItem = async (id: string) => {
     try {
       await apiService.guildIDs.deleteDiscordGuild(id);
-      setItems(items => items.filter(guild => guild.id !== id));
+      setItems((items) => items.filter((guild) => guild.id !== id));
       toaster.success('Guild deleted successfully!');
     } catch (err) {
       const message = err?.response?.data?.error;
@@ -65,7 +68,7 @@ const ManageGuildsIndexPage = () => {
       text: 'You are about to delete this guild. This cannot be undone!',
       showCancelButton: true,
       confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
     });
 
     if (result.isConfirmed) {
@@ -80,7 +83,12 @@ const ManageGuildsIndexPage = () => {
   }, [errored]);
 
   return (
-    <DashboardLayout hasContainer title="Blacklisted Discord Guilds" buttonText="Add guild ID" onButtonClick={handleNewButtonClick}>
+    <DashboardLayout
+      hasContainer
+      title="Blacklisted Discord Guilds"
+      buttonText="Add guild ID"
+      onButtonClick={handleNewButtonClick}
+    >
       {groups && (
         <Blacklist
           items={items}
@@ -89,15 +97,15 @@ const ManageGuildsIndexPage = () => {
           error={error}
           zdsMessage="No blacklisted guilds have been found."
           groups={groups}
-          actions={[
-            { label: 'Delete', onClick: handleDeleteActionClick }
-          ]}
+          actions={[{ label: 'Delete', onClick: handleDeleteActionClick }]}
           entryComponent={DiscordGuildEntry}
         />
       )}
 
       {groups === null && !error && <Loading />}
-      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
     </DashboardLayout>
   );
 };
@@ -105,7 +113,7 @@ const ManageGuildsIndexPage = () => {
 export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAnonmyous(req, res);
   return {
-    props: {}
+    props: {},
   };
 };
 

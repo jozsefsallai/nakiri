@@ -6,5 +6,5 @@ import { ensureAuthenticated } from '@/middleware/auth';
 import * as monitoredKeywordsContoller from '@/controllers/monitored-keywords/monitoredKeywordsController';
 
 export default bar({
-  get: withSentry(ensureAuthenticated(monitoredKeywordsContoller.index, true))
+  get: withSentry(ensureAuthenticated(monitoredKeywordsContoller.index, true)),
 });

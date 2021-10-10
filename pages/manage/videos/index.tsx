@@ -1,4 +1,6 @@
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import Loading from '@/components/loading/Loading';
 import { IYouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -18,9 +20,9 @@ import { APIPaginationData } from '@/services/axios';
 
 const ManageVideosIndexPage = () => {
   const { groups, errored } = useUserGroups();
-  const [ items, setItems ] = useState<IYouTubeVideoID[] | null>(null);
-  const [ pagination, setPagination ] = useState<APIPaginationData | null>(null);
-  const [ error, setError ] = useState<string>('');
+  const [items, setItems] = useState<IYouTubeVideoID[] | null>(null);
+  const [pagination, setPagination] = useState<APIPaginationData | null>(null);
+  const [error, setError] = useState<string>('');
 
   const router = useRouter();
 
@@ -30,7 +32,11 @@ const ManageVideosIndexPage = () => {
     setError('');
 
     try {
-      const { videoIDs, pagination } = await apiService.videoIDs.getVideoIDs({ group, guild, page });
+      const { videoIDs, pagination } = await apiService.videoIDs.getVideoIDs({
+        group,
+        guild,
+        page,
+      });
       setItems(videoIDs);
       setPagination(pagination);
     } catch (err) {
@@ -41,7 +47,7 @@ const ManageVideosIndexPage = () => {
   const deleteItem = async (id: string) => {
     try {
       await apiService.videoIDs.deleteVideoID(id);
-      setItems(items => items.filter(video => video.id !== id));
+      setItems((items) => items.filter((video) => video.id !== id));
       toaster.success('Video ID deleted successfully!');
     } catch (err) {
       const message = err?.response?.data?.error;
@@ -65,7 +71,7 @@ const ManageVideosIndexPage = () => {
       text: 'You are about to delete this video ID. This cannot be undone!',
       showCancelButton: true,
       confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
     });
 
     if (result.isConfirmed) {
@@ -81,7 +87,7 @@ const ManageVideosIndexPage = () => {
       text: `Are you sure you want to open the following URL: ${url}?`,
       showCancelButton: true,
       confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
+      cancelButtonText: 'No',
     });
 
     if (result.isConfirmed) {
@@ -96,7 +102,12 @@ const ManageVideosIndexPage = () => {
   }, [errored]);
 
   return (
-    <DashboardLayout hasContainer title="Blacklisted YouTube Video IDs" buttonText="Add video ID" onButtonClick={handleNewButtonClick}>
+    <DashboardLayout
+      hasContainer
+      title="Blacklisted YouTube Video IDs"
+      buttonText="Add video ID"
+      onButtonClick={handleNewButtonClick}
+    >
       {groups && (
         <Blacklist
           items={items}
@@ -106,15 +117,15 @@ const ManageVideosIndexPage = () => {
           zdsMessage="No blacklisted video IDs have been found."
           groups={groups}
           onTextClick={handleTextClick}
-          actions={[
-            { label: 'Delete', onClick: handleDeleteActionClick }
-          ]}
+          actions={[{ label: 'Delete', onClick: handleDeleteActionClick }]}
           entryComponent={YouTubeVideoEntry}
         />
       )}
 
       {groups === null && !error && <Loading />}
-      {groups === null && error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {groups === null && error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
     </DashboardLayout>
   );
 };
@@ -122,7 +133,7 @@ const ManageVideosIndexPage = () => {
 export const getServerSideProps = async ({ req, res }) => {
   await redirectIfAnonmyous(req, res);
   return {
-    props: {}
+    props: {},
   };
 };
 

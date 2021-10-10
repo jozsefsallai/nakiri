@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 import {
   GuildRestrictableBlacklist,
-  IGuildRestrictableBlacklist
+  IGuildRestrictableBlacklist,
 } from '../../common/GuildRestrictableBlacklist';
 import { ProcessingState } from '../../common/ProcessingState';
 
@@ -14,14 +14,21 @@ export interface IYouTubeVideoID extends IGuildRestrictableBlacklist {
   uploadDate?: Date;
   uploaderId?: string;
   uploaderName?: string;
-};
+}
 
 @Entity()
-export class YouTubeVideoID extends GuildRestrictableBlacklist implements IYouTubeVideoID {
+export class YouTubeVideoID
+  extends GuildRestrictableBlacklist
+  implements IYouTubeVideoID
+{
   @Column()
   videoId: string;
 
-  @Column({ type: 'enum', enum: ProcessingState, default: ProcessingState.QUEUED })
+  @Column({
+    type: 'enum',
+    enum: ProcessingState,
+    default: ProcessingState.QUEUED,
+  })
   status: ProcessingState;
 
   @Column({ nullable: true, default: null })
@@ -52,7 +59,7 @@ export class YouTubeVideoID extends GuildRestrictableBlacklist implements IYouTu
       thumbnailUrl: this.thumbnailUrl,
       uploadDate: this.uploadDate,
       uploaderId: this.uploaderId,
-      uploaderName: this.uploaderName
+      uploaderName: this.uploaderName,
     };
   }
 }

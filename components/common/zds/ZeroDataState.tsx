@@ -2,7 +2,7 @@ import { Frown } from 'react-feather';
 
 export interface ZeroDataStateProps {
   message?: string;
-};
+}
 
 const ZeroDataState = ({ message }: ZeroDataStateProps) => {
   return (

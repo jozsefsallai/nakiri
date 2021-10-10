@@ -6,5 +6,5 @@ import { ensureAuthenticated } from '@/middleware/auth';
 
 export default bar({
   get: withSentry(ensureAuthenticated(guildsController.index, true)),
-  post: withSentry(ensureAuthenticated(guildsController.insert, true))
+  post: withSentry(ensureAuthenticated(guildsController.insert, true)),
 });

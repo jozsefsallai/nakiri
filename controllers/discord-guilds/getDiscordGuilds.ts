@@ -2,7 +2,12 @@ import db from '@/services/db';
 import { DiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 import { FindConditions, IsNull } from 'typeorm';
 
-export const getDiscordGuilds = async (guildId?: string, strict?: boolean, skip?: number, take?: number) => {
+export const getDiscordGuilds = async (
+  guildId?: string,
+  strict?: boolean,
+  skip?: number,
+  take?: number,
+) => {
   await db.prepare();
   const discordGuildRepository = db.getRepository(DiscordGuild);
 
@@ -17,7 +22,12 @@ export const getDiscordGuilds = async (guildId?: string, strict?: boolean, skip?
   }
 
   const totalCount = await discordGuildRepository.count({ where });
-  const discordGuilds = await discordGuildRepository.find({ where, skip, take, order: { createdAt: 'DESC' } });
+  const discordGuilds = await discordGuildRepository.find({
+    where,
+    skip,
+    take,
+    order: { createdAt: 'DESC' },
+  });
 
   return { discordGuilds, totalCount };
 };

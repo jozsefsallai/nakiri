@@ -4,12 +4,16 @@ import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
 export enum ButtonSize {
   SMALL,
   MEDIUM,
-  LARGE
-};
+  LARGE,
+}
 
-export interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+export interface ButtonProps
+  extends DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
   size?: ButtonSize;
-};
+}
 
 const Button = ({ size, ...props }: ButtonProps, ref) => {
   const finalSize = size ?? ButtonSize.MEDIUM;
@@ -32,15 +36,15 @@ const Button = ({ size, ...props }: ButtonProps, ref) => {
       'text-base': finalSize === ButtonSize.MEDIUM,
 
       'px-10 py-5': finalSize === ButtonSize.LARGE,
-      'text-lg': finalSize === ButtonSize.LARGE
+      'text-lg': finalSize === ButtonSize.LARGE,
     },
 
-    props.className
+    props.className,
   );
 
   return (
     <button ref={ref} {...props} className={buttonClasses}>
-      { props.children }
+      {props.children}
     </button>
   );
 };

@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { IMonitoredKeyword, MonitoredKeyword } from './MonitoredKeyword';
 
 export interface IKeywordSearchResult {
@@ -12,7 +19,7 @@ export interface IKeywordSearchResult {
   uploadDate: Date;
   uploader: string;
   uploaderName: string;
-};
+}
 
 @Entity()
 export class KeywordSearchResult implements IKeywordSearchResult {
@@ -25,7 +32,10 @@ export class KeywordSearchResult implements IKeywordSearchResult {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => MonitoredKeyword, monitoredKeyword => monitoredKeyword.results)
+  @ManyToOne(
+    () => MonitoredKeyword,
+    (monitoredKeyword) => monitoredKeyword.results,
+  )
   keyword: Partial<MonitoredKeyword>;
 
   @Column()
@@ -57,7 +67,7 @@ export class KeywordSearchResult implements IKeywordSearchResult {
       thumbnailUrl: this.thumbnailUrl,
       uploadDate: this.uploadDate,
       uploader: this.uploader,
-      uploaderName: this.uploaderName
+      uploaderName: this.uploaderName,
     };
   }
 }

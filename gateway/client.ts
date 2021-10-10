@@ -4,7 +4,7 @@ type GatewayEventHandler<T> = (data: T) => void | Promise<void>;
 
 interface GatewayEventHandlers {
   [key: string]: GatewayEventHandler<any>;
-};
+}
 
 type GatewayEvent = [string, any];
 
@@ -19,16 +19,16 @@ export class GatewayClient {
     this.ws = ws;
     this.isAlive = true;
 
-    this.ws.on('message', async message => {
+    this.ws.on('message', async (message) => {
       try {
-        const [ event, data ]: GatewayEvent = JSON.parse(message.toString());
+        const [event, data]: GatewayEvent = JSON.parse(message.toString());
         const handler = this.handlers[event];
         if (handler) {
           await handler(data);
         }
       } catch (err) {
         this.emit('error', {
-          code: 'INVALID_JSON'
+          code: 'INVALID_JSON',
         });
       }
     });
@@ -43,7 +43,7 @@ export class GatewayClient {
   }
 
   emit<T = any>(event: string, data: T): void {
-    this.ws.send(JSON.stringify([ event, data ]));
+    this.ws.send(JSON.stringify([event, data]));
   }
 
   ping() {

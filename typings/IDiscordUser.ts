@@ -6,4 +6,4 @@ export interface IDiscordUser {
   public_flags?: number;
   banner?: string;
   banner_color?: string;
-};
+}

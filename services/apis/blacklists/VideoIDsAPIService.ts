@@ -25,16 +25,16 @@ export interface DeleteVideoIDAPIResponse extends APIResponse {}
 
 export class VideoIDsAPIService {
   static GET_VIDEO_IDS_URL =
-  '/api/lists/youtube/videos?compact=false&page=:page&limit=:limit';
+    '/api/lists/youtube/videos?compact=false&page=:page&limit=:limit';
   static GET_VIDEO_IDS_WITH_GROUP_URL =
-  '/api/lists/youtube/videos?compact=false&group=:group&strict=true&page=:page&limit=:limit';
+    '/api/lists/youtube/videos?compact=false&group=:group&strict=true&page=:page&limit=:limit';
   static GET_VIDEO_IDS_WITH_GUILD_URL =
-  '/api/lists/youtube/videos?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
+    '/api/lists/youtube/videos?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
 
   static ADD_VIDEO_ID_URL = '/api/lists/youtube/videos';
   static ADD_VIDEO_ID_WITH_GROUP_URL = '/api/lists/youtube/videos?group=:group';
   static ADD_VIDEO_ID_WITH_GUILD_URL =
-  '/api/lists/youtube/videos?group=:group&guild=:guild';
+    '/api/lists/youtube/videos?group=:group&guild=:guild';
 
   static DELETE_VIDEO_ID_URL = '/api/lists/youtube/videos/:id';
 
@@ -75,13 +75,13 @@ export class VideoIDsAPIService {
     if (group) {
       url = guild
         ? VideoIDsAPIService.GET_VIDEO_IDS_WITH_GUILD_URL.replace(
-          ':group',
-          group,
-        ).replace(':guild', guild)
+            ':group',
+            group,
+          ).replace(':guild', guild)
         : VideoIDsAPIService.GET_VIDEO_IDS_WITH_GROUP_URL.replace(
-          ':group',
-          group,
-        );
+            ':group',
+            group,
+          );
     } else {
       url = VideoIDsAPIService.GET_VIDEO_IDS_URL;
     }
@@ -97,13 +97,13 @@ export class VideoIDsAPIService {
     if (group) {
       url = guild
         ? VideoIDsAPIService.ADD_VIDEO_ID_WITH_GUILD_URL.replace(
-          ':group',
-          group,
-        ).replace(':guild', guild)
+            ':group',
+            group,
+          ).replace(':guild', guild)
         : VideoIDsAPIService.ADD_VIDEO_ID_WITH_GROUP_URL.replace(
-          ':group',
-          group,
-        );
+            ':group',
+            group,
+          );
     } else {
       url = VideoIDsAPIService.ADD_VIDEO_ID_URL;
     }

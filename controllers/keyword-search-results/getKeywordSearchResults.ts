@@ -13,7 +13,12 @@ export class GetKeywordSearchResultsError extends APIError {
   }
 }
 
-export const getKeywordSearchResults = async (session: Session, id: string, skip?: number, take?: number) => {
+export const getKeywordSearchResults = async (
+  session: Session,
+  id: string,
+  skip?: number,
+  take?: number,
+) => {
   await db.prepare();
 
   const monitoredKeywordsRepository = db.getRepository(MonitoredKeyword);
@@ -29,7 +34,12 @@ export const getKeywordSearchResults = async (session: Session, id: string, skip
   };
 
   const totalCount = await keywordSearchResultsRepository.count({ where });
-  const keywordSearchResults = await keywordSearchResultsRepository.find({ where, skip, take, order: { createdAt: 'DESC' } });
+  const keywordSearchResults = await keywordSearchResultsRepository.find({
+    where,
+    skip,
+    take,
+    order: { createdAt: 'DESC' },
+  });
 
   return { keywordSearchResults, totalCount };
 };

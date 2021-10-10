@@ -5,17 +5,23 @@ export interface UserListProps {
   users: IAuthorizedUser[];
   onUpdateUserPermissions(id: string, permissions: number[]);
   onUnauthorizeUser(user: IAuthorizedUser);
-};
+}
 
-const UserList = ({ users, onUpdateUserPermissions, onUnauthorizeUser }: UserListProps) => {
+const UserList = ({
+  users,
+  onUpdateUserPermissions,
+  onUnauthorizeUser,
+}: UserListProps) => {
   return (
     <div>
-      {users.map(user => <UserListItem
-        key={user.id}
-        user={user}
-        onUpdateUserPermissions={onUpdateUserPermissions}
-        onUnauthorizeUser={onUnauthorizeUser}
-      />)}
+      {users.map((user) => (
+        <UserListItem
+          key={user.id}
+          user={user}
+          onUpdateUserPermissions={onUpdateUserPermissions}
+          onUnauthorizeUser={onUnauthorizeUser}
+        />
+      ))}
     </div>
   );
 };

@@ -11,7 +11,10 @@ import * as NewLinkPatternFormValidator from '@/validators/NewLinkPatternFormVal
 import { AddLinkPatternAPIRequest } from '@/services/apis/blacklists/LinkPatternsAPIService';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
-import MessageBox, { CompactDangerMessageBox, MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  CompactDangerMessageBox,
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import { redirectIfDoesNotHaveOneOfPermissions } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 
@@ -22,15 +25,18 @@ import RegexTester from '@/components/common/regex-tester/RegexTester';
 const MySwal = withReactContent(Swal);
 
 const NewLinkPatternPage = () => {
-  const [ currentUser, _ ] = useCurrentUser();
+  const [currentUser, _] = useCurrentUser();
 
-  const [ guilds, , guildsErrored ] = useGuilds();
-  const [ guildID, setGuildID ] = useState<string | undefined>(undefined);
-  const [ error, setError ] = useState('');
+  const [guilds, , guildsErrored] = useGuilds();
+  const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [error, setError] = useState('');
 
   const router = useRouter();
 
-  const handleFormSubmit = async ({ pattern }: AddLinkPatternAPIRequest, { setSubmitting }: FormikHelpers<AddLinkPatternAPIRequest>) => {
+  const handleFormSubmit = async (
+    { pattern }: AddLinkPatternAPIRequest,
+    { setSubmitting }: FormikHelpers<AddLinkPatternAPIRequest>,
+  ) => {
     try {
       await apiService.patterns.addLinkPattern({ pattern, guild: guildID });
 
@@ -62,7 +68,10 @@ const NewLinkPatternPage = () => {
     setGuildID(guildID);
   };
 
-  const handleTestClick = async (e: MouseEvent<HTMLButtonElement>, pattern?: string) => {
+  const handleTestClick = async (
+    e: MouseEvent<HTMLButtonElement>,
+    pattern?: string,
+  ) => {
     e.preventDefault();
 
     if (!pattern || pattern.length === 0) {
@@ -71,7 +80,7 @@ const NewLinkPatternPage = () => {
 
     await MySwal.fire({
       title: 'Regex Tester',
-      html: <RegexTester pattern={pattern} />
+      html: <RegexTester pattern={pattern} />,
     });
   };
 
@@ -83,7 +92,9 @@ const NewLinkPatternPage = () => {
 
   return (
     <DashboardLayout hasContainer title="Add link pattern">
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
 
       <Formik
         initialValues={{ pattern: '' }}
@@ -95,10 +106,13 @@ const NewLinkPatternPage = () => {
             <div className="input-group">
               <label htmlFor="pattern">Regex pattern:</label>
               <Field name="pattern" />
-              <ErrorMessage name="pattern" component={CompactDangerMessageBox} />
+              <ErrorMessage
+                name="pattern"
+                component={CompactDangerMessageBox}
+              />
               {values.pattern.length > 0 && !errors.pattern && (
                 <Button
-                  onClick={e => handleTestClick(e, values.pattern)}
+                  onClick={(e) => handleTestClick(e, values.pattern)}
                   size={ButtonSize.SMALL}
                 >
                   Test
@@ -108,17 +122,28 @@ const NewLinkPatternPage = () => {
 
             <div className="input-group">
               <label htmlFor="guild">Guild</label>
-              <select onChange={e => handleGuildChange(e.currentTarget.value)} name="guild">
-                {currentUser?.canManageGlobalBlacklists() && <option value="">Global</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && !guilds && <option disabled>--- loading guilds ---</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && guilds && guilds.map(guild => (
-                  <option value={guild.id}>{guild.name}</option>
-                ))}
+              <select
+                onChange={(e) => handleGuildChange(e.currentTarget.value)}
+                name="guild"
+              >
+                {currentUser?.canManageGlobalBlacklists() && (
+                  <option value="">Global</option>
+                )}
+                {currentUser?.canManageOwnGuildBlacklists() && !guilds && (
+                  <option disabled>--- loading guilds ---</option>
+                )}
+                {currentUser?.canManageOwnGuildBlacklists() &&
+                  guilds &&
+                  guilds.map((guild) => (
+                    <option value={guild.id}>{guild.name}</option>
+                  ))}
               </select>
             </div>
 
             <div className="input-group">
-              <Button type="submit" disabled={isSubmitting}>Add</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Add
+              </Button>
             </div>
           </Form>
         )}
@@ -134,7 +159,7 @@ export const getServerSideProps = async ({ req, res }) => {
   ]);
 
   return {
-    props: {}
+    props: {},
   };
 };
 

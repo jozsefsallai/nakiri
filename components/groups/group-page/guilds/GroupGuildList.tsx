@@ -13,27 +13,35 @@ export interface GroupGuildListProps {
   guilds: IAuthorizedGuild[];
   group: IGroup;
   setGroup(group: IGroup): void;
-};
+}
 
-const GroupGuildList: React.FC<GroupGuildListProps> = ({ guilds, group, setGroup }) => {
-  const [ allGuilds ] = useGuilds();
+const GroupGuildList: React.FC<GroupGuildListProps> = ({
+  guilds,
+  group,
+  setGroup,
+}) => {
+  const [allGuilds] = useGuilds();
 
   const getGuildMetadata = (guildId: string): IGuildWithKey | undefined => {
-    const guild = allGuilds.find(g => g.id === guildId);
+    const guild = allGuilds.find((g) => g.id === guildId);
     return guild;
   };
 
   return (
     <Box title="Guilds">
-      {guilds.length === 0 && <ZeroDataState message="There are no guilds in this group yet." />}
+      {guilds.length === 0 && (
+        <ZeroDataState message="There are no guilds in this group yet." />
+      )}
       {guilds.length > 0 && !allGuilds && <Loading />}
-      {guilds.length > 0 && allGuilds && guilds.map(guild => (
-        <GroupGuildListItem
-          guild={guild}
-          metadata={getGuildMetadata(guild.guildId)}
-          key={guild.guildId}
-        />
-      ))}
+      {guilds.length > 0 &&
+        allGuilds &&
+        guilds.map((guild) => (
+          <GroupGuildListItem
+            guild={guild}
+            metadata={getGuildMetadata(guild.guildId)}
+            key={guild.guildId}
+          />
+        ))}
 
       {GroupMemberPermissionsUtil.canManageGroupGuilds(group.myPermissions) && (
         <div className="text-center mt-5">

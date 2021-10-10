@@ -13,14 +13,14 @@ export default bar({
       ensureHasAccessToGuild(
         withPagination({
           defaultLimit: Infinity,
-          maxLimit: Infinity
-        })(youtubeVideoIDsController.index)
-      )
-    )
+          maxLimit: Infinity,
+        })(youtubeVideoIDsController.index),
+      ),
+    ),
   ),
   post: withSentry(
     ensureAuthenticated(
-      ensureHasAccessToGuild(youtubeVideoIDsController.create)
-    )
-  )
+      ensureHasAccessToGuild(youtubeVideoIDsController.create),
+    ),
+  ),
 });

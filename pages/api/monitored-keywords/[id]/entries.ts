@@ -11,8 +11,9 @@ export default bar({
     ensureAuthenticated(
       withPagination({
         defaultLimit: 25,
-        maxLimit: 50
-      })(keywordSearchResultsController.index), true
-    )
+        maxLimit: 50,
+      })(keywordSearchResultsController.index),
+      true,
+    ),
   ),
 });

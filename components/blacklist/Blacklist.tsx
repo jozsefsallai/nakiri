@@ -18,7 +18,7 @@ export interface IFetcherOptions {
   group?: string;
   guild?: string;
   page?: number;
-};
+}
 
 export interface BlacklistProps {
   items: BlacklistItem[];
@@ -32,13 +32,29 @@ export interface BlacklistProps {
   actions?: BlacklistAction[];
   entryComponent?: React.FC<any> | React.ComponentClass<any>;
   hideGlobal?: boolean;
-};
+}
 
-const Blacklist: React.FC<BlacklistProps> = ({ items, groups, guilds, pagination, fetcher, error, zdsMessage, onTextClick, actions, entryComponent, hideGlobal }) => {
-  const [ activeGroup, setActiveGroup ] = useState<IGroup | null>(hideGlobal && groups ? groups[0] : null);
-  const [ activeGuild, setActiveGuild ] = useState<IGuild | null>(hideGlobal && guilds ? guilds[0] : null);
+const Blacklist: React.FC<BlacklistProps> = ({
+  items,
+  groups,
+  guilds,
+  pagination,
+  fetcher,
+  error,
+  zdsMessage,
+  onTextClick,
+  actions,
+  entryComponent,
+  hideGlobal,
+}) => {
+  const [activeGroup, setActiveGroup] = useState<IGroup | null>(
+    hideGlobal && groups ? groups[0] : null,
+  );
+  const [activeGuild, setActiveGuild] = useState<IGuild | null>(
+    hideGlobal && guilds ? guilds[0] : null,
+  );
 
-  const [ filtersVisible, setFiltersVisible ] = useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(false);
 
   const handleGuildClick = (guild: IGuild | null) => {
     if (guild === null && activeGuild === null) {
@@ -109,43 +125,77 @@ const Blacklist: React.FC<BlacklistProps> = ({ items, groups, guilds, pagination
     fetcher();
   }, []);
 
-  const toggleFiltersVisibility = () => setFiltersVisible(filtersVisible => !filtersVisible);
+  const toggleFiltersVisibility = () =>
+    setFiltersVisible((filtersVisible) => !filtersVisible);
 
   return (
     <div className="lg:flex gap-4">
       {((guilds && guilds.length > 0) || (groups && groups.length > 0)) && (
         <>
-          <div className="lg:hidden select-none py-4 flex items-center justify-center gap-3 mt-4" onClick={toggleFiltersVisibility}>
+          <div
+            className="lg:hidden select-none py-4 flex items-center justify-center gap-3 mt-4"
+            onClick={toggleFiltersVisibility}
+          >
             <Filter />
             <div>Toggle filters</div>
           </div>
 
-          <div className={clsx('py-4 lg:w-80 lg:block', {
-            'block': filtersVisible,
-            'hidden': !filtersVisible
-          })}>
-            {!hideGlobal && <div
-              className={clsx('py-3 px-4 hover:bg-ayame-secondary-200 rounded-md cursor-pointer', { 'bg-ayame-secondary-200': activeGroup === null && activeGuild === null })}
-              onClick={handleGlobalClick}
-            >Global</div>}
+          <div
+            className={clsx('py-4 lg:w-80 lg:block', {
+              'block': filtersVisible,
+              'hidden': !filtersVisible,
+            })}
+          >
+            {!hideGlobal && (
+              <div
+                className={clsx(
+                  'py-3 px-4 hover:bg-ayame-secondary-200 rounded-md cursor-pointer',
+                  {
+                    'bg-ayame-secondary-200':
+                      activeGroup === null && activeGuild === null,
+                  },
+                )}
+                onClick={handleGlobalClick}
+              >
+                Global
+              </div>
+            )}
 
-            {guilds && <GuildList compact guilds={guilds} onGuildClick={handleGuildClick} activeGuild={activeGuild} />}
-            {groups && <CompactGroupList groups={groups} onChange={handleGroupClick} activeGroup={activeGroup} activeGuild={activeGuild} />}
+            {guilds && (
+              <GuildList
+                compact
+                guilds={guilds}
+                onGuildClick={handleGuildClick}
+                activeGuild={activeGuild}
+              />
+            )}
+            {groups && (
+              <CompactGroupList
+                groups={groups}
+                onChange={handleGroupClick}
+                activeGroup={activeGroup}
+                activeGuild={activeGuild}
+              />
+            )}
           </div>
         </>
       )}
 
       <div className="flex-1">
-        {items && items.length > 0 && <FilteredBlacklist
-          items={items}
-          onTextClick={onTextClick}
-          actions={actions}
-          entryComponent={entryComponent}
-        />}
+        {items && items.length > 0 && (
+          <FilteredBlacklist
+            items={items}
+            onTextClick={onTextClick}
+            actions={actions}
+            entryComponent={entryComponent}
+          />
+        )}
 
         {items?.length === 0 && <ZeroDataState message={zdsMessage} />}
         {!items && !error && <Loading />}
-        {error?.length > 0 && <MessageBox level={MessageBoxLevel.DANGER}>{error}</MessageBox>}
+        {error?.length > 0 && (
+          <MessageBox level={MessageBoxLevel.DANGER}>{error}</MessageBox>
+        )}
 
         {pagination && (
           <Pagination

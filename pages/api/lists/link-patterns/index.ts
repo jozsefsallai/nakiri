@@ -7,21 +7,18 @@ import { ensureHasAccessToGuild } from '@/middleware/permissions';
 
 import * as linkPatternsController from '@/controllers/link-patterns/linkPatternsController';
 
-
 export default bar({
   get: withSentry(
     ensureAuthenticated(
       ensureHasAccessToGuild(
         withPagination({
           defaultLimit: Infinity,
-          maxLimit: Infinity
-        })(linkPatternsController.index)
-      )
-    )
+          maxLimit: Infinity,
+        })(linkPatternsController.index),
+      ),
+    ),
   ),
   post: withSentry(
-    ensureAuthenticated(
-      ensureHasAccessToGuild(linkPatternsController.create)
-    )
-  )
+    ensureAuthenticated(ensureHasAccessToGuild(linkPatternsController.create)),
+  ),
 });

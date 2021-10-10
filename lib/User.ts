@@ -10,7 +10,7 @@ export interface IUser {
   discordId: string;
   permissions: number;
   hideThumbnails: boolean;
-};
+}
 
 // I know this is code duplication, but it's pretty much the only way I can do
 // this right now. Extending from AuthorizedUser will bundle typeorm too.
@@ -42,14 +42,26 @@ export class User implements IUser {
   }
 
   canManageGuildMonitoredKeywords(): boolean {
-    return UserPermissionsUtil.canManageGuildMonitoredKeywords(this.permissions);
+    return UserPermissionsUtil.canManageGuildMonitoredKeywords(
+      this.permissions,
+    );
   }
 
   canCreateGroups(): boolean {
     return UserPermissionsUtil.canCreateGroups(this.permissions);
   }
 
-  constructor({ id, name, image, discriminator, discordId, createdAt, updatedAt, permissions, hideThumbnails }: IUser) {
+  constructor({
+    id,
+    name,
+    image,
+    discriminator,
+    discordId,
+    createdAt,
+    updatedAt,
+    permissions,
+    hideThumbnails,
+  }: IUser) {
     this.id = id;
     this.name = name;
     this.image = image;

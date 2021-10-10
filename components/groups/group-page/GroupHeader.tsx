@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 export interface GroupHeaderProps {
   group: IGroup;
-};
+}
 
 const COPY_TEXT = 'Copy';
 const COPIED_TEXT = 'Copied';
@@ -24,7 +24,7 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
     id: group.creator.discordId,
   };
 
-  const [ copyButtonText, setCopyButtonText ] = useState(COPY_TEXT);
+  const [copyButtonText, setCopyButtonText] = useState(COPY_TEXT);
 
   const handleCopyClick = async () => {
     await navigator.clipboard.writeText(group.apiKey);
@@ -60,7 +60,11 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
               <Clock />
 
               <div>
-                <strong>Created at:</strong> {formatDate(new Date(group.createdAt), 'MMMM d yyyy, h:mm:ss a')}
+                <strong>Created at:</strong>{' '}
+                {formatDate(
+                  new Date(group.createdAt),
+                  'MMMM d yyyy, h:mm:ss a',
+                )}
               </div>
             </div>
 
@@ -69,7 +73,8 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
                 <Users />
 
                 <div>
-                  <strong>{group.members.length}</strong> member{group.members.length === 1 ? '' : 's'}
+                  <strong>{group.members.length}</strong> member
+                  {group.members.length === 1 ? '' : 's'}
                 </div>
               </div>
 
@@ -77,7 +82,8 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
                 <Server />
 
                 <div>
-                  <strong>{group.guilds.length}</strong> guild{group.guilds.length === 1 ? '' : 's'}
+                  <strong>{group.guilds.length}</strong> guild
+                  {group.guilds.length === 1 ? '' : 's'}
                 </div>
               </div>
             </div>
@@ -85,8 +91,15 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
         </div>
 
         <div>
-          <div className="text-center text-xs font-bold uppercase p-2 bg-ayame-primary-900 text-nakiri-base-invert">Creator</div>
-          <DiscordCard user={creatorDiscordUser} small squareCorners noMargins />
+          <div className="text-center text-xs font-bold uppercase p-2 bg-ayame-primary-900 text-nakiri-base-invert">
+            Creator
+          </div>
+          <DiscordCard
+            user={creatorDiscordUser}
+            small
+            squareCorners
+            noMargins
+          />
         </div>
       </div>
     </Box>

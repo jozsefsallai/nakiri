@@ -4,7 +4,7 @@ import GroupListItem from './GroupListItem';
 
 export interface GroupListProps {
   groups: IGroup[];
-};
+}
 
 const GroupList: React.FC<GroupListProps> = ({ groups }) => {
   if (groups.length === 0) {
@@ -13,7 +13,9 @@ const GroupList: React.FC<GroupListProps> = ({ groups }) => {
 
   return (
     <div className="py-4">
-      {groups.map(group => <GroupListItem key={group.id} group={group} />)}
+      {groups.map((group) => (
+        <GroupListItem key={group.id} group={group} />
+      ))}
     </div>
   );
 };

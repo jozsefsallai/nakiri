@@ -14,13 +14,16 @@ const MySwal = withReactContent(Swal);
 export interface AddGuildButtonProps {
   group: IGroup;
   onSuccess(group: IGroup): void;
-};
+}
 
-const AddGuildButton: React.FC<AddGuildButtonProps> = ({ group, onSuccess }) => {
-  const [ guilds ] = useGuilds();
+const AddGuildButton: React.FC<AddGuildButtonProps> = ({
+  group,
+  onSuccess,
+}) => {
+  const [guilds] = useGuilds();
   const targetGuild = useRef<string | null>(null);
 
-  const [ requestInProgress, setRequestInProgress ] = useState(false);
+  const [requestInProgress, setRequestInProgress] = useState(false);
 
   const updateTargetGuild = (guildId: string) => {
     targetGuild.current = guildId;
@@ -34,7 +37,9 @@ const AddGuildButton: React.FC<AddGuildButtonProps> = ({ group, onSuccess }) => 
     setRequestInProgress(true);
 
     try {
-      const res = await apiService.groups.addGuildToGroup(group.id, { guildId });
+      const res = await apiService.groups.addGuildToGroup(group.id, {
+        guildId,
+      });
       toaster.success('Guild added to group successfully!');
       setRequestInProgress(false);
       return res.group;
@@ -61,8 +66,10 @@ const AddGuildButton: React.FC<AddGuildButtonProps> = ({ group, onSuccess }) => 
           <p>Please select the guild you'd like to add to the group.</p>
           <p>
             <select onChange={(e) => updateTargetGuild(e.target.value)}>
-              {guilds?.map(guild => (
-                <option key={guild.id} value={guild.id}>{guild.name}</option>
+              {guilds?.map((guild) => (
+                <option key={guild.id} value={guild.id}>
+                  {guild.name}
+                </option>
               ))}
             </select>
           </p>
@@ -80,15 +87,12 @@ const AddGuildButton: React.FC<AddGuildButtonProps> = ({ group, onSuccess }) => 
     const newGroup = await addGuildToGroup(targetGuild.current);
     onSuccess({
       ...group,
-      ...newGroup
+      ...newGroup,
     });
   };
 
   return (
-    <Button
-      onClick={handleAddGuildActionClick}
-      disabled={requestInProgress}
-    >
+    <Button onClick={handleAddGuildActionClick} disabled={requestInProgress}>
       Add guild
     </Button>
   );

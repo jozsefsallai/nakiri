@@ -7,12 +7,21 @@ import DiscordAvatar from '@/components/users/common/DiscordAvatar';
 export interface GroupMemberListItemProps {
   member: IAuthorizedUser;
   permissions: number;
-};
+}
 
-const GroupMemberListItem: React.FC<GroupMemberListItemProps> = ({ member, permissions }) => {
+const GroupMemberListItem: React.FC<GroupMemberListItemProps> = ({
+  member,
+  permissions,
+}) => {
   const permissionsList = Object.keys(GroupMemberPermissions)
-    .filter(permission => {
-      return typeof permission === 'string' && UserPermissionsUtil.hasPermission(permissions, GroupMemberPermissions[permission]);
+    .filter((permission) => {
+      return (
+        typeof permission === 'string' &&
+        UserPermissionsUtil.hasPermission(
+          permissions,
+          GroupMemberPermissions[permission],
+        )
+      );
     })
     .join(', ');
 
@@ -35,7 +44,9 @@ const GroupMemberListItem: React.FC<GroupMemberListItemProps> = ({ member, permi
             <span className="text-gray">#{member.discriminator}</span>
           </div>
 
-          <div className="text-xs"><strong>Permissions:</strong> {permissionsList}</div>
+          <div className="text-xs">
+            <strong>Permissions:</strong> {permissionsList}
+          </div>
         </div>
       </div>
     </div>

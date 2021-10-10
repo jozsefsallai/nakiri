@@ -9,7 +9,10 @@ import * as NewMonitoredKeywordFormValidator from '@/validators/NewMonitoredKeyw
 import { CreateMonitoredKeywordAPIRequest } from '@/services/apis/monitored-keywords/MonitoredKeywordsAPIService';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
-import MessageBox, { CompactDangerMessageBox, MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  CompactDangerMessageBox,
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
@@ -17,20 +20,25 @@ import Loading from '@/components/loading/Loading';
 
 interface IEditMonitoredKeywordPageProps {
   id: string;
-};
+}
 
-const EditMonitoredKeywordPage: React.FC<IEditMonitoredKeywordPageProps> = ({ id }) => {
-  const [ entry, setEntry ] = useState<IMonitoredKeyword | null>(null);
-  const [ error, setError ] = useState('');
+const EditMonitoredKeywordPage: React.FC<IEditMonitoredKeywordPageProps> = ({
+  id,
+}) => {
+  const [entry, setEntry] = useState<IMonitoredKeyword | null>(null);
+  const [error, setError] = useState('');
 
   const router = useRouter();
 
-  const handleFormSubmit = async ({ keyword, webhookUrl }: CreateMonitoredKeywordAPIRequest, { setSubmitting }: FormikHelpers<CreateMonitoredKeywordAPIRequest>) => {
+  const handleFormSubmit = async (
+    { keyword, webhookUrl }: CreateMonitoredKeywordAPIRequest,
+    { setSubmitting }: FormikHelpers<CreateMonitoredKeywordAPIRequest>,
+  ) => {
     try {
       await apiService.monitoredKeywords.updateMonitoredKeyword(id, {
         keyword,
         guildId: entry.guildId,
-        webhookUrl
+        webhookUrl,
       });
 
       toaster.success(`Updated keyword "${keyword}".`);
@@ -57,7 +65,9 @@ const EditMonitoredKeywordPage: React.FC<IEditMonitoredKeywordPageProps> = ({ id
     setError('');
 
     try {
-      const { entry } = await apiService.monitoredKeywords.getMonitoredKeyword(id);
+      const { entry } = await apiService.monitoredKeywords.getMonitoredKeyword(
+        id,
+      );
       setEntry(entry);
     } catch (err) {
       const message = err?.response?.data?.error;
@@ -77,12 +87,18 @@ const EditMonitoredKeywordPage: React.FC<IEditMonitoredKeywordPageProps> = ({ id
 
   return (
     <DashboardLayout hasContainer title="Update Monitored Keyword">
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
       {!entry && !error.length && <Loading />}
 
       {entry && (
         <Formik
-          initialValues={{ keyword: entry.keyword, webhookUrl: entry.webhookUrl, guildId: entry.guildId }}
+          initialValues={{
+            keyword: entry.keyword,
+            webhookUrl: entry.webhookUrl,
+            guildId: entry.guildId,
+          }}
           validate={NewMonitoredKeywordFormValidator.validate}
           onSubmit={handleFormSubmit}
         >
@@ -91,17 +107,25 @@ const EditMonitoredKeywordPage: React.FC<IEditMonitoredKeywordPageProps> = ({ id
               <div className="input-group">
                 <label htmlFor="keyword">Keyword:</label>
                 <Field name="keyword" />
-                <ErrorMessage name="keyword" component={CompactDangerMessageBox} />
+                <ErrorMessage
+                  name="keyword"
+                  component={CompactDangerMessageBox}
+                />
               </div>
 
               <div className="input-group">
                 <label htmlFor="webhookUrl">Webhook URL:</label>
                 <Field name="webhookUrl" />
-                <ErrorMessage name="webhookUrl" component={CompactDangerMessageBox} />
+                <ErrorMessage
+                  name="webhookUrl"
+                  component={CompactDangerMessageBox}
+                />
               </div>
 
               <div className="input-group">
-                <Button type="submit" disabled={isSubmitting}>Save</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  Save
+                </Button>
               </div>
             </Form>
           )}
@@ -112,14 +136,18 @@ const EditMonitoredKeywordPage: React.FC<IEditMonitoredKeywordPageProps> = ({ id
 };
 
 export const getServerSideProps = async ({ req, res, query }) => {
-  await redirectIfDoesNotHavePermission(req, res, UserPermissions.MANAGE_MONITORED_KEYWORDS);
+  await redirectIfDoesNotHavePermission(
+    req,
+    res,
+    UserPermissions.MANAGE_MONITORED_KEYWORDS,
+  );
 
   const { id } = query;
 
   return {
     props: {
-      id
-    }
+      id,
+    },
   };
 };
 

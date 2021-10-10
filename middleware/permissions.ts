@@ -8,24 +8,29 @@ import { UserPermissions } from '@/lib/UserPermissions';
 
 import firstOf from '@/lib/firstOf';
 
-export const ensureUserHasPermissions = (callback: NextApiHandler, permissions: number[]): NextApiHandler => {
+export const ensureUserHasPermissions = (
+  callback: NextApiHandler,
+  permissions: number[],
+): NextApiHandler => {
   return async (req, res) => {
     const session = await getSession({ req });
 
     await db.prepare();
     const authorizedUserRepository = db.getRepository(AuthorizedUser);
 
-    const targetUser = await authorizedUserRepository.findOne({ discordId: session.user.id });
+    const targetUser = await authorizedUserRepository.findOne({
+      discordId: session.user.id,
+    });
     if (!targetUser) {
       return res.status(401).json({
         ok: false,
-        error: 'UNAUTHORIZED'
+        error: 'UNAUTHORIZED',
       });
     }
 
     const missingPermissions = [];
 
-    permissions.forEach(permission => {
+    permissions.forEach((permission) => {
       if (!targetUser.hasPermission(permission)) {
         missingPermissions.push(permissions);
       }
@@ -35,8 +40,9 @@ export const ensureUserHasPermissions = (callback: NextApiHandler, permissions: 
       return res.status(401).json({
         ok: false,
         error: 'INSUFFICIENT_PERMISSIONS',
-        missingPermissions: missingPermissions
-          .map(permission => UserPermissions[permission])
+        missingPermissions: missingPermissions.map(
+          (permission) => UserPermissions[permission],
+        ),
       });
     }
 
@@ -44,7 +50,9 @@ export const ensureUserHasPermissions = (callback: NextApiHandler, permissions: 
   };
 };
 
-export const ensureHasAccessToGuild = (callback: NextApiHandler): NextApiHandler => {
+export const ensureHasAccessToGuild = (
+  callback: NextApiHandler,
+): NextApiHandler => {
   return async (req, res) => {
     const guildId = firstOf(req.query.guild);
     const key = req.headers.authorization;
@@ -69,7 +77,7 @@ export const ensureHasAccessToGuild = (callback: NextApiHandler): NextApiHandler
     if (count === 0) {
       return res.status(401).json({
         ok: false,
-        error: 'ACCESS_TO_GUILD_DENIED'
+        error: 'ACCESS_TO_GUILD_DENIED',
       });
     }
 

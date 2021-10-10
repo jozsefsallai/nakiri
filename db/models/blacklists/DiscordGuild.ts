@@ -1,13 +1,19 @@
 import { Column, Entity } from 'typeorm';
-import { GuildRestrictableBlacklist, IGuildRestrictableBlacklist } from '../../common/GuildRestrictableBlacklist';
+import {
+  GuildRestrictableBlacklist,
+  IGuildRestrictableBlacklist,
+} from '../../common/GuildRestrictableBlacklist';
 
 export interface IDiscordGuild extends IGuildRestrictableBlacklist {
   blacklistedId: string;
   name?: string;
-};
+}
 
 @Entity()
-export class DiscordGuild extends GuildRestrictableBlacklist implements IDiscordGuild {
+export class DiscordGuild
+  extends GuildRestrictableBlacklist
+  implements IDiscordGuild
+{
   @Column()
   blacklistedId: string;
 

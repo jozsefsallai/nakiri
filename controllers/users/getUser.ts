@@ -8,13 +8,15 @@ export const getUser = async (session: Session): Promise<IUser | null> => {
   await db.prepare();
   const authorizedUserRepository = db.getRepository(AuthorizedUser);
 
-  const authorizedUser = await authorizedUserRepository.findOne({ discordId: session.user.id });
+  const authorizedUser = await authorizedUserRepository.findOne({
+    discordId: session.user.id,
+  });
   if (!authorizedUser) {
     return null;
   }
 
   return {
     ...session.user,
-    ...authorizedUser
+    ...authorizedUser,
   };
 };

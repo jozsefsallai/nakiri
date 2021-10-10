@@ -7,6 +7,10 @@ import * as monitoredKeywordsController from '@/controllers/monitored-keywords/m
 
 export default bar({
   get: withSentry(ensureAuthenticated(monitoredKeywordsController.get, true)),
-  patch: withSentry(ensureAuthenticated(monitoredKeywordsController.update, true)),
-  delete: withSentry(ensureAuthenticated(monitoredKeywordsController.destroy, true))
+  patch: withSentry(
+    ensureAuthenticated(monitoredKeywordsController.update, true),
+  ),
+  delete: withSentry(
+    ensureAuthenticated(monitoredKeywordsController.destroy, true),
+  ),
 });

@@ -11,19 +11,19 @@ import { UserPermissions } from '@/lib/UserPermissions';
 export default bar({
   patch: withSentry(
     ensureAuthenticated(
-      ensureUserHasPermissions(
-        usersController.updatePermissions,
-        [ UserPermissions.MANAGE_AUTHORIZED_USERS ]
-      ), true
-    )
+      ensureUserHasPermissions(usersController.updatePermissions, [
+        UserPermissions.MANAGE_AUTHORIZED_USERS,
+      ]),
+      true,
+    ),
   ),
 
   delete: withSentry(
     ensureAuthenticated(
-      ensureUserHasPermissions(
-        usersController.destroy,
-        [ UserPermissions.MANAGE_AUTHORIZED_USERS ]
-      ), true
-    )
-  )
+      ensureUserHasPermissions(usersController.destroy, [
+        UserPermissions.MANAGE_AUTHORIZED_USERS,
+      ]),
+      true,
+    ),
+  ),
 });

@@ -10,20 +10,25 @@ import { useGuilds } from '@/hooks/useGuilds';
 import { AddDiscordGuildAPIRequest } from '@/services/apis/blacklists/DiscordGuildsAPIService';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
-import MessageBox, { MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import { redirectIfDoesNotHaveOneOfPermissions } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 
 const NewGuildPage = () => {
-  const [ currentUser, _ ] = useCurrentUser();
+  const [currentUser, _] = useCurrentUser();
 
-  const [ guilds, , guildsErrored ] = useGuilds();
-  const [ guildID, setGuildID ] = useState<string | undefined>(undefined);
-  const [ error, setError ] = useState('');
+  const [guilds, , guildsErrored] = useGuilds();
+  const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [error, setError] = useState('');
 
   const router = useRouter();
 
-  const handleFormSubmit = async ({ id, name }: AddDiscordGuildAPIRequest, { setSubmitting }: FormikHelpers<AddDiscordGuildAPIRequest>) => {
+  const handleFormSubmit = async (
+    { id, name }: AddDiscordGuildAPIRequest,
+    { setSubmitting }: FormikHelpers<AddDiscordGuildAPIRequest>,
+  ) => {
     try {
       await apiService.guildIDs.addDiscordGuild({ id, name, guild: guildID });
 
@@ -63,12 +68,11 @@ const NewGuildPage = () => {
 
   return (
     <DashboardLayout hasContainer title="Add Discord Guild">
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
 
-      <Formik
-        initialValues={{ id: '', name: '' }}
-        onSubmit={handleFormSubmit}
-      >
+      <Formik initialValues={{ id: '', name: '' }} onSubmit={handleFormSubmit}>
         {({ isSubmitting }) => (
           <Form>
             <div className="input-group">
@@ -83,17 +87,28 @@ const NewGuildPage = () => {
 
             <div className="input-group">
               <label htmlFor="guild">Blacklist:</label>
-              <select onChange={e => handleGuildChange(e.currentTarget.value)} name="guild">
-                {currentUser?.canManageGlobalBlacklists() && <option value="">Global</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && !guilds && <option disabled>--- loading guilds ---</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && guilds && guilds.map(guild => (
-                  <option value={guild.id}>{guild.name}</option>
-                ))}
+              <select
+                onChange={(e) => handleGuildChange(e.currentTarget.value)}
+                name="guild"
+              >
+                {currentUser?.canManageGlobalBlacklists() && (
+                  <option value="">Global</option>
+                )}
+                {currentUser?.canManageOwnGuildBlacklists() && !guilds && (
+                  <option disabled>--- loading guilds ---</option>
+                )}
+                {currentUser?.canManageOwnGuildBlacklists() &&
+                  guilds &&
+                  guilds.map((guild) => (
+                    <option value={guild.id}>{guild.name}</option>
+                  ))}
               </select>
             </div>
 
             <div className="input-group">
-              <Button type="submit" disabled={isSubmitting}>Add</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Add
+              </Button>
             </div>
           </Form>
         )}
@@ -109,7 +124,7 @@ export const getServerSideProps = async ({ req, res }) => {
   ]);
 
   return {
-    props: {}
+    props: {},
   };
 };
 

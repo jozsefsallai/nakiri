@@ -19,7 +19,11 @@ export class MonitoredKeywordUpdateError extends APIError {
   }
 }
 
-export const updateMonitoredKeyword = async (session: Session, id: string, { keyword, guildId, webhookUrl }: UpdateMonitoredKeywordAPIRequest) => {
+export const updateMonitoredKeyword = async (
+  session: Session,
+  id: string,
+  { keyword, guildId, webhookUrl }: UpdateMonitoredKeywordAPIRequest,
+) => {
   await db.prepare();
   const monitoredKeywordRepository = db.getRepository(MonitoredKeyword);
 
@@ -30,14 +34,20 @@ export const updateMonitoredKeyword = async (session: Session, id: string, { key
 
   const user = new User(loggedInUser);
   if (!user.canManageGuildMonitoredKeywords()) {
-    throw new MonitoredKeywordUpdateError(403, 'CANNOT_MANAGE_GUILD_MONITORED_KEYWORDS');
+    throw new MonitoredKeywordUpdateError(
+      403,
+      'CANNOT_MANAGE_GUILD_MONITORED_KEYWORDS',
+    );
   }
 
   const userGuilds = await fetchGuilds(session);
-  const guild = userGuilds.find(guild => guild.id === guildId);
+  const guild = userGuilds.find((guild) => guild.id === guildId);
 
   if (!guild) {
-    throw new MonitoredKeywordUpdateError(404, 'CANNOT_UPDATE_ENTRY_FROM_THIS_GUILD');
+    throw new MonitoredKeywordUpdateError(
+      404,
+      'CANNOT_UPDATE_ENTRY_FROM_THIS_GUILD',
+    );
   }
 
   const entry = await monitoredKeywordRepository.findOne({ id });

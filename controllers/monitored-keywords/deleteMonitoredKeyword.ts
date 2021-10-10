@@ -27,7 +27,10 @@ export const deleteMonitoredKeyword = async (session: Session, id: string) => {
 
   const user = new User(loggedInUser);
   if (!user.canManageGuildMonitoredKeywords()) {
-    throw new MonitoredKeywordDeletionError(403, 'CANNOT_MANAGE_GUILD_MONITORED_KEYWORDS');
+    throw new MonitoredKeywordDeletionError(
+      403,
+      'CANNOT_MANAGE_GUILD_MONITORED_KEYWORDS',
+    );
   }
 
   const entry = await monitoredKeywordRepository.findOne({ id });
@@ -36,10 +39,13 @@ export const deleteMonitoredKeyword = async (session: Session, id: string) => {
   }
 
   const userGuilds = await fetchGuilds(session);
-  const guild = userGuilds.find(guild => guild.id === entry.guildId);
+  const guild = userGuilds.find((guild) => guild.id === entry.guildId);
 
   if (!guild) {
-    throw new MonitoredKeywordDeletionError(404, 'CANNOT_DELETE_ENTRY_FROM_THIS_GUILD');
+    throw new MonitoredKeywordDeletionError(
+      404,
+      'CANNOT_DELETE_ENTRY_FROM_THIS_GUILD',
+    );
   }
 
   await monitoredKeywordRepository.delete({ id });

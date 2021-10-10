@@ -5,18 +5,23 @@ export interface PaginationOpts {
   currentPage: number;
   disabled?: boolean;
   onChange: (page: number) => void;
-};
+}
 
 interface PaginationButton {
   page: number;
   label: string;
-};
+}
 
 const SEPARATOR = -1;
 type PaginationItem = PaginationButton | typeof SEPARATOR;
 
 // The P in "pagination" stands for pain.
-const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOpts) => {
+const Pagination = ({
+  pageCount,
+  currentPage,
+  disabled,
+  onChange,
+}: PaginationOpts) => {
   const items: PaginationItem[] = [];
 
   // Display a "Prev" button if the current page is not the first one.
@@ -35,7 +40,11 @@ const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOp
   //    * [1] [2] [3] [4] [5]
   if (currentPage < 4 && pageCount > 4) {
     // Display the second and third pages.
-    items.push(...Array(2).fill(null).map((_, idx) => ({ page: idx + 2, label: `${idx + 2}` })));
+    items.push(
+      ...Array(2)
+        .fill(null)
+        .map((_, idx) => ({ page: idx + 2, label: `${idx + 2}` })),
+    );
 
     // If the current page is the last one in this batch (3), display the
     // following page (4) too.
@@ -69,7 +78,11 @@ const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOp
   // Expected outputs:
   //    * [1] ... [n - 2] [n - 1] [n]
   //    * [1] ... [n - 3] [n - 2] [n - 1] [n]
-  if (currentPage >= pageCount - 2 && currentPage !== Math.ceil(pageCount / 2) && pageCount > 4) {
+  if (
+    currentPage >= pageCount - 2 &&
+    currentPage !== Math.ceil(pageCount / 2) &&
+    pageCount > 4
+  ) {
     // Display a separator for good measure.
     items.push(SEPARATOR);
 
@@ -80,7 +93,14 @@ const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOp
     }
 
     // Display the two pages before the last page.
-    items.push(...Array(2).fill(null).map((_, idx) => ({ page: pageCount + idx - 2, label: `${pageCount + idx - 2}` })));
+    items.push(
+      ...Array(2)
+        .fill(null)
+        .map((_, idx) => ({
+          page: pageCount + idx - 2,
+          label: `${pageCount + idx - 2}`,
+        })),
+    );
   }
 
   // Edge case: if the number of pages is between (2, 4], display all the
@@ -89,7 +109,11 @@ const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOp
   //    * [1] [2] [3]
   //    * [1] [2] [3] [4]
   if (pageCount <= 4 && pageCount > 2) {
-    items.push(...Array(pageCount - 2).fill(null).map((_, idx) => ({ page: idx + 2, label: `${idx + 2}` })));
+    items.push(
+      ...Array(pageCount - 2)
+        .fill(null)
+        .map((_, idx) => ({ page: idx + 2, label: `${idx + 2}` })),
+    );
   }
 
   // Display the last page ONLY if there are at least 2 pages.
@@ -113,7 +137,7 @@ const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOp
   };
 
   return (
-    <div className="flex items-center gap-2 justify-center" >
+    <div className="flex items-center gap-2 justify-center">
       {items.map((item, idx) => (
         <div key={idx}>
           {item === SEPARATOR && '...'}
@@ -124,8 +148,8 @@ const Pagination = ({ pageCount, currentPage, disabled, onChange }: PaginationOp
                 'border-2 border-ayame-primary rounded-md px-3 py-2 hover:bg-ayame-primary hover:text-nakiri-base-invert cursor-pointer select-none text-sm',
                 {
                   'bg-ayame-primary': item.page === currentPage,
-                  'text-nakiri-base-invert': item.page === currentPage
-                }
+                  'text-nakiri-base-invert': item.page === currentPage,
+                },
               )}
             >
               {item.label}

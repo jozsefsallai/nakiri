@@ -6,5 +6,7 @@ import { ensureAuthenticated } from '@/middleware/auth';
 import * as discordGuildsController from '@/controllers/discord-guilds/discordGuildsController';
 
 export default bar({
-  delete: withSentry(ensureAuthenticated(discordGuildsController.destroy, true))
+  delete: withSentry(
+    ensureAuthenticated(discordGuildsController.destroy, true),
+  ),
 });

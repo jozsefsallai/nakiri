@@ -6,12 +6,12 @@ export interface DiscordGuildData {
   icon: string;
 
   // we wont ever care about the rest
-};
+}
 
 export interface DiscordInviteResponse {
   code: string;
   guild?: DiscordGuildData;
-};
+}
 
 export class DiscordAPIService {
   static INVITE_API_URL = 'https://discord.com/api/invites/:invite';

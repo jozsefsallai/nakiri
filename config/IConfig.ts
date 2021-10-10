@@ -1,6 +1,6 @@
 export interface ISentryConfig {
   dsn: string;
-};
+}
 
 export interface IAppConfig {
   protocol: string;
@@ -9,7 +9,7 @@ export interface IAppConfig {
   sessionSecret: string;
   cookieSecret: string;
   sentry?: ISentryConfig;
-};
+}
 
 export interface IDatabaseConfig {
   dialect: string;
@@ -18,7 +18,7 @@ export interface IDatabaseConfig {
   username: string;
   password: string;
   name: string;
-};
+}
 
 export interface IRedisConfig {
   host: string;
@@ -26,17 +26,17 @@ export interface IRedisConfig {
   password?: string;
 
   buildRedisUrl(database?: number): string;
-};
+}
 
 export interface IDiscordConfig {
   clientId: string;
   clientSecret: string;
   botToken: string;
-};
+}
 
 export interface IYouTubeConfig {
   apiKey: string;
-};
+}
 
 export interface IConfig {
   app: IAppConfig;
@@ -44,4 +44,4 @@ export interface IConfig {
   redis: IRedisConfig;
   discord: IDiscordConfig;
   youtube?: IYouTubeConfig;
-};
+}

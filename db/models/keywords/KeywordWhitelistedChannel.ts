@@ -1,4 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export interface IKeywordWhitelistedChannel {
   id: string;
@@ -6,7 +12,7 @@ export interface IKeywordWhitelistedChannel {
   updatedAt: Date;
   channelId: string;
   guildId: string;
-};
+}
 
 @Entity()
 export class KeywordWhitelistedChannel implements IKeywordWhitelistedChannel {
@@ -31,7 +37,7 @@ export class KeywordWhitelistedChannel implements IKeywordWhitelistedChannel {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       channelId: this.channelId,
-      guildId: this.guildId
+      guildId: this.guildId,
     };
   }
 }

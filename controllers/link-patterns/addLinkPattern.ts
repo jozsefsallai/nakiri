@@ -20,9 +20,7 @@ export const addLinkPattern = async (pattern: string, guildId?: string) => {
     throw new LinkPatternCreationError(400, 'INVALID_REGEX_PATTERN');
   }
 
-  const where: FindConditions<LinkPattern>[] = [
-    { pattern, guildId: IsNull() }
-  ];
+  const where: FindConditions<LinkPattern>[] = [{ pattern, guildId: IsNull() }];
 
   if (guildId) {
     where.push({ pattern, guildId });

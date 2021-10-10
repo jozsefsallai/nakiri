@@ -23,29 +23,38 @@ export const getGroups = async (session: Session): Promise<IGroup[]> => {
 
   const memberships = await groupMembersRepository.find({
     where: {
-      user
+      user,
     },
     relations: ['user', 'group', 'group.creator', 'group.guilds'],
   });
 
-  const groups = memberships.map(membership => {
-    const group = Object.assign({}, membership.group) as IGroup;
-    group.myPermissions = membership.permissions;
-    group.isCreator = group.creator.id === user.id;
+  const groups = memberships
+    .map((membership) => {
+      const group = Object.assign({}, membership.group) as IGroup;
+      group.myPermissions = membership.permissions;
+      group.isCreator = group.creator.id === user.id;
 
-    if (!membership.canSeeApiKey()) {
-      delete group.apiKey;
-    }
+      if (!membership.canSeeApiKey()) {
+        delete group.apiKey;
+      }
 
-    return group as IGroup;
-  }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      return group as IGroup;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
 
   return groups;
 };
 
-export const getGroup = async (id: string, session: Session): Promise<IGroup> => {
-  const guilds = await fetchGuilds(session, true)
-    .then(guilds => guilds.map(guild => guild.id));
+export const getGroup = async (
+  id: string,
+  session: Session,
+): Promise<IGroup> => {
+  const guilds = await fetchGuilds(session, true).then((guilds) =>
+    guilds.map((guild) => guild.id),
+  );
 
   await db.prepare();
 
@@ -55,11 +64,18 @@ export const getGroup = async (id: string, session: Session): Promise<IGroup> =>
   const membership = await groupMembersRepository.findOne({
     where: {
       group: {
-        id
+        id,
       },
-      user
+      user,
     },
-    relations: ['user', 'group', 'group.creator', 'group.guilds', 'group.members', 'group.members.user'],
+    relations: [
+      'user',
+      'group',
+      'group.creator',
+      'group.guilds',
+      'group.members',
+      'group.members.user',
+    ],
   });
 
   if (!membership) {
@@ -75,7 +91,7 @@ export const getGroup = async (id: string, session: Session): Promise<IGroup> =>
     delete group.apiKey;
   }
 
-  group.guilds = group.guilds.filter(guild => guilds.includes(guild.guildId));
+  group.guilds = group.guilds.filter((guild) => guilds.includes(guild.guildId));
 
   return group;
 };

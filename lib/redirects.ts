@@ -7,7 +7,7 @@ export const redirectIfAnonmyous = async (req, res): Promise<boolean> => {
     return false;
   } catch (_) {
     res.writeHead(302, {
-      location: '/manage/login'
+      location: '/manage/login',
     });
     res.end();
 
@@ -20,7 +20,7 @@ export const redirectIfAuthenticated = async (req, res): Promise<boolean> => {
     await apiService.users.getLoggedInUser(req.headers);
 
     res.writeHead(302, {
-      location: '/manage/guilds'
+      location: '/manage/guilds',
     });
     res.end();
 
@@ -30,13 +30,17 @@ export const redirectIfAuthenticated = async (req, res): Promise<boolean> => {
   }
 };
 
-export const redirectIfDoesNotHavePermission = async (req, res, permission: UserPermissions): Promise<boolean> => {
+export const redirectIfDoesNotHavePermission = async (
+  req,
+  res,
+  permission: UserPermissions,
+): Promise<boolean> => {
   try {
     const { user } = await apiService.users.getLoggedInUser(req.headers);
 
     if (!UserPermissionsUtil.hasPermission(user.permissions, permission)) {
       res.writeHead(302, {
-        location: '/manage/guilds'
+        location: '/manage/guilds',
       });
       res.end();
 
@@ -46,7 +50,7 @@ export const redirectIfDoesNotHavePermission = async (req, res, permission: User
     return false;
   } catch (_) {
     res.writeHead(302, {
-      location: '/manage/login'
+      location: '/manage/login',
     });
     res.end();
 
@@ -54,14 +58,20 @@ export const redirectIfDoesNotHavePermission = async (req, res, permission: User
   }
 };
 
-export const redirectIfDoesNotHaveOneOfPermissions = async (req, res, permissions: UserPermissions[]): Promise<boolean> => {
+export const redirectIfDoesNotHaveOneOfPermissions = async (
+  req,
+  res,
+  permissions: UserPermissions[],
+): Promise<boolean> => {
   try {
     const { user } = await apiService.users.getLoggedInUser(req.headers);
 
-    const userPermissions = permissions.filter(permission => UserPermissionsUtil.hasPermission(user.permissions, permission));
+    const userPermissions = permissions.filter((permission) =>
+      UserPermissionsUtil.hasPermission(user.permissions, permission),
+    );
     if (userPermissions.length === 0) {
       res.writeHead(302, {
-        location: '/manage/guilds'
+        location: '/manage/guilds',
       });
       res.end();
 
@@ -69,7 +79,7 @@ export const redirectIfDoesNotHaveOneOfPermissions = async (req, res, permission
     }
   } catch (_) {
     res.writeHead(302, {
-      location: '/manage/login'
+      location: '/manage/login',
     });
     res.end();
 

@@ -3,7 +3,9 @@ import { CreateMonitoredKeywordAPIRequest } from '@/services/apis/monitored-keyw
 import { errors as _errors } from '@/lib/errors';
 import { isValidUrl } from '@/lib/commonValidators';
 
-export const validate = (fields: CreateMonitoredKeywordAPIRequest): Partial<CreateMonitoredKeywordAPIRequest> => {
+export const validate = (
+  fields: CreateMonitoredKeywordAPIRequest,
+): Partial<CreateMonitoredKeywordAPIRequest> => {
   const errors: Partial<CreateMonitoredKeywordAPIRequest> = {};
 
   if (!fields.keyword?.trim()) {

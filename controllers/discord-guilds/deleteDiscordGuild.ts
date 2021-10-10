@@ -35,10 +35,13 @@ export const deleteDiscordGuild = async (session: Session, id: string) => {
     }
 
     const userGuilds = await fetchGuilds(session);
-    const guild = userGuilds.find(g => g.id === entry.guildId);
+    const guild = userGuilds.find((g) => g.id === entry.guildId);
 
     if (!guild) {
-      throw new DiscordGuildDeletionError(403, 'CANNOT_DELETE_ENTRY_FROM_THIS_GUILD');
+      throw new DiscordGuildDeletionError(
+        403,
+        'CANNOT_DELETE_ENTRY_FROM_THIS_GUILD',
+      );
     }
   }
 

@@ -11,17 +11,28 @@ export class AddKeywordWhitelistedChannelError extends APIError {
   }
 }
 
-export const addWhitelistedChannel = async (channelId: string, guildId: string) => {
+export const addWhitelistedChannel = async (
+  channelId: string,
+  guildId: string,
+) => {
   if (!isValidYouTubeChannelID(channelId)) {
     throw new AddKeywordWhitelistedChannelError(400, 'INVALID_CHANNEL_ID');
   }
 
   await db.prepare();
-  const keywordWhitelistedChannelsRepository = db.getRepository(KeywordWhitelistedChannel);
+  const keywordWhitelistedChannelsRepository = db.getRepository(
+    KeywordWhitelistedChannel,
+  );
 
-  const count = await keywordWhitelistedChannelsRepository.count({ channelId, guildId });
+  const count = await keywordWhitelistedChannelsRepository.count({
+    channelId,
+    guildId,
+  });
   if (count > 0) {
-    throw new AddKeywordWhitelistedChannelError(400, 'CHANNEL_ALREADY_WHITELISTED');
+    throw new AddKeywordWhitelistedChannelError(
+      400,
+      'CHANNEL_ALREADY_WHITELISTED',
+    );
   }
 
   const keywordWhitelistedChannel = new KeywordWhitelistedChannel();

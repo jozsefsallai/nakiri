@@ -15,7 +15,7 @@ const MySwal = withReactContent(Swal);
 export interface AddMemberButtonProps {
   group: IGroup;
   onSuccess(group: IGroup): void;
-};
+}
 
 type PermissionsMap = {
   [permission in GroupMemberPermissions]: {
@@ -26,7 +26,7 @@ type PermissionsMap = {
 
 const defaultPermissionsMap: PermissionsMap = {
   [GroupMemberPermissions.VIEW_GROUP_BLACKLISTS]: {
-    label: 'View the group\'s blacklists',
+    label: "View the group's blacklists",
     checked: true,
   },
 
@@ -36,7 +36,7 @@ const defaultPermissionsMap: PermissionsMap = {
   },
 
   [GroupMemberPermissions.SEE_API_KEY]: {
-    label: 'See the group\'s API key',
+    label: "See the group's API key",
     checked: false,
   },
 
@@ -51,25 +51,37 @@ const defaultPermissionsMap: PermissionsMap = {
   },
 };
 
-const AddMemberButton: React.FC<AddMemberButtonProps> = ({ group, onSuccess }) => {
+const AddMemberButton: React.FC<AddMemberButtonProps> = ({
+  group,
+  onSuccess,
+}) => {
   const discordId = useRef<string | null>(null);
   const permissions = useRef<PermissionsMap>(clone(defaultPermissionsMap));
 
-  const [ requestInProgress, setRequestInProgress ] = useState(false);
+  const [requestInProgress, setRequestInProgress] = useState(false);
 
   const updateDiscordID = (id: string) => {
     discordId.current = id;
   };
 
-  const updatePermissions = (permission: GroupMemberPermissions, checked: boolean) => {
+  const updatePermissions = (
+    permission: GroupMemberPermissions,
+    checked: boolean,
+  ) => {
     permissions.current[permission].checked = checked;
   };
 
-  const addMemberToGroup = async (discordId: string, permissions: number[]): Promise<IGroup> => {
+  const addMemberToGroup = async (
+    discordId: string,
+    permissions: number[],
+  ): Promise<IGroup> => {
     setRequestInProgress(true);
 
     try {
-      const res = await apiService.groups.addGroupMember(group.id, { discordId, permissions });
+      const res = await apiService.groups.addGroupMember(group.id, {
+        discordId,
+        permissions,
+      });
       toaster.success('Member added successfully!');
       setRequestInProgress(false);
       return res.group;
@@ -104,22 +116,30 @@ const AddMemberButton: React.FC<AddMemberButtonProps> = ({ group, onSuccess }) =
               name="discordId"
               id="discordId"
               placeholder="Discord ID"
-              onChange={e => updateDiscordID(e.currentTarget.value)}
+              onChange={(e) => updateDiscordID(e.currentTarget.value)}
               required
             />
           </div>
 
           <div className="input-group">
-            {(Object.keys as (o: PermissionsMap) => Extract<keyof PermissionsMap, string>[])(permissions.current).map((permission: GroupMemberPermissions) => (
+            {(
+              Object.keys as (
+                o: PermissionsMap,
+              ) => Extract<keyof PermissionsMap, string>[]
+            )(permissions.current).map((permission: GroupMemberPermissions) => (
               <div className="checkbox" key={permission}>
                 <input
                   type="checkbox"
                   id={`permission-${permission}`}
-                  onChange={e => updatePermissions(permission, e.target.checked)}
+                  onChange={(e) =>
+                    updatePermissions(permission, e.target.checked)
+                  }
                   defaultChecked={permissions.current[permission].checked}
                 />
 
-                <label htmlFor={`permission-${permission}`}>{permissions.current[permission].label}</label>
+                <label htmlFor={`permission-${permission}`}>
+                  {permissions.current[permission].label}
+                </label>
               </div>
             ))}
           </div>
@@ -135,10 +155,13 @@ const AddMemberButton: React.FC<AddMemberButtonProps> = ({ group, onSuccess }) =
     }
 
     const finalPermissions = Object.keys(permissions.current)
-      .filter(permission => permissions.current[permission].checked)
-      .map(permission => parseInt(permission, 10));
+      .filter((permission) => permissions.current[permission].checked)
+      .map((permission) => parseInt(permission, 10));
 
-    const newGroup = await addMemberToGroup(discordId.current!, finalPermissions);
+    const newGroup = await addMemberToGroup(
+      discordId.current!,
+      finalPermissions,
+    );
     onSuccess({
       ...group,
       ...newGroup,
@@ -146,10 +169,7 @@ const AddMemberButton: React.FC<AddMemberButtonProps> = ({ group, onSuccess }) =
   };
 
   return (
-    <Button
-      onClick={handleAddMemberActionClick}
-      disabled={requestInProgress}
-    >
+    <Button onClick={handleAddMemberActionClick} disabled={requestInProgress}>
       Add member
     </Button>
   );

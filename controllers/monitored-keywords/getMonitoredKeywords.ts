@@ -1,8 +1,13 @@
 import db from '@/services/db';
 
-import { IMonitoredKeyword, MonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
+import {
+  IMonitoredKeyword,
+  MonitoredKeyword,
+} from '@/db/models/keywords/MonitoredKeyword';
 
-export const getMonitoredKeyword = async (id: string): Promise<IMonitoredKeyword | null> => {
+export const getMonitoredKeyword = async (
+  id: string,
+): Promise<IMonitoredKeyword | null> => {
   await db.prepare();
   const monitoredKeywordsRepository = db.getRepository(MonitoredKeyword);
 
@@ -10,7 +15,9 @@ export const getMonitoredKeyword = async (id: string): Promise<IMonitoredKeyword
   return entry || null;
 };
 
-export const getMonitoredKeywords = async (guildId: string): Promise<IMonitoredKeyword[]> => {
+export const getMonitoredKeywords = async (
+  guildId: string,
+): Promise<IMonitoredKeyword[]> => {
   await db.prepare();
   const monitoredKeywordsRepository = db.getRepository(MonitoredKeyword);
 

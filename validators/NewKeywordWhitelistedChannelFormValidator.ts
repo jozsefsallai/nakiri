@@ -3,7 +3,9 @@ import { AddKeywordWhitelistedChannelAPIRequest } from '@/services/apis/monitore
 import { errors as _errors } from '@/lib/errors';
 import { isValidYouTubeChannelID } from '@/lib/commonValidators';
 
-export const validate = (fields: AddKeywordWhitelistedChannelAPIRequest): Partial<AddKeywordWhitelistedChannelAPIRequest> => {
+export const validate = (
+  fields: AddKeywordWhitelistedChannelAPIRequest,
+): Partial<AddKeywordWhitelistedChannelAPIRequest> => {
   const errors: Partial<AddKeywordWhitelistedChannelAPIRequest> = {};
 
   if (!isValidYouTubeChannelID(fields.channelId?.trim())) {

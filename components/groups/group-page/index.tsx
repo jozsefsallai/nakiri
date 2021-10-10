@@ -13,7 +13,7 @@ import GroupMemberList from './members/GroupMemberList';
 export interface GroupProps {
   group: IGroup;
   setGroup(group: IGroup): void;
-};
+}
 
 const Group: React.FC<GroupProps> = ({ group, setGroup }) => {
   return (

@@ -15,7 +15,10 @@ export class AuthorizedUserCreationError extends APIError {
   }
 }
 
-export const authorizeUser = async (discordId: string, permissionsList: number[]) => {
+export const authorizeUser = async (
+  discordId: string,
+  permissionsList: number[],
+) => {
   await db.prepare();
   const authorizedUserRepository = db.getRepository(AuthorizedUser);
 
@@ -25,7 +28,7 @@ export const authorizeUser = async (discordId: string, permissionsList: number[]
   }
 
   const forbiddenPermissions = [];
-  permissionsList.forEach(permission => {
+  permissionsList.forEach((permission) => {
     if (!(permission in UserPermissions)) {
       forbiddenPermissions.push(permission);
     }
@@ -33,15 +36,17 @@ export const authorizeUser = async (discordId: string, permissionsList: number[]
 
   if (forbiddenPermissions.length > 0) {
     throw new AuthorizedUserCreationError(400, 'FORBIDDEN_PERMISSIONS', {
-      forbiddenPermissions
+      forbiddenPermissions,
     });
   }
 
-  const discordResponse = await axios.get(`https://discordapp.com/api/users/${discordId}`, {
-    headers: {
-      Authorization: `Bot ${config.discord.botToken}`
-    }
-  }).then(res => res.data);
+  const discordResponse = await axios
+    .get(`https://discordapp.com/api/users/${discordId}`, {
+      headers: {
+        Authorization: `Bot ${config.discord.botToken}`,
+      },
+    })
+    .then((res) => res.data);
 
   const permissions = permissionsList.reduce((a, b) => a + b);
 
