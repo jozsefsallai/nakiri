@@ -20,6 +20,8 @@ export const errors = {
   GUILD_ID_NOT_PROVIDED: 'You have not specified a guild.',
 
   GROUP_NOT_FOUND: 'The specified guild coult not be found.',
+  CANNOT_MANAGE_ENTRIES_IN_THIS_GROUP:
+    'You do not have access to managing entries in this group.',
   CANNOT_MANAGE_GUILDS_IN_THIS_GROUP:
     'You do not have access to managing guilds in this group.',
   CANNOT_MANAGE_MEMBERS_IN_THIS_GROUP:

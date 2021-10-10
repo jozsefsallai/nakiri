@@ -11,22 +11,42 @@ import * as NewVideoIDFormValidator from '@/validators/NewVideoIDFormValidator';
 import { AddVideoIDAPIRequest } from '@/services/apis/blacklists/VideoIDsAPIService';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
-import MessageBox, { CompactDangerMessageBox, MessageBoxLevel } from '@/components/common/messagebox/MessageBox';
+import MessageBox, {
+  CompactDangerMessageBox,
+  MessageBoxLevel,
+} from '@/components/common/messagebox/MessageBox';
 import { redirectIfDoesNotHaveOneOfPermissions } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
+import { useUserGroups } from '@/hooks/useGroups';
+import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
+import { bulkMapGuildMetadata } from '@/lib/guildMetadata';
+import { IGuild } from '@/controllers/guilds/IGuild';
+import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
 
 const NewVideoIDPage = () => {
-  const [ currentUser, _ ] = useCurrentUser();
+  const [currentUser, _] = useCurrentUser();
 
-  const [ guilds, , guildsErrored ] = useGuilds();
-  const [ guildID, setGuildID ] = useState<string | undefined>(undefined);
-  const [ error, setError ] = useState('');
+  const { groups, errored } = useUserGroups();
+  const [guilds] = useGuilds();
+
+  const [groupGuilds, setGroupGuilds] = useState<IGuild[]>([]);
+
+  const [groupID, setGroupID] = useState<string | undefined>(undefined);
+  const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [error, setError] = useState('');
 
   const router = useRouter();
 
-  const handleFormSubmit = async ({ videoID }: AddVideoIDAPIRequest, { setSubmitting }: FormikHelpers<AddVideoIDAPIRequest>) => {
+  const handleFormSubmit = async (
+    { videoID }: AddVideoIDAPIRequest,
+    { setSubmitting }: FormikHelpers<AddVideoIDAPIRequest>,
+  ) => {
     try {
-      await apiService.videoIDs.addVideoID({ videoID, guild: guildID });
+      await apiService.videoIDs.addVideoID({
+        videoID,
+        guild: guildID,
+        group: groupID,
+      });
 
       toaster.success(`Added video with ID ${videoID}.`);
 
@@ -47,6 +67,23 @@ const NewVideoIDPage = () => {
     }
   };
 
+  const handleGroupChange = (groupID: string) => {
+    setGuildID(undefined);
+
+    if (groupID.length === 0) {
+      setGroupID(undefined);
+      setGroupGuilds([]);
+      return;
+    }
+
+    setGroupID(groupID);
+
+    const targetGroup = groups.find((g) => g.id === groupID);
+    setGroupGuilds(
+      bulkMapGuildMetadata(guilds, targetGroup.guilds as IAuthorizedGuild[]),
+    );
+  };
+
   const handleGuildChange = (guildID: string) => {
     if (guildID.length === 0) {
       setGuildID(undefined);
@@ -57,14 +94,16 @@ const NewVideoIDPage = () => {
   };
 
   useEffect(() => {
-    if (guildsErrored) {
-      setError('Failed to fetch your guilds.');
+    if (errored) {
+      setError('Failed to fetch your groups.');
     }
-  }, [guildsErrored]);
+  }, [errored]);
 
   return (
     <DashboardLayout hasContainer title="Add YouTube video ID">
-      {error.length > 0 && <MessageBox level={MessageBoxLevel.DANGER} message={error} />}
+      {error.length > 0 && (
+        <MessageBox level={MessageBoxLevel.DANGER} message={error} />
+      )}
 
       <Formik
         initialValues={{ videoID: '' }}
@@ -76,22 +115,64 @@ const NewVideoIDPage = () => {
             <div className="input-group">
               <label htmlFor="videoID">Video ID:</label>
               <Field name="videoID" />
-              <ErrorMessage name="videoID" component={CompactDangerMessageBox} />
+              <ErrorMessage
+                name="videoID"
+                component={CompactDangerMessageBox}
+              />
             </div>
 
             <div className="input-group">
-              <label htmlFor="guild">Guild</label>
-              <select onChange={e => handleGuildChange(e.currentTarget.value)} name="guild">
-                {currentUser?.canManageGlobalBlacklists() && <option value="">Global</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && !guilds && <option disabled>--- loading guilds ---</option>}
-                {currentUser?.canManageOwnGuildBlacklists() && guilds && guilds.map(guild => (
-                  <option value={guild.id}>{guild.name}</option>
-                ))}
+              <label htmlFor="group">Group</label>
+              <select
+                onChange={(e) => handleGroupChange(e.currentTarget.value)}
+                name="group"
+              >
+                {currentUser?.canManageGlobalBlacklists() && (
+                  <option value="">No group (global blacklist)</option>
+                )}
+                {currentUser?.canManageGlobalBlacklists() && (
+                  <option disabled> --- </option>
+                )}
+                {!groups && <option disabled> --- loading groups --- </option>}
+                {groups &&
+                  groups.map((group) => (
+                    <option
+                      key={group.id}
+                      value={group.id}
+                      disabled={
+                        !GroupMemberPermissionsUtil.canManageGroupEntries(
+                          group.myPermissions,
+                        )
+                      }
+                    >
+                      {group.name}
+                    </option>
+                  ))}
               </select>
             </div>
 
+            {groupGuilds?.length > 0 && (
+              <div className="input-group">
+                <label htmlFor="guild">Guild</label>
+                <select
+                  onChange={(e) => handleGuildChange(e.currentTarget.value)}
+                  name="guild"
+                >
+                  <option value="">No guild (group's blacklist)</option>
+                  <option disabled> --- </option>
+                  {groupGuilds.map((guild) => (
+                    <option key={guild.id} value={guild.id}>
+                      {guild.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="input-group">
-              <Button type="submit" disabled={isSubmitting}>Add</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Add
+              </Button>
             </div>
           </Form>
         )}
@@ -107,7 +188,7 @@ export const getServerSideProps = async ({ req, res }) => {
   ]);
 
   return {
-    props: {}
+    props: {},
   };
 };
 

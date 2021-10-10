@@ -1,11 +1,14 @@
 import db from '@/services/db';
-import { FindConditions, IsNull } from 'typeorm';
 
 import { YouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { APIError } from '@/lib/errors';
 import { isValidYouTubeVideoID } from '@/lib/commonValidators';
 
 import { collectVideoMetadata } from '@/jobs/queue';
+import buildFindConditions from '@/lib/buildFindConditions';
+import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
+import { GroupMember } from '@/db/models/groups/GroupMember';
+import { Group } from '@/db/models/groups/Group';
 
 export class YouTubeVideoIDCreationError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -14,7 +17,11 @@ export class YouTubeVideoIDCreationError extends APIError {
   }
 }
 
-export const addYouTubeVideoID = async (videoId: string, guildId?: string) => {
+export const addYouTubeVideoID = async ({
+  videoId,
+  groupId,
+  guildId,
+}: IBlacklistAddParams<'videoId'>) => {
   await db.prepare();
   const youTubeVideoIDRepository = db.getRepository(YouTubeVideoID);
 
@@ -23,15 +30,14 @@ export const addYouTubeVideoID = async (videoId: string, guildId?: string) => {
     throw new YouTubeVideoIDCreationError(400, 'INVALID_VIDEO_ID');
   }
 
-  const where: FindConditions<YouTubeVideoID>[] = [
-    { videoId, guildId: IsNull() }
-  ];
+  const where = buildFindConditions<YouTubeVideoID>(groupId, guildId, false, {
+    videoId,
+  });
 
-  if (guildId) {
-    where.push({ videoId, guildId });
-  }
-
-  const count = await youTubeVideoIDRepository.count({ where });
+  const count = await youTubeVideoIDRepository.count({
+    where,
+    relations: ['group'],
+  });
 
   if (count > 0) {
     throw new YouTubeVideoIDCreationError(400, 'ID_ALREADY_EXISTS');
@@ -40,8 +46,25 @@ export const addYouTubeVideoID = async (videoId: string, guildId?: string) => {
   const entry = new YouTubeVideoID();
   entry.videoId = videoId;
 
-  if (guildId) {
-    entry.guildId = guildId;
+  if (groupId) {
+    const membershipsRepository = db.getRepository(GroupMember);
+
+    const membership = await membershipsRepository.findOne({
+      where: {
+        group: { id: groupId },
+      },
+      relations: ['group'],
+    });
+
+    if (!membership) {
+      throw new YouTubeVideoIDCreationError(404, 'GROUP_NOT_FOUND');
+    }
+
+    entry.group = membership.group as Group;
+
+    if (guildId) {
+      entry.guildId = guildId;
+    }
   }
 
   await youTubeVideoIDRepository.insert(entry);
