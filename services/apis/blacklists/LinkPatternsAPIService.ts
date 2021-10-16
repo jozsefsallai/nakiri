@@ -16,6 +16,7 @@ export interface GetLinkPatternsAPIResponse extends APIResponse {
 export interface AddLinkPatternAPIRequest {
   pattern: string;
   guild?: string;
+  group?: string;
 }
 
 export interface AddLinkPatternAPIResponse extends APIResponse {}
@@ -31,8 +32,10 @@ export class LinkPatternsAPIService {
     '/api/lists/link-patterns?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
 
   static ADD_LINK_PATTERN_URL = '/api/lists/link-patterns';
+  static ADD_LINK_PATTERN_WITH_GROUP_URL =
+    '/api/lists/link-patterns?group=:group';
   static ADD_LINK_PATTERN_WITH_GUILD_URL =
-    '/api/lists/link-patterns?guild=:guild';
+    '/api/lists/link-patterns?group=:group&guild=:guild';
 
   static DELETE_LINK_PATTERN_URL = '/api/lists/link-patterns/:id';
 
@@ -49,8 +52,9 @@ export class LinkPatternsAPIService {
   public async addLinkPattern({
     pattern,
     guild,
+    group,
   }: AddLinkPatternAPIRequest): Promise<AddLinkPatternAPIResponse> {
-    const url = this.makeAddLinkPatternUrl(guild);
+    const url = this.makeAddLinkPatternUrl(group, guild);
     return axiosService.post(url, { pattern }).then((res) => res.data);
   }
 
@@ -88,15 +92,20 @@ export class LinkPatternsAPIService {
       .replace(':limit', (limit ?? 25).toString());
   }
 
-  private makeAddLinkPatternUrl(guild?: string): string {
-    if (guild) {
-      return LinkPatternsAPIService.ADD_LINK_PATTERN_WITH_GUILD_URL.replace(
-        ':guild',
-        guild,
-      );
+  private makeAddLinkPatternUrl(group?: string, guild?: string): string {
+    if (group) {
+      return guild
+        ? LinkPatternsAPIService.ADD_LINK_PATTERN_WITH_GUILD_URL.replace(
+            ':group',
+            group,
+          ).replace(':guild', guild)
+        : LinkPatternsAPIService.ADD_LINK_PATTERN_WITH_GROUP_URL.replace(
+            ':group',
+            group,
+          );
+    } else {
+      return LinkPatternsAPIService.ADD_LINK_PATTERN_URL;
     }
-
-    return LinkPatternsAPIService.ADD_LINK_PATTERN_URL;
   }
 
   private makeDeleteLinkPatternUrl(id: string): string {

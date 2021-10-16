@@ -4,6 +4,11 @@ import { FindConditions, IsNull } from 'typeorm';
 import { APIError } from '@/lib/errors';
 import { isValidRegex } from '@/lib/commonValidators';
 
+import buildFindConditions from '@/lib/buildFindConditions';
+import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
+import { GroupMember } from '@/db/models/groups/GroupMember';
+import { Group } from '@/db/models/groups/Group';
+
 export class LinkPatternCreationError extends APIError {
   constructor(statusCode: number, code: string) {
     super(statusCode, code);
@@ -11,7 +16,11 @@ export class LinkPatternCreationError extends APIError {
   }
 }
 
-export const addLinkPattern = async (pattern: string, guildId?: string) => {
+export const addLinkPattern = async ({
+  pattern,
+  groupId,
+  guildId,
+}: IBlacklistAddParams<'pattern'>) => {
   await db.prepare();
   const linkPatternRepository = db.getRepository(LinkPattern);
 
@@ -20,13 +29,14 @@ export const addLinkPattern = async (pattern: string, guildId?: string) => {
     throw new LinkPatternCreationError(400, 'INVALID_REGEX_PATTERN');
   }
 
-  const where: FindConditions<LinkPattern>[] = [{ pattern, guildId: IsNull() }];
+  const where = buildFindConditions<LinkPattern>(groupId, guildId, false, {
+    pattern,
+  });
 
-  if (guildId) {
-    where.push({ pattern, guildId });
-  }
-
-  const count = await linkPatternRepository.count({ where });
+  const count = await linkPatternRepository.count({
+    where,
+    relations: ['group'],
+  });
 
   if (count > 0) {
     throw new LinkPatternCreationError(400, 'PATTERN_ALREADY_EXISTS');
@@ -35,8 +45,25 @@ export const addLinkPattern = async (pattern: string, guildId?: string) => {
   const entry = new LinkPattern();
   entry.pattern = pattern;
 
-  if (guildId) {
-    entry.guildId = guildId;
+  if (groupId) {
+    const membershipsRepository = db.getRepository(GroupMember);
+
+    const membership = await membershipsRepository.findOne({
+      where: {
+        group: { id: groupId },
+      },
+      relations: ['group'],
+    });
+
+    if (!membership) {
+      throw new LinkPatternCreationError(404, 'GROUP_NOT_FOUND');
+    }
+
+    entry.group = membership.group as Group;
+
+    if (guildId) {
+      entry.guildId = guildId;
+    }
   }
 
   await linkPatternRepository.insert(entry);

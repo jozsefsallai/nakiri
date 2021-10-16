@@ -36,7 +36,10 @@ export const addYouTubeChannelID = async ({
     channelId,
   });
 
-  const count = await youTubeChannelIDRepository.count({ where });
+  const count = await youTubeChannelIDRepository.count({
+    where,
+    relations: ['group'],
+  });
 
   if (count > 0) {
     throw new YouTubeChannelIDCreationError(400, 'ID_ALREADY_EXISTS');

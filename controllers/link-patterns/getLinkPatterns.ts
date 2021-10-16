@@ -2,31 +2,31 @@ import db from '@/services/db';
 import { LinkPattern } from '@/db/models/blacklists/LinkPattern';
 import { FindConditions, IsNull } from 'typeorm';
 
-export const getLinkPatterns = async (
-  guildId?: string,
-  strict?: boolean,
-  skip?: number,
-  take?: number,
-) => {
+import { IBlacklistGetterParams } from '@/typings/IBlacklistGetterParams';
+import buildFindConditions from '@/lib/buildFindConditions';
+
+export const getLinkPatterns = async ({
+  groupId,
+  guildId,
+  strict,
+  skip,
+  take,
+}: IBlacklistGetterParams) => {
   await db.prepare();
   const linkPatternRepository = db.getRepository(LinkPattern);
 
-  const where: FindConditions<LinkPattern>[] = [];
+  const where = buildFindConditions<LinkPattern>(groupId, guildId, strict);
 
-  if (!guildId || (guildId && !strict)) {
-    where.push({ guildId: IsNull() }); // global blacklist (if strict mode is disabled)
-  }
-
-  if (guildId) {
-    where.push({ guildId }); // guild-specific blacklist
-  }
-
-  const totalCount = await linkPatternRepository.count({ where });
+  const totalCount = await linkPatternRepository.count({
+    where,
+    relations: ['group'],
+  });
   const patterns = await linkPatternRepository.find({
     where,
     skip,
     take,
     order: { createdAt: 'DESC' },
+    relations: ['group'],
   });
 
   return { patterns, totalCount };
