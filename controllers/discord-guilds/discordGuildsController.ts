@@ -24,12 +24,13 @@ export const index: NextApiHandler = async (req, res) => {
   const skip = limit !== Infinity ? (page - 1) * limit : undefined;
   const take = limit !== Infinity ? limit : undefined;
 
-  const { discordGuilds, totalCount } = await getDiscordGuilds(
-    firstOf(req.query.guild),
+  const { discordGuilds, totalCount } = await getDiscordGuilds({
+    guildId: firstOf(req.query.guild),
+    groupId: firstOf(req.query.group),
     strict,
     skip,
     take,
-  );
+  });
   const pageCount = limit !== Infinity ? Math.ceil(totalCount / limit) : 1;
 
   const pagination = {
@@ -58,6 +59,7 @@ export const index: NextApiHandler = async (req, res) => {
 
 export const create: NextApiHandler = async (req, res) => {
   const guildId = firstOf(req.query.guild);
+  const groupId = firstOf(req.query.group);
   const id: string | undefined = req.body.id;
   const name: string | undefined = req.body.name;
 
@@ -69,7 +71,11 @@ export const create: NextApiHandler = async (req, res) => {
   }
 
   try {
-    await addDiscordGuild(id, name, guildId);
+    await addDiscordGuild(name, {
+      guildId,
+      groupId,
+      blacklistedId: id,
+    });
     return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'DiscordGuildCreationError') {

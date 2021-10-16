@@ -17,6 +17,7 @@ export interface AddDiscordGuildAPIRequest {
   id: string;
   name?: string;
   guild?: string;
+  group?: string;
 }
 
 export interface AddDiscordGuildAPIResponse extends APIResponse {}
@@ -32,7 +33,9 @@ export class DiscordGuildsAPIService {
     '/api/lists/discord?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
 
   static ADD_DISCORD_GUILD_URL = '/api/lists/discord';
-  static ADD_DISCORD_GUILD_WITH_GUILD_URL = '/api/lists/discord?guild=:guild';
+  static ADD_DISCORD_GUILD_WITH_GROUP_URL = '/api/lists/discord?group=:group';
+  static ADD_DISCORD_GUILD_WITH_GUILD_URL =
+    '/api/lists/discord?group=:group&guild=:guild';
 
   static DELETE_DISCORD_GUILD_URL = '/api/lists/discord/:id';
 
@@ -49,9 +52,10 @@ export class DiscordGuildsAPIService {
   public async addDiscordGuild({
     id,
     guild,
+    group,
     name,
   }: AddDiscordGuildAPIRequest): Promise<AddDiscordGuildAPIResponse> {
-    const url = this.makeAddDiscordGuildURL(guild);
+    const url = this.makeAddDiscordGuildURL(group, guild);
 
     const payload: Partial<AddDiscordGuildAPIRequest> = {
       id,
@@ -98,13 +102,20 @@ export class DiscordGuildsAPIService {
       .replace(':limit', (limit ?? 25).toString());
   }
 
-  private makeAddDiscordGuildURL(guild?: string): string {
-    return guild
-      ? DiscordGuildsAPIService.ADD_DISCORD_GUILD_WITH_GUILD_URL.replace(
-          ':guild',
-          guild,
-        )
-      : DiscordGuildsAPIService.ADD_DISCORD_GUILD_URL;
+  private makeAddDiscordGuildURL(group?: string, guild?: string): string {
+    if (group) {
+      return guild
+        ? DiscordGuildsAPIService.ADD_DISCORD_GUILD_WITH_GUILD_URL.replace(
+            ':group',
+            group,
+          ).replace(':guild', guild)
+        : DiscordGuildsAPIService.ADD_DISCORD_GUILD_WITH_GROUP_URL.replace(
+            ':group',
+            group,
+          );
+    } else {
+      return DiscordGuildsAPIService.ADD_DISCORD_GUILD_URL;
+    }
   }
 
   private makeDeleteDiscordGuildURL(id: string): string {
