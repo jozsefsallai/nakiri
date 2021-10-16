@@ -40,7 +40,13 @@ export interface UpdateMemberPermissionsAPIRequest {
 
 export interface UpdateMemberPermissionsAPIResponse extends APIResponse {}
 
-export interface RemoveGroupMemberAPIResponse extends APIResponse {}
+export interface RemoveGroupMemberAPIResponse extends APIResponse {
+  group: IGroup;
+}
+
+export interface RemoveGroupGuildAPIResponse extends APIResponse {
+  group: IGroup;
+}
 
 export interface UpdateGroupAPIRequest {
   name?: string;
@@ -58,13 +64,14 @@ export interface UpdateGroupOwnerAPIResponse extends APIResponse {}
 export interface DeleteGroupAPIResponse extends APIResponse {}
 
 export class GroupsAPIService {
-  static GET_GROUPS_API_URL = '/api/groups';
-  static CREATE_GROUP_API_URL = '/api/groups';
-  static GET_GROUP_API_URL = '/api/groups/:id';
-  static ADD_GROUP_MEMBER_API_URL = '/api/groups/:id/members';
-  static ADD_GUILD_TO_GROUP_API_URL = '/api/groups/:id/guilds';
+  static GET_GROUPS_API_URL = '/api/groups'; //
+  static CREATE_GROUP_API_URL = '/api/groups'; //
+  static GET_GROUP_API_URL = '/api/groups/:id'; //
+  static ADD_GROUP_MEMBER_API_URL = '/api/groups/:id/members'; //
+  static ADD_GUILD_TO_GROUP_API_URL = '/api/groups/:id/guilds'; //
   static UPDATE_MEMBER_PERMISSIONS_API_URL = '/api/groups/:gid/members/:mid';
   static REMOVE_GROUP_MEMBER_API_URL = '/api/groups/:gid/members/:mid';
+  static REMOVE_GROUP_GUILD_API_URL = '/api/groups/:gid/guilds/:guildId';
   static UPDATE_GROUP_API_URL = '/api/groups/:id';
   static UPDATE_GROUP_OWNER_API_URL = '/api/groups/:id/owner';
   static DELETE_GROUP_API_URL = '/api/groups/:id';
@@ -154,6 +161,16 @@ export class GroupsAPIService {
       .then((res) => res.data);
   }
 
+  public async removeGroupGuild(
+    groupId: string,
+    guildId: string,
+  ): Promise<RemoveGroupGuildAPIResponse> {
+    const url = this.makeRemoveGroupGuildUrl(groupId, guildId);
+    return axiosService
+      .delete<RemoveGroupGuildAPIResponse>(url)
+      .then((res) => res.data);
+  }
+
   public async updateGroup(
     id: string,
     { name, description }: UpdateGroupAPIRequest,
@@ -222,6 +239,13 @@ export class GroupsAPIService {
       ':gid',
       groupId,
     ).replace(':mid', memberId);
+  }
+
+  private makeRemoveGroupGuildUrl(groupId: string, guildId: string): string {
+    return GroupsAPIService.REMOVE_GROUP_GUILD_API_URL.replace(
+      ':gid',
+      groupId,
+    ).replace(':guildId', guildId);
   }
 
   private makeUpdateGroupUrl(groupId: string): string {

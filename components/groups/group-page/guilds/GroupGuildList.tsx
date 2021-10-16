@@ -8,6 +8,12 @@ import GroupGuildListItem from './GroupGuildListItem';
 import { IGroup } from '@/db/models/groups/Group';
 import AddGuildButton from './AddGuildButton';
 import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
+import toaster from '@/lib/toaster';
+import { useState } from 'react';
+import apiService from '@/services/apis';
+import { errors } from '@/lib/errors';
+
+import Swal from 'sweetalert2';
 
 export interface GroupGuildListProps {
   guilds: IAuthorizedGuild[];
@@ -22,9 +28,61 @@ const GroupGuildList: React.FC<GroupGuildListProps> = ({
 }) => {
   const [allGuilds] = useGuilds();
 
+  const [requestInProgress, setRequestInProgress] = useState(false);
+
+  const removeGuildFromGroup = async (
+    guild: IAuthorizedGuild,
+  ): Promise<IGroup> => {
+    if (requestInProgress) {
+      return;
+    }
+
+    setRequestInProgress(true);
+
+    try {
+      const res = await apiService.groups.removeGroupGuild(
+        group.id,
+        guild.guildId,
+      );
+      toaster.success('Guild removed from group successfully!');
+      setRequestInProgress(false);
+      return res.group;
+    } catch (err) {
+      setRequestInProgress(false);
+      const message = err?.response?.data?.error;
+
+      if (message) {
+        toaster.danger(errors[message]);
+        return;
+      }
+
+      toaster.danger(errors.INTERNAL_SERVER_ERROR);
+    }
+  };
+
   const getGuildMetadata = (guildId: string): IGuildWithKey | undefined => {
     const guild = allGuilds.find((g) => g.id === guildId);
     return guild;
+  };
+
+  const handleGuildRemoveClick = async (guild: IAuthorizedGuild) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Are you sure you want to remove this guild from the group? This will NOT remove entries associated to this guild in this group, so you can add the guild again later and still have the original blacklist entries.',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const newGroup = await removeGuildFromGroup(guild);
+    setGroup({
+      ...group,
+      ...newGroup,
+    });
   };
 
   return (
@@ -39,6 +97,10 @@ const GroupGuildList: React.FC<GroupGuildListProps> = ({
           <GroupGuildListItem
             guild={guild}
             metadata={getGuildMetadata(guild.guildId)}
+            canManageGuilds={GroupMemberPermissionsUtil.canManageGroupGuilds(
+              group.myPermissions,
+            )}
+            onGuildRemoveClicked={handleGuildRemoveClick}
             key={guild.guildId}
           />
         ))}

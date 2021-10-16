@@ -7,7 +7,12 @@ import { createGroup } from './createGroup';
 import firstOf from '@/lib/firstOf';
 
 import { handleError } from '@/lib/errors';
-import { addGuildToGroup, addUserToGroup } from './updateGroup';
+import {
+  addGuildToGroup,
+  addUserToGroup,
+  removeGuildFromGroup,
+  removeUserFromGroup,
+} from './updateGroup';
 
 export const index: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
@@ -156,6 +161,60 @@ export const addMember: NextApiHandler = async (req, res) => {
     handleError(err);
     console.error(err);
 
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR',
+    });
+  }
+};
+
+export const removeGuild: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+  const guildId = firstOf(req.query.guildId);
+  const session = await getSession({ req });
+
+  try {
+    const group = await removeGuildFromGroup(session, id, guildId);
+    return res.json({
+      ok: true,
+      group,
+    });
+  } catch (err) {
+    if (err.name === 'UpdateGroupError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+      });
+    }
+
+    handleError(err);
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR',
+    });
+  }
+};
+
+export const removeMember: NextApiHandler = async (req, res) => {
+  const groupId = firstOf(req.query.id);
+  const discordId = firstOf(req.query.mid);
+  const session = await getSession({ req });
+
+  try {
+    const group = await removeUserFromGroup(session, groupId, discordId);
+    return res.json({
+      ok: true,
+      group,
+    });
+  } catch (err) {
+    if (err.name === 'UpdateGroupError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+      });
+    }
+
+    handleError(err);
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR',

@@ -149,3 +149,115 @@ export const addUserToGroup = async (
 
   return membership.group.toJSON();
 };
+
+export const removeGuildFromGroup = async (
+  session: Session,
+  groupId: string,
+  guildId: string,
+) => {
+  await db.prepare();
+
+  const groupMembersRepository = db.getRepository(GroupMember);
+  const groupsRepository = db.getRepository(Group);
+  const authorizedGuildsRepository = db.getRepository(AuthorizedGuild);
+
+  const user = await getUser(session);
+
+  const membership = await groupMembersRepository.findOne({
+    where: {
+      group: {
+        id: groupId,
+      },
+      user,
+    },
+    relations: ['group', 'user', 'group.guilds'],
+  });
+
+  if (!membership) {
+    throw new UpdateGroupError(404, 'GROUP_NOT_FOUND');
+  }
+
+  if (!membership.canManageGroupGuilds()) {
+    throw new UpdateGroupError(403, 'CANNOT_MANAGE_GUILDS_IN_THIS_GROUP');
+  }
+
+  const guilds = await fetchGuilds(session, true).then((guilds) =>
+    guilds.filter((guild) => guild.id === guildId),
+  );
+
+  if (guilds.length === 0) {
+    throw new UpdateGroupError(403, 'CANNOT_MANAGE_GUILD');
+  }
+
+  const guild = await authorizedGuildsRepository.findOne({ guildId });
+  if (!guild) {
+    throw new UpdateGroupError(404, 'GUILD_NOT_AUTHORIZED');
+  }
+
+  if (!membership.group.guilds.find((guild) => guild.guildId === guildId)) {
+    throw new UpdateGroupError(400, 'GUILD_NOT_IN_GROUP');
+  }
+
+  membership.group.guilds = membership.group.guilds.filter(
+    (guild) => guild.guildId !== guildId,
+  );
+  await groupsRepository.save(membership.group);
+
+  return membership.group.toJSON();
+};
+
+export const removeUserFromGroup = async (
+  session: Session,
+  groupId: string,
+  userId: string,
+) => {
+  await db.prepare();
+
+  const groupMembersRepository = db.getRepository(GroupMember);
+  const groupsRepository = db.getRepository(Group);
+  const authorizedUsersRepository = db.getRepository(AuthorizedUser);
+
+  const user = await getUser(session);
+
+  const membership = await groupMembersRepository.findOne({
+    where: {
+      group: {
+        id: groupId,
+      },
+      user,
+    },
+    relations: ['group', 'user', 'group.members', 'group.members.user'],
+  });
+
+  if (!membership) {
+    throw new UpdateGroupError(404, 'GROUP_NOT_FOUND');
+  }
+
+  if (!membership.canManageGroupMembers()) {
+    throw new UpdateGroupError(403, 'CANNOT_MANAGE_MEMBERS_IN_THIS_GROUP');
+  }
+
+  const targetUser = await authorizedUsersRepository.findOne({ id: userId });
+  if (!targetUser) {
+    throw new UpdateGroupError(404, 'USER_NOT_AUTHORIZED');
+  }
+
+  const targetMembership = await groupMembersRepository.count({
+    where: {
+      group: membership.group,
+      user: targetUser,
+    },
+    relations: ['group', 'user', 'group.members'],
+  });
+
+  if (targetMembership === 0) {
+    throw new UpdateGroupError(400, 'USER_NOT_IN_GROUP');
+  }
+
+  membership.group.members = membership.group.members.filter(
+    (member) => member.user.id !== targetUser.id,
+  );
+  await groupsRepository.save(membership.group);
+
+  return membership.group.toJSON();
+};

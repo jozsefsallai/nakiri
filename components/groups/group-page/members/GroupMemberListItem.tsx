@@ -3,15 +3,20 @@ import { GroupMemberPermissions } from '@/lib/GroupMemberPermissions';
 import { UserPermissionsUtil } from '@/lib/UserPermissions';
 
 import DiscordAvatar from '@/components/users/common/DiscordAvatar';
+import Button from '@/components/common/button/Button';
 
 export interface GroupMemberListItemProps {
   member: IAuthorizedUser;
   permissions: number;
+  canManageMembers: boolean;
+  onMemberRemoveClicked: (member: IAuthorizedUser) => void;
 }
 
 const GroupMemberListItem: React.FC<GroupMemberListItemProps> = ({
   member,
   permissions,
+  canManageMembers,
+  onMemberRemoveClicked,
 }) => {
   const permissionsList = Object.keys(GroupMemberPermissions)
     .filter((permission) => {
@@ -49,6 +54,12 @@ const GroupMemberListItem: React.FC<GroupMemberListItemProps> = ({
           </div>
         </div>
       </div>
+
+      {canManageMembers && (
+        <div className="flex items-center gap-3">
+          <Button onClick={() => onMemberRemoveClicked(member)}>Remove</Button>
+        </div>
+      )}
     </div>
   );
 };
