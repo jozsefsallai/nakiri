@@ -1,6 +1,7 @@
 import axiosService, { APIResponse } from '@/services/axios';
 
 import { IYouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
+import { isRendered } from 'nprogress';
 
 export interface GetChannelIDsAPIRequest {
   group?: string;
@@ -16,6 +17,7 @@ export interface GetChannelIDsAPIResponse extends APIResponse {
 export interface AddChannelIDAPIRequest {
   channelID: string;
   guild?: string;
+  group?: string;
 }
 
 export interface AddChannelIDAPIResponse extends APIResponse {}
@@ -31,8 +33,10 @@ export class ChannelIDsAPIService {
     '/api/lists/youtube/channels?compact=false&group=:group&guild=:guild&strict=true&page=:page&limit=:limit';
 
   static ADD_CHANNEL_ID_URL = '/api/lists/youtube/channels';
+  static ADD_CHANNEL_ID_WITH_GROUP_URL =
+    '/api/lists/youtube/channels?group=:group';
   static ADD_CHANNEL_ID_WITH_GUILD_URL =
-    '/api/lists/youtube/channels?guild=:guild';
+    '/api/lists/youtube/channels?group=:group&guild=:guild';
 
   static DELETE_CHANNEL_ID_URL = '/api/lists/youtube/channels/:id';
 
@@ -49,8 +53,9 @@ export class ChannelIDsAPIService {
   public async addChannelID({
     channelID,
     guild,
+    group,
   }: AddChannelIDAPIRequest): Promise<AddChannelIDAPIResponse> {
-    const url = this.makeAddChannelIDUrl(guild);
+    const url = this.makeAddChannelIDUrl(group, guild);
     return axiosService.post(url, { channelID }).then((res) => res.data);
   }
 
@@ -88,15 +93,20 @@ export class ChannelIDsAPIService {
       .replace(':limit', (limit ?? 25).toString());
   }
 
-  private makeAddChannelIDUrl(guild?: string): string {
-    if (guild) {
-      return ChannelIDsAPIService.ADD_CHANNEL_ID_WITH_GUILD_URL.replace(
-        ':guild',
-        guild,
-      );
+  private makeAddChannelIDUrl(group?: string, guild?: string): string {
+    if (group) {
+      return guild
+        ? ChannelIDsAPIService.ADD_CHANNEL_ID_WITH_GUILD_URL.replace(
+            ':group',
+            group,
+          ).replace(':guild', guild)
+        : ChannelIDsAPIService.ADD_CHANNEL_ID_WITH_GROUP_URL.replace(
+            ':group',
+            group,
+          );
+    } else {
+      return ChannelIDsAPIService.ADD_CHANNEL_ID_URL;
     }
-
-    return ChannelIDsAPIService.ADD_CHANNEL_ID_URL;
   }
 
   private makeDeleteChannelIDUrl(id: string): string {

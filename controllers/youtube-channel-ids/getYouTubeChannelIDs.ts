@@ -2,31 +2,32 @@ import db from '@/services/db';
 import { YouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { FindConditions, IsNull } from 'typeorm';
 
-export const getYouTubeChannelIDs = async (
-  guildId?: string,
-  strict?: boolean,
-  skip?: number,
-  take?: number,
-) => {
+import { IBlacklistGetterParams } from '@/typings/IBlacklistGetterParams';
+import buildFindConditions from '@/lib/buildFindConditions';
+
+export const getYouTubeChannelIDs = async ({
+  groupId,
+  guildId,
+  strict,
+  skip,
+  take,
+}: IBlacklistGetterParams) => {
   await db.prepare();
   const youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
 
-  const where: FindConditions<YouTubeChannelID>[] = [];
+  const where = buildFindConditions<YouTubeChannelID>(groupId, guildId, strict);
 
-  if (!guildId || (guildId && !strict)) {
-    where.push({ guildId: IsNull() }); // global blacklist (if strict mode is disabled)
-  }
+  const totalCount = await youTubeChannelIDRepository.count({
+    where,
+    relations: ['group'],
+  });
 
-  if (guildId) {
-    where.push({ guildId }); // guild-specific blacklist
-  }
-
-  const totalCount = await youTubeChannelIDRepository.count({ where });
   const channelIDs = await youTubeChannelIDRepository.find({
     where,
     skip,
     take,
     order: { createdAt: 'DESC' },
+    relations: ['group'],
   });
 
   return { totalCount, channelIDs };

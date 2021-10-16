@@ -24,12 +24,14 @@ export const index: NextApiHandler = async (req, res) => {
   const skip = limit !== Infinity ? (page - 1) * limit : undefined;
   const take = limit !== Infinity ? limit : undefined;
 
-  const { channelIDs, totalCount } = await getYouTubeChannelIDs(
-    firstOf(req.query.guild),
+  const { channelIDs, totalCount } = await getYouTubeChannelIDs({
+    groupId: firstOf(req.query.group),
+    guildId: firstOf(req.query.guild),
     strict,
     skip,
     take,
-  );
+  });
+
   const pageCount = limit !== Infinity ? Math.ceil(totalCount / limit) : 1;
 
   const pagination = {
@@ -58,6 +60,7 @@ export const index: NextApiHandler = async (req, res) => {
 
 export const create: NextApiHandler = async (req, res) => {
   const guildId = firstOf(req.query.guild);
+  const groupId = firstOf(req.query.group);
   const channelId: string | undefined = req.body.channelID;
 
   if (typeof channelId === 'undefined') {
@@ -68,7 +71,12 @@ export const create: NextApiHandler = async (req, res) => {
   }
 
   try {
-    await addYouTubeChannelID(channelId, guildId);
+    await addYouTubeChannelID({
+      channelId,
+      guildId,
+      groupId,
+    });
+
     return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'YouTubeChannelIDCreationError') {

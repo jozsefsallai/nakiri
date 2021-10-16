@@ -18,10 +18,21 @@ import MessageBox, {
 import { redirectIfDoesNotHaveOneOfPermissions } from '@/lib/redirects';
 import { UserPermissions } from '@/lib/UserPermissions';
 
+import { useUserGroups } from '@/hooks/useGroups';
+import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
+import { bulkMapGuildMetadata } from '@/lib/guildMetadata';
+import { IGuild } from '@/controllers/guilds/IGuild';
+import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
+
 const NewChannelIDPage = () => {
   const [currentUser, _] = useCurrentUser();
 
-  const [guilds, , guildsErrored] = useGuilds();
+  const { groups, errored } = useUserGroups();
+  const [guilds] = useGuilds();
+
+  const [groupGuilds, setGroupGuilds] = useState<IGuild[]>([]);
+
+  const [groupID, setGroupID] = useState<string | undefined>(undefined);
   const [guildID, setGuildID] = useState<string | undefined>(undefined);
   const [error, setError] = useState('');
 
@@ -32,7 +43,11 @@ const NewChannelIDPage = () => {
     { setSubmitting }: FormikHelpers<AddChannelIDAPIRequest>,
   ) => {
     try {
-      await apiService.channelIDs.addChannelID({ channelID, guild: guildID });
+      await apiService.channelIDs.addChannelID({
+        channelID,
+        guild: guildID,
+        group: groupID,
+      });
 
       toaster.success(`Added channel with ID ${channelID}.`);
 
@@ -53,6 +68,23 @@ const NewChannelIDPage = () => {
     }
   };
 
+  const handleGroupChange = (groupID: string) => {
+    setGuildID(undefined);
+
+    if (groupID.length === 0) {
+      setGroupID(undefined);
+      setGroupGuilds([]);
+      return;
+    }
+
+    setGroupID(groupID);
+
+    const targetGroup = groups.find((g) => g.id === groupID);
+    setGroupGuilds(
+      bulkMapGuildMetadata(guilds, targetGroup.guilds as IAuthorizedGuild[]),
+    );
+  };
+
   const handleGuildChange = (guildID: string) => {
     if (guildID.length === 0) {
       setGuildID(undefined);
@@ -63,10 +95,10 @@ const NewChannelIDPage = () => {
   };
 
   useEffect(() => {
-    if (guildsErrored) {
+    if (errored) {
       setError('Failed to fetch your guilds.');
     }
-  }, [guildsErrored]);
+  }, [errored]);
 
   return (
     <DashboardLayout hasContainer title="Add YouTube channel ID">
@@ -91,24 +123,52 @@ const NewChannelIDPage = () => {
             </div>
 
             <div className="input-group">
-              <label htmlFor="guild">Guild</label>
+              <label htmlFor="group">Group</label>
               <select
-                onChange={(e) => handleGuildChange(e.currentTarget.value)}
-                name="guild"
+                onChange={(e) => handleGroupChange(e.currentTarget.value)}
+                name="group"
               >
                 {currentUser?.canManageGlobalBlacklists() && (
-                  <option value="">Global</option>
+                  <option value="">No group (global blacklist)</option>
                 )}
-                {currentUser?.canManageOwnGuildBlacklists() && !guilds && (
-                  <option disabled>--- loading guilds ---</option>
+                {currentUser?.canManageGlobalBlacklists() && (
+                  <option disabled> --- </option>
                 )}
-                {currentUser?.canManageOwnGuildBlacklists() &&
-                  guilds &&
-                  guilds.map((guild) => (
-                    <option value={guild.id}>{guild.name}</option>
+                {!groups && <option disabled> --- loading groups --- </option>}
+                {groups &&
+                  groups.map((group) => (
+                    <option
+                      key={group.id}
+                      value={group.id}
+                      disabled={
+                        !GroupMemberPermissionsUtil.canManageGroupEntries(
+                          group.myPermissions,
+                        )
+                      }
+                    >
+                      {group.name}
+                    </option>
                   ))}
               </select>
             </div>
+
+            {groupGuilds?.length > 0 && (
+              <div className="input-group">
+                <label htmlFor="guild">Guild</label>
+                <select
+                  onChange={(e) => handleGuildChange(e.currentTarget.value)}
+                  name="guild"
+                >
+                  <option value="">No guild (group's blacklist)</option>
+                  <option disabled> --- </option>
+                  {groupGuilds.map((guild) => (
+                    <option key={guild.id} value={guild.id}>
+                      {guild.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="input-group">
               <Button type="submit" disabled={isSubmitting}>

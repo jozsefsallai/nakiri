@@ -7,6 +7,11 @@ import { isValidYouTubeChannelID } from '@/lib/commonValidators';
 
 import { collectChannelMetadata } from '@/jobs/queue';
 
+import buildFindConditions from '@/lib/buildFindConditions';
+import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
+import { GroupMember } from '@/db/models/groups/GroupMember';
+import { Group } from '@/db/models/groups/Group';
+
 export class YouTubeChannelIDCreationError extends APIError {
   constructor(statusCode: number, code: string) {
     super(statusCode, code);
@@ -14,10 +19,11 @@ export class YouTubeChannelIDCreationError extends APIError {
   }
 }
 
-export const addYouTubeChannelID = async (
-  channelId: string,
-  guildId?: string,
-) => {
+export const addYouTubeChannelID = async ({
+  channelId,
+  groupId,
+  guildId,
+}: IBlacklistAddParams<'channelId'>) => {
   await db.prepare();
   const youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
 
@@ -26,13 +32,9 @@ export const addYouTubeChannelID = async (
     throw new YouTubeChannelIDCreationError(400, 'INVALID_CHANNEL_ID');
   }
 
-  const where: FindConditions<YouTubeChannelID>[] = [
-    { channelId, guildId: IsNull() },
-  ];
-
-  if (guildId) {
-    where.push({ channelId, guildId });
-  }
+  const where = buildFindConditions<YouTubeChannelID>(groupId, guildId, false, {
+    channelId,
+  });
 
   const count = await youTubeChannelIDRepository.count({ where });
 
@@ -43,8 +45,25 @@ export const addYouTubeChannelID = async (
   const entry = new YouTubeChannelID();
   entry.channelId = channelId;
 
-  if (guildId) {
-    entry.guildId = guildId;
+  if (groupId) {
+    const membershipsRepository = db.getRepository(GroupMember);
+
+    const membership = await membershipsRepository.findOne({
+      where: {
+        group: { id: groupId },
+      },
+      relations: ['group'],
+    });
+
+    if (!membership) {
+      throw new YouTubeChannelIDCreationError(404, 'GROUP_NOT_FOUND');
+    }
+
+    entry.group = membership.group as Group;
+
+    if (guildId) {
+      entry.guildId = guildId;
+    }
   }
 
   await youTubeChannelIDRepository.insert(entry);
