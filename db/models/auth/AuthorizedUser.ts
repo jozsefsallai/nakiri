@@ -9,7 +9,7 @@ import {
 import { UserPermissionsUtil } from '../../../lib/UserPermissions';
 import { GroupMember, IGroupMember } from '../groups/GroupMember';
 
-import omit from '@/lib/omit';
+import omit from '../../../lib/omit';
 
 export interface IAuthorizedUser {
   id: string;

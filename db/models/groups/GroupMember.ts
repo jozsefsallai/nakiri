@@ -3,7 +3,7 @@ import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { Group, IGroup } from './Group';
 import { GroupMemberPermissionsUtil } from '../../../lib/GroupMemberPermissions';
 
-import omit from '@/lib/omit';
+import omit from '../../../lib/omit';
 
 export interface IGroupMember {
   id: string;

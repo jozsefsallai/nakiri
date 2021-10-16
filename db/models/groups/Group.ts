@@ -12,7 +12,7 @@ import { AuthorizedGuild, IAuthorizedGuild } from '../auth/AuthorizedGuild';
 import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { GroupMember, IGroupMember } from './GroupMember';
 
-import omit from '@/lib/omit';
+import omit from '../../../lib/omit';
 
 export interface IGroup {
   id: string;

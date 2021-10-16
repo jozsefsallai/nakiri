@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Group, IGroup } from '../groups/Group';
 
-import omit from '@/lib/omit';
+import omit from '../../../lib/omit';
 
 export interface IAuthorizedGuild {
   id: string;
