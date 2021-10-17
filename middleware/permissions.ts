@@ -7,9 +7,10 @@ import { UserPermissions } from '@/lib/UserPermissions';
 
 import firstOf from '@/lib/firstOf';
 import { getUser } from '@/controllers/users/getUser';
+import { Group } from '@/db/models/groups/Group';
 import { GroupMember } from '@/db/models/groups/GroupMember';
 import { fetchGuilds } from '@/controllers/guilds/fetchGuilds';
-import Group from '@/components/groups/group-page';
+import { FindConditions } from 'typeorm';
 
 export const ensureUserHasPermissions = (
   callback: NextApiHandler,
@@ -60,18 +61,18 @@ export const ensureHasAccessToResource = (
     const groupId = firstOf(req.query.group);
     const guildId = firstOf(req.query.guild);
 
-    if (!groupId) {
+    const key = req.headers.authorization;
+
+    if (!groupId && !key) {
       return callback(req, res);
     }
 
     const session = await getSession({ req });
     const user = session && (await getUser(session));
-    const key = req.headers.authorization;
 
     await db.prepare();
 
     if (user) {
-      console.log('--> I am a user!');
       const membershipsRepository = db.getRepository(GroupMember);
       const membership = await membershipsRepository.findOne({
         where: {
@@ -98,16 +99,21 @@ export const ensureHasAccessToResource = (
     }
 
     if (key) {
-      console.log('--> I am a key!');
       const groupsRepository = db.getRepository(Group);
+
+      const where: FindConditions<Group> = groupId
+        ? { id: groupId, apiKey: key }
+        : { apiKey: key };
+
       const group = await groupsRepository.findOne({
-        where: {
-          id: groupId,
-          key,
-        },
+        where,
       });
 
       if (group) {
+        if (!groupId) {
+          req.query.group = group.id;
+        }
+
         return callback(req, res);
       }
     }

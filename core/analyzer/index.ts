@@ -33,6 +33,7 @@ interface LinkAnalysisResults {
 
 export class Analyzer {
   private content: string;
+  private groupId: string;
 
   private analyzeYouTubeVideoIDs: boolean;
   private analyzeYouTubeChannelIDs: boolean;
@@ -44,6 +45,7 @@ export class Analyzer {
   private greedy: boolean;
   private guildId?: string;
   private strictGuildCheck: boolean;
+  private strictGroupCheck: boolean;
 
   private youTubeAPI?: YouTubeAPIService;
   private discordAPI?: DiscordAPIService;
@@ -53,7 +55,8 @@ export class Analyzer {
   private discordGuildRepository: Repository<DiscordGuild>;
   private linkPatternRepository: Repository<LinkPattern>;
 
-  constructor(content: string, options: IAnalyzerOptions) {
+  constructor(groupId: string, content: string, options: IAnalyzerOptions) {
+    this.groupId = groupId;
     this.content = content;
 
     this.analyzeYouTubeVideoIDs = options.analyzeYouTubeVideoIDs ?? true;
@@ -67,6 +70,7 @@ export class Analyzer {
     this.greedy = options.greedy ?? false;
     this.guildId = options.guildId;
     this.strictGuildCheck = options.strictGuildCheck ?? false;
+    this.strictGroupCheck = options.strictGroupCheck ?? false;
 
     if (this.preemptiveVideoIDAnalysis && config.youtube?.apiKey) {
       this.youTubeAPI = new YouTubeAPIService(config.youtube.apiKey);
@@ -96,16 +100,31 @@ export class Analyzer {
     >[] = [];
 
     const baseCondition = { [`${fieldName}`]: id };
+    const baseGroupCondition = { group: { id: this.groupId } };
 
     if (this.guildId) {
-      conditions.push({ ...baseCondition, guildId: this.guildId });
+      conditions.push({
+        ...baseCondition,
+        ...baseGroupCondition,
+        guildId: this.guildId,
+      });
 
       if (this.strictGuildCheck) {
         return conditions;
       }
     }
 
-    conditions.push({ ...baseCondition, guildId: IsNull() });
+    conditions.push({
+      ...baseCondition,
+      ...baseGroupCondition,
+      guildId: IsNull(),
+    });
+
+    if (this.strictGroupCheck) {
+      return conditions;
+    }
+
+    conditions.push({ ...baseCondition, group: IsNull(), guildId: IsNull() });
     return conditions;
   }
 

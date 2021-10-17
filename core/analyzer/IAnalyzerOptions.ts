@@ -9,4 +9,5 @@ export interface IAnalyzerOptions {
   greedy?: boolean;
   guildId?: string;
   strictGuildCheck?: boolean;
+  strictGroupCheck?: boolean;
 }
