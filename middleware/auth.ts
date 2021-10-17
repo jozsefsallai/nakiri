@@ -2,7 +2,7 @@ import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
 
 import db from '@/services/db';
-import { AuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
+import { Group } from '@/db/models/groups/Group';
 
 export const ensureAuthenticated = (
   callback: NextApiHandler,
@@ -15,10 +15,10 @@ export const ensureAuthenticated = (
     if (!strict && req.headers.authorization?.length > 0) {
       await db.prepare();
 
-      const guildRepository = db.getRepository(AuthorizedGuild);
-      const key = req.headers.authorization!;
+      const groupsRepository = db.getRepository(Group);
+      const apiKey = req.headers.authorization!;
 
-      hasApiKey = (await guildRepository.count({ key })) === 1;
+      hasApiKey = (await groupsRepository.count({ apiKey })) === 1;
     }
 
     const session = await getSession({ req });

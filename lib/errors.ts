@@ -81,7 +81,7 @@ export const errors = {
   NOT_ANONYMOUS: 'You need to be logged out to perform this request.',
   INSUFFICIENT_PERMISSIONS:
     'You do not have the required permissions to perform this action.',
-  ACCESS_TO_GUILD_DENIED: 'You do not have access to this guild.',
+  ACCESS_TO_GUILD_DENIED: 'You do not have access to this group or guild.',
   INTERNAL_SERVER_ERROR: 'Internal server error.',
 };
 
