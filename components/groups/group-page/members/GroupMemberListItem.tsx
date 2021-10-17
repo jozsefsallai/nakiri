@@ -3,7 +3,7 @@ import { GroupMemberPermissions } from '@/lib/GroupMemberPermissions';
 import { UserPermissionsUtil } from '@/lib/UserPermissions';
 
 import DiscordAvatar from '@/components/users/common/DiscordAvatar';
-import Button from '@/components/common/button/Button';
+import Button, { ButtonSize } from '@/components/common/button/Button';
 
 export interface GroupMemberListItemProps {
   member: IAuthorizedUser;
@@ -57,7 +57,12 @@ const GroupMemberListItem: React.FC<GroupMemberListItemProps> = ({
 
       {canManageMembers && (
         <div className="flex items-center gap-3">
-          <Button onClick={() => onMemberRemoveClicked(member)}>Remove</Button>
+          <Button
+            size={ButtonSize.SMALL}
+            onClick={() => onMemberRemoveClicked(member)}
+          >
+            Remove
+          </Button>
         </div>
       )}
     </div>

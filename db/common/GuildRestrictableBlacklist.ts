@@ -33,7 +33,7 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
   @Column('varchar', { nullable: true, default: null })
   guildId?: string;
 
-  @ManyToOne(() => Group, { nullable: true })
+  @ManyToOne(() => Group, { nullable: true, onDelete: 'CASCADE' })
   group?: Group;
 
   toJSON(): IGuildRestrictableBlacklist {

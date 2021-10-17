@@ -37,7 +37,9 @@ export class AuthorizedGuild implements IAuthorizedGuild {
   @Column()
   guildId: string;
 
-  @ManyToMany(() => Group, (group) => group.guilds)
+  @ManyToMany(() => Group, (group) => group.guilds, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable()
   groups: Partial<Group>[];
 

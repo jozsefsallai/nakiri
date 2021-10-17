@@ -7,16 +7,26 @@ import { Clock, Key, Server, Users } from 'react-feather';
 import { format as formatDate } from 'date-fns';
 import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
 import Button, { ButtonSize } from '@/components/common/button/Button';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+
+import Swal from 'sweetalert2';
+import apiService from '@/services/apis';
+import toaster from '@/lib/toaster';
+import { useUserGroups } from '@/hooks/useGroups';
+import router from 'next/router';
+import { errors } from '@/lib/errors';
 
 export interface GroupHeaderProps {
   group: IGroup;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
 }
 
 const COPY_TEXT = 'Copy';
 const COPIED_TEXT = 'Copied';
 
-const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
+const GroupHeader: React.FC<GroupHeaderProps> = ({ group, setEditMode }) => {
+  const { reloadGroups } = useUserGroups();
+
   const creatorDiscordUser: IDiscordUser = {
     ...(group.creator as IUser),
     username: group.creator.name,
@@ -33,6 +43,54 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
     setTimeout(() => {
       setCopyButtonText(COPY_TEXT);
     }, 2000);
+  };
+
+  const toggleEditMode = () => setEditMode((editMode) => !editMode);
+
+  const deleteGroup = async () => {
+    try {
+      await apiService.groups.deleteGroup(group.id);
+      toaster.success('Group deleted successfully.');
+      await reloadGroups();
+      router.push('/manage/groups');
+    } catch (err) {
+      const message = err?.response?.data?.error;
+
+      if (message) {
+        toaster.danger(errors[message]);
+        return;
+      }
+
+      toaster.danger(errors.INTERNAL_SERVER_ERROR);
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    let result = await Swal.fire({
+      title: `Delete group "${group.name}"?`,
+      text: 'Are you extra very sure you want to delete the group? This action is IRREVERSIBLE and will DELETE ALL BLACKLIST ENTRIES attached to the group.',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete group and entries',
+      cancelButtonText: 'No, do NOT delete anything',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    result = await Swal.fire({
+      title: 'Are you really really sure?',
+      text: 'You should only need to delete a group if you REALLY know what you\'re doing. If you want to transfer the ownership you can do so using the "Edit" button.',
+      showCancelButton: true,
+      confirmButtonText: "Yes, I know what I'm doing",
+      cancelButtonText: 'Nevermind, keep the group',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    await deleteGroup();
   };
 
   return (
@@ -92,7 +150,7 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
 
         <div>
           <div className="text-center text-xs font-bold uppercase p-2 bg-ayame-primary-900 text-nakiri-base-invert">
-            Creator
+            Owner
           </div>
           <DiscordCard
             user={creatorDiscordUser}
@@ -100,6 +158,18 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({ group }) => {
             squareCorners
             noMargins
           />
+
+          {group.isCreator && (
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <Button size={ButtonSize.SMALL} onClick={toggleEditMode}>
+                Edit
+              </Button>
+
+              <Button size={ButtonSize.SMALL} onClick={handleDeleteClick}>
+                Delete
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </Box>

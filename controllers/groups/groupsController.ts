@@ -12,7 +12,9 @@ import {
   addUserToGroup,
   removeGuildFromGroup,
   removeUserFromGroup,
+  updateGroupDetails,
 } from './updateGroup';
+import { deleteGroup } from './deleteGroup';
 
 export const index: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
@@ -208,6 +210,63 @@ export const removeMember: NextApiHandler = async (req, res) => {
     });
   } catch (err) {
     if (err.name === 'UpdateGroupError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+      });
+    }
+
+    handleError(err);
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR',
+    });
+  }
+};
+
+export const update: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+  const session = await getSession({ req });
+
+  const { name, description } = req.body;
+
+  try {
+    const group = await updateGroupDetails(session, id, {
+      name,
+      description,
+    });
+
+    return res.json({
+      ok: true,
+      group,
+    });
+  } catch (err) {
+    if (err.name === 'UpdateGroupError') {
+      return res.status(err.statusCode).json({
+        ok: false,
+        error: err.code,
+      });
+    }
+
+    handleError(err);
+    return res.status(500).json({
+      ok: false,
+      error: 'INTERNAL_SERVER_ERROR',
+    });
+  }
+};
+
+export const destroy: NextApiHandler = async (req, res) => {
+  const id = firstOf(req.query.id);
+  const session = await getSession({ req });
+
+  try {
+    await deleteGroup(session, id);
+    return res.json({
+      ok: true,
+    });
+  } catch (err) {
+    if (err.name === 'DeleteGroupError') {
       return res.status(err.statusCode).json({
         ok: false,
         error: err.code,

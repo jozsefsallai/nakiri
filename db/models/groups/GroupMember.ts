@@ -17,10 +17,14 @@ export class GroupMember implements IGroupMember {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => AuthorizedUser, (user) => user.memberships)
+  @ManyToOne(() => AuthorizedUser, (user) => user.memberships, {
+    onDelete: 'CASCADE',
+  })
   user: Partial<AuthorizedUser>;
 
-  @ManyToOne(() => Group, (group) => group.members)
+  @ManyToOne(() => Group, (group) => group.members, {
+    onDelete: 'CASCADE',
+  })
   group: Partial<Group>;
 
   @Column('int', { default: 1 })

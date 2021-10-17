@@ -53,7 +53,9 @@ export interface UpdateGroupAPIRequest {
   description?: string;
 }
 
-export interface UpdateGroupAPIResponse extends APIResponse {}
+export interface UpdateGroupAPIResponse extends APIResponse {
+  group: IGroup;
+}
 
 export interface UpdateGroupOwnerAPIRequest {
   newOwnerId: string;
@@ -64,12 +66,12 @@ export interface UpdateGroupOwnerAPIResponse extends APIResponse {}
 export interface DeleteGroupAPIResponse extends APIResponse {}
 
 export class GroupsAPIService {
-  static GET_GROUPS_API_URL = '/api/groups'; //
-  static CREATE_GROUP_API_URL = '/api/groups'; //
-  static GET_GROUP_API_URL = '/api/groups/:id'; //
-  static ADD_GROUP_MEMBER_API_URL = '/api/groups/:id/members'; //
-  static ADD_GUILD_TO_GROUP_API_URL = '/api/groups/:id/guilds'; //
-  static UPDATE_MEMBER_PERMISSIONS_API_URL = '/api/groups/:gid/members/:mid';
+  static GET_GROUPS_API_URL = '/api/groups';
+  static CREATE_GROUP_API_URL = '/api/groups';
+  static GET_GROUP_API_URL = '/api/groups/:id';
+  static ADD_GROUP_MEMBER_API_URL = '/api/groups/:id/members';
+  static ADD_GUILD_TO_GROUP_API_URL = '/api/groups/:id/guilds';
+  static UPDATE_MEMBER_PERMISSIONS_API_URL = '/api/groups/:gid/members/:mid'; // might not do this
   static REMOVE_GROUP_MEMBER_API_URL = '/api/groups/:gid/members/:mid';
   static REMOVE_GROUP_GUILD_API_URL = '/api/groups/:gid/guilds/:guildId';
   static UPDATE_GROUP_API_URL = '/api/groups/:id';

@@ -1,4 +1,4 @@
-import Button from '@/components/common/button/Button';
+import Button, { ButtonSize } from '@/components/common/button/Button';
 import GuildIcon from '@/components/guilds/GuildIcon';
 import { IGuildWithKey } from '@/controllers/guilds/IGuild';
 import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
@@ -32,7 +32,12 @@ const GroupGuildListItem: React.FC<GroupGuildListItemProps> = ({
 
       {canManageGuilds && (
         <div className="flex items-center gap-3">
-          <Button onClick={() => onGuildRemoveClicked(guild)}>Remove</Button>
+          <Button
+            size={ButtonSize.SMALL}
+            onClick={() => onGuildRemoveClicked(guild)}
+          >
+            Remove
+          </Button>
         </div>
       )}
     </div>

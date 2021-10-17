@@ -54,7 +54,9 @@ export class Group implements IGroup {
   @OneToMany(() => GroupMember, (member) => member.group)
   members: Partial<GroupMember>[];
 
-  @ManyToMany(() => AuthorizedGuild, (guild) => guild.groups)
+  @ManyToMany(() => AuthorizedGuild, (guild) => guild.groups, {
+    onDelete: 'CASCADE',
+  })
   guilds: Partial<AuthorizedGuild>[];
 
   toJSON(): IGroup {

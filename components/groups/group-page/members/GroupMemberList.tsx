@@ -91,6 +91,7 @@ const GroupMemberList: React.FC<GroupMemberListProps> = ({
             member={member.user as IAuthorizedUser}
             permissions={member.permissions}
             canManageMembers={
+              currentUser &&
               GroupMemberPermissionsUtil.canManageGroupMembers(
                 group.myPermissions,
               ) &&

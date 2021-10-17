@@ -9,6 +9,8 @@ import { IGroupMember } from '@/db/models/groups/GroupMember';
 import GroupGuildList from './guilds/GroupGuildList';
 import GroupHeader from './GroupHeader';
 import GroupMemberList from './members/GroupMemberList';
+import { useState } from 'react';
+import GroupDetailsEditor from './GroupDetailsEditor';
 
 export interface GroupProps {
   group: IGroup;
@@ -16,9 +18,18 @@ export interface GroupProps {
 }
 
 const Group: React.FC<GroupProps> = ({ group, setGroup }) => {
+  const [editMode, setEditMode] = useState(false);
+
   return (
     <div>
-      <GroupHeader group={group} />
+      <GroupHeader group={group} setEditMode={setEditMode} />
+      {editMode && (
+        <GroupDetailsEditor
+          group={group}
+          setEditMode={setEditMode}
+          setGroup={setGroup}
+        />
+      )}
 
       <Columns>
         <Column>

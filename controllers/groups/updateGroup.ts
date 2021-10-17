@@ -4,6 +4,7 @@ import { Group, IGroup } from '@/db/models/groups/Group';
 import { GroupMember } from '@/db/models/groups/GroupMember';
 import { APIError } from '@/lib/errors';
 import { GroupMemberPermissions } from '@/lib/GroupMemberPermissions';
+import { UpdateGroupAPIRequest } from '@/services/apis/groups/GroupsAPIService';
 import db from '@/services/db';
 import { Session } from 'next-auth';
 import { fetchGuilds } from '../guilds/fetchGuilds';
@@ -260,4 +261,37 @@ export const removeUserFromGroup = async (
   await groupsRepository.save(membership.group);
 
   return membership.group.toJSON();
+};
+
+export const updateGroupDetails = async (
+  session: Session,
+  id: string,
+  { name, description }: UpdateGroupAPIRequest,
+): Promise<IGroup> => {
+  await db.prepare();
+
+  const groupsRepository = db.getRepository(Group);
+  const user = await getUser(session);
+
+  const group = await groupsRepository.findOne({
+    where: {
+      id,
+      creator: user,
+    },
+    relations: ['creator'],
+  });
+
+  if (!group) {
+    throw new UpdateGroupError(404, 'GROUP_NOT_FOUND');
+  }
+
+  if (name) {
+    group.name = name;
+  }
+
+  group.description = description || null;
+
+  await groupsRepository.save(group);
+
+  return group.toJSON();
 };
