@@ -58,6 +58,10 @@ export const errors = {
   PATTERN_ALREADY_EXISTS:
     'The provided pattern already exists in the database.',
 
+  MISSING_PHRASE_CONTENT: 'You have not provided a phrase.',
+  PHRASE_TOO_SHORT: 'The provided phrase is too short.',
+  PHRASE_ALREADY_EXISTS: 'The provided phrase already exists in the database.',
+
   ENTRY_NOT_FOUND: 'The requested entry could not be found.',
   UNAUTHORIZED: 'You are not authorized to perform this action.',
   CANNOT_MANAGE_OWN_BLACKLISTS:

@@ -5,6 +5,7 @@ import { VideoIDsAPIService } from './blacklists/VideoIDsAPIService';
 import { ChannelIDsAPIService } from './blacklists/ChannelIDsAPIService';
 import { LinkPatternsAPIService } from './blacklists/LinkPatternsAPIService';
 import { DiscordGuildsAPIService } from './blacklists/DiscordGuildsAPIService';
+import { PhrasesAPIService } from './blacklists/PhrasesAPIService';
 
 import { MonitoredKeywordsAPIService } from './monitored-keywords/MonitoredKeywordsAPIService';
 import { KeywordWhitelistedChannelsAPIService } from './monitored-keywords/KeywordWhitelistedChannels';
@@ -20,6 +21,7 @@ class APIService {
   public channelIDs = new ChannelIDsAPIService();
   public patterns = new LinkPatternsAPIService();
   public guildIDs = new DiscordGuildsAPIService();
+  public phrases = new PhrasesAPIService();
 
   public monitoredKeywords = new MonitoredKeywordsAPIService();
   public keywordWhitelistedChannels =

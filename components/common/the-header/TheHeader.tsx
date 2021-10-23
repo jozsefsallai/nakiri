@@ -19,6 +19,7 @@ const TheHeader = () => {
     { url: '/manage/videos', label: 'Videos' },
     { url: '/manage/channels', label: 'Channels' },
     { url: '/manage/blacklisted-guilds', label: 'Guilds' },
+    { url: '/manage/phrases', label: 'Phrases' },
     { url: '/manage/patterns', label: 'Link patterns' },
   ];
 

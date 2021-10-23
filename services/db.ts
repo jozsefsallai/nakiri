@@ -13,6 +13,7 @@ import { YouTubeVideoID } from '../db/models/blacklists/YouTubeVideoID';
 import { YouTubeChannelID } from '../db/models/blacklists/YouTubeChannelID';
 import { LinkPattern } from '../db/models/blacklists/LinkPattern';
 import { DiscordGuild } from '../db/models/blacklists/DiscordGuild';
+import { Phrase } from '../db/models/blacklists/Phrase';
 
 import { AuthorizedUser } from '../db/models/auth/AuthorizedUser';
 import { AuthorizedGuild } from '../db/models/auth/AuthorizedGuild';
@@ -44,6 +45,7 @@ const connectionOptions: ConnectionOptions = {
     YouTubeChannelID,
     LinkPattern,
     DiscordGuild,
+    Phrase,
 
     AuthorizedUser,
     AuthorizedGuild,
