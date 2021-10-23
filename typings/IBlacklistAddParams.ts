@@ -3,4 +3,5 @@ export type IBlacklistAddParams<T extends string> = {
 } & {
   groupId?: string;
   guildId?: string;
+  severity?: number;
 };

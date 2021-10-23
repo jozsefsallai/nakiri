@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Group, IGroup } from '../models/groups/Group';
+import { Severity } from './Severity';
 
 export interface IGuildRestrictableBlacklist {
   id: string;
@@ -15,6 +16,7 @@ export interface IGuildRestrictableBlacklist {
   deletedAt: Date;
   guildId?: string;
   group?: IGroup;
+  severity: Severity;
 }
 
 export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
@@ -36,6 +38,9 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
   @ManyToOne(() => Group, { nullable: true, onDelete: 'CASCADE' })
   group?: Group;
 
+  @Column({ type: 'enum', enum: Severity, default: Severity.HIGH })
+  severity: Severity;
+
   toJSON(): IGuildRestrictableBlacklist {
     return {
       id: this.id,
@@ -44,6 +49,7 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
       deletedAt: this.deletedAt,
       guildId: this.guildId,
       group: this.group ? this.group.toJSON() : null,
+      severity: this.severity,
     };
   }
 }

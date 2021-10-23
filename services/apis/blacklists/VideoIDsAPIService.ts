@@ -17,6 +17,7 @@ export interface AddVideoIDAPIRequest {
   videoID: string;
   guild?: string;
   group?: string;
+  severity?: number;
 }
 
 export interface AddVideoIDAPIResponse extends APIResponse {}
@@ -52,9 +53,12 @@ export class VideoIDsAPIService {
     videoID,
     guild,
     group,
+    severity,
   }: AddVideoIDAPIRequest): Promise<AddVideoIDAPIResponse> {
     const url = this.makeAddVideoIDURL(group, guild);
-    return axiosService.post(url, { videoID }).then((res) => res.data);
+    return axiosService
+      .post(url, { videoID, severity })
+      .then((res) => res.data);
   }
 
   public async deleteVideoID(

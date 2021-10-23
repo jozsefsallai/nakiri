@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import truncate from 'lodash.truncate';
 import { format as formatDate } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { Severity } from '@/db/common/Severity';
 
 export interface YouTubeVideoEntryProps {
   item: IYouTubeVideoID | IKeywordSearchResult;
@@ -126,6 +127,12 @@ const YouTubeVideoEntry: React.FC<YouTubeVideoEntryProps> = ({
               </div>
             </div>
           </>
+        )}
+
+        {'severity' in item && (
+          <small>
+            <strong>Severity:</strong> {Severity[item.severity]}
+          </small>
         )}
       </div>
     </div>

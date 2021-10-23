@@ -1,3 +1,4 @@
+import { Severity } from '@/db/common/Severity';
 import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
 
 export interface DiscordGuildEntryProps {
@@ -10,7 +11,14 @@ const DiscordGuildEntry: React.FC<DiscordGuildEntryProps> = ({ item }) => {
     ? `${item.name} (${item.blacklistedId})`
     : item.blacklistedId;
 
-  return <span className="font-bold">{name}</span>;
+  return (
+    <div>
+      <div className="font-bold mb-2">{name}</div>
+      <div className="text-xs">
+        <strong>Severity:</strong> {Severity[item.severity]}
+      </div>
+    </div>
+  );
 };
 
 export default DiscordGuildEntry;

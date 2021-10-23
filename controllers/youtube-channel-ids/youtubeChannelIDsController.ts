@@ -62,6 +62,8 @@ export const create: NextApiHandler = async (req, res) => {
   const guildId = firstOf(req.query.guild);
   const groupId = firstOf(req.query.group);
   const channelId: string | undefined = req.body.channelID;
+  const severity: number | undefined =
+    req.body.severity && parseInt(req.body.severity, 10);
 
   if (typeof channelId === 'undefined') {
     return res.status(400).json({
@@ -75,6 +77,7 @@ export const create: NextApiHandler = async (req, res) => {
       channelId,
       guildId,
       groupId,
+      severity,
     });
 
     return res.json({ ok: true });

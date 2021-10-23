@@ -18,6 +18,7 @@ export interface AddChannelIDAPIRequest {
   channelID: string;
   guild?: string;
   group?: string;
+  severity?: number;
 }
 
 export interface AddChannelIDAPIResponse extends APIResponse {}
@@ -54,9 +55,12 @@ export class ChannelIDsAPIService {
     channelID,
     guild,
     group,
+    severity,
   }: AddChannelIDAPIRequest): Promise<AddChannelIDAPIResponse> {
     const url = this.makeAddChannelIDUrl(group, guild);
-    return axiosService.post(url, { channelID }).then((res) => res.data);
+    return axiosService
+      .post(url, { channelID, severity })
+      .then((res) => res.data);
   }
 
   public async deleteChannelID(

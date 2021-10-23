@@ -7,6 +7,7 @@ import buildFindConditions from '@/lib/buildFindConditions';
 import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
 import { GroupMember } from '@/db/models/groups/GroupMember';
 import { Group } from '@/db/models/groups/Group';
+import { Severity } from '@/db/common/Severity';
 
 export class DiscordGuildCreationError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -17,7 +18,12 @@ export class DiscordGuildCreationError extends APIError {
 
 export const addDiscordGuild = async (
   name: string,
-  { blacklistedId, guildId, groupId }: IBlacklistAddParams<'blacklistedId'>,
+  {
+    blacklistedId,
+    guildId,
+    groupId,
+    severity,
+  }: IBlacklistAddParams<'blacklistedId'>,
 ) => {
   await db.prepare();
   const discordGuildsRepository = db.getRepository(DiscordGuild);
@@ -35,8 +41,13 @@ export const addDiscordGuild = async (
     throw new DiscordGuildCreationError(400, 'ID_ALREADY_EXISTS');
   }
 
+  if (typeof severity !== 'undefined' && !(severity in Severity)) {
+    throw new DiscordGuildCreationError(400, 'INVALID_SEVERITY');
+  }
+
   const entry = new DiscordGuild();
   entry.blacklistedId = blacklistedId;
+  entry.severity = severity ?? Severity.HIGH;
 
   if (name) {
     entry.name = name;

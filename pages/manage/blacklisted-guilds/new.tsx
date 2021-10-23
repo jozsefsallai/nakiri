@@ -22,6 +22,9 @@ import { bulkMapGuildMetadata } from '@/lib/guildMetadata';
 import { IGuild } from '@/controllers/guilds/IGuild';
 import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
 
+import SeverityField from '@/components/common/fields/severity-field/SeverityField';
+import { Severity } from '@/db/common/Severity';
+
 const NewGuildPage = () => {
   const [currentUser, _] = useCurrentUser();
 
@@ -32,6 +35,8 @@ const NewGuildPage = () => {
 
   const [groupID, setGroupID] = useState<string | undefined>(undefined);
   const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [severity, setSeverity] = useState<Severity | undefined>(undefined);
+
   const [error, setError] = useState('');
 
   const router = useRouter();
@@ -46,6 +51,7 @@ const NewGuildPage = () => {
         name,
         guild: guildID,
         group: groupID,
+        severity,
       });
 
       toaster.success(`Added guild with ID ${id}.`);
@@ -116,6 +122,11 @@ const NewGuildPage = () => {
             <div className="input-group">
               <label htmlFor="id">Guild ID:</label>
               <Field name="id" />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="severity">Severity:</label>
+              <SeverityField onChange={setSeverity} />
             </div>
 
             <div className="input-group">

@@ -9,6 +9,7 @@ import buildFindConditions from '@/lib/buildFindConditions';
 import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
 import { GroupMember } from '@/db/models/groups/GroupMember';
 import { Group } from '@/db/models/groups/Group';
+import { Severity } from '@/db/common/Severity';
 
 export class YouTubeVideoIDCreationError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -21,6 +22,7 @@ export const addYouTubeVideoID = async ({
   videoId,
   groupId,
   guildId,
+  severity,
 }: IBlacklistAddParams<'videoId'>) => {
   await db.prepare();
   const youTubeVideoIDRepository = db.getRepository(YouTubeVideoID);
@@ -43,8 +45,13 @@ export const addYouTubeVideoID = async ({
     throw new YouTubeVideoIDCreationError(400, 'ID_ALREADY_EXISTS');
   }
 
+  if (typeof severity !== 'undefined' && !(severity in Severity)) {
+    throw new YouTubeVideoIDCreationError(400, 'INVALID_SEVERITY');
+  }
+
   const entry = new YouTubeVideoID();
   entry.videoId = videoId;
+  entry.severity = severity ?? Severity.HIGH;
 
   if (groupId) {
     const membershipsRepository = db.getRepository(GroupMember);

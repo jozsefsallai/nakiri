@@ -18,6 +18,7 @@ export interface AddDiscordGuildAPIRequest {
   name?: string;
   guild?: string;
   group?: string;
+  severity?: number;
 }
 
 export interface AddDiscordGuildAPIResponse extends APIResponse {}
@@ -54,11 +55,13 @@ export class DiscordGuildsAPIService {
     guild,
     group,
     name,
+    severity,
   }: AddDiscordGuildAPIRequest): Promise<AddDiscordGuildAPIResponse> {
     const url = this.makeAddDiscordGuildURL(group, guild);
 
     const payload: Partial<AddDiscordGuildAPIRequest> = {
       id,
+      severity,
     };
 
     if (name) {

@@ -22,6 +22,8 @@ import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 import { bulkMapGuildMetadata } from '@/lib/guildMetadata';
 import { IGuild } from '@/controllers/guilds/IGuild';
 import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
+import SeverityField from '@/components/common/fields/severity-field/SeverityField';
+import { Severity } from '@/db/common/Severity';
 
 const NewVideoIDPage = () => {
   const [currentUser, _] = useCurrentUser();
@@ -33,6 +35,8 @@ const NewVideoIDPage = () => {
 
   const [groupID, setGroupID] = useState<string | undefined>(undefined);
   const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [severity, setSeverity] = useState<Severity | undefined>(undefined);
+
   const [error, setError] = useState('');
 
   const router = useRouter();
@@ -46,6 +50,7 @@ const NewVideoIDPage = () => {
         videoID,
         guild: guildID,
         group: groupID,
+        severity,
       });
 
       toaster.success(`Added video with ID ${videoID}.`);
@@ -119,6 +124,11 @@ const NewVideoIDPage = () => {
                 name="videoID"
                 component={CompactDangerMessageBox}
               />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="severity">Severity:</label>
+              <SeverityField onChange={setSeverity} />
             </div>
 
             <div className="input-group">

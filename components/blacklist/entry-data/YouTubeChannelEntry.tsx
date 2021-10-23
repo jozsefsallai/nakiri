@@ -6,6 +6,7 @@ import { Clock } from 'react-feather';
 import clsx from 'clsx';
 import truncate from 'lodash.truncate';
 import { format as formatDate } from 'date-fns';
+import { Severity } from '@/db/common/Severity';
 
 export interface YouTubeChannelEntryProps {
   item: IYouTubeChannelID;
@@ -90,6 +91,10 @@ const YouTubeChannelEntry: React.FC<YouTubeChannelEntryProps> = ({
             </div>
           </>
         )}
+
+        <small>
+          <strong>Severity:</strong> {Severity[item.severity]}
+        </small>
       </div>
     </div>
   );

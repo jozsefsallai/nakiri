@@ -8,6 +8,7 @@ import buildFindConditions from '@/lib/buildFindConditions';
 import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
 import { GroupMember } from '@/db/models/groups/GroupMember';
 import { Group } from '@/db/models/groups/Group';
+import { Severity } from '@/db/common/Severity';
 
 export class LinkPatternCreationError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -20,6 +21,7 @@ export const addLinkPattern = async ({
   pattern,
   groupId,
   guildId,
+  severity,
 }: IBlacklistAddParams<'pattern'>) => {
   await db.prepare();
   const linkPatternRepository = db.getRepository(LinkPattern);
@@ -42,8 +44,13 @@ export const addLinkPattern = async ({
     throw new LinkPatternCreationError(400, 'PATTERN_ALREADY_EXISTS');
   }
 
+  if (typeof severity !== 'undefined' && !(severity in Severity)) {
+    throw new LinkPatternCreationError(400, 'INVALID_SEVERITY');
+  }
+
   const entry = new LinkPattern();
   entry.pattern = pattern;
+  entry.severity = severity ?? Severity.HIGH;
 
   if (groupId) {
     const membershipsRepository = db.getRepository(GroupMember);

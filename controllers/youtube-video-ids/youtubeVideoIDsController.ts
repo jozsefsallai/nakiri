@@ -60,9 +60,11 @@ export const index: NextApiHandler = async (req, res) => {
 export const create: NextApiHandler = async (req, res) => {
   const guildId = firstOf(req.query.guild);
   const groupId = firstOf(req.query.group);
-  const videoID: string | undefined = req.body.videoID;
+  const videoId: string | undefined = req.body.videoID;
+  const severity: number | undefined =
+    req.body.severity && parseInt(req.body.severity, 10);
 
-  if (typeof videoID === 'undefined') {
+  if (typeof videoId === 'undefined') {
     return res.status(400).json({
       ok: false,
       error: 'MISSING_VIDEO_ID',
@@ -71,9 +73,10 @@ export const create: NextApiHandler = async (req, res) => {
 
   try {
     await addYouTubeVideoID({
-      videoId: videoID,
+      videoId,
       guildId,
       groupId,
+      severity,
     });
     return res.json({ ok: true });
   } catch (err) {

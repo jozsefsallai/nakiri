@@ -23,6 +23,8 @@ import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 import { bulkMapGuildMetadata } from '@/lib/guildMetadata';
 import { IGuild } from '@/controllers/guilds/IGuild';
 import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
+import SeverityField from '@/components/common/fields/severity-field/SeverityField';
+import { Severity } from '@/db/common/Severity';
 
 const NewChannelIDPage = () => {
   const [currentUser, _] = useCurrentUser();
@@ -34,6 +36,8 @@ const NewChannelIDPage = () => {
 
   const [groupID, setGroupID] = useState<string | undefined>(undefined);
   const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [severity, setSeverity] = useState<Severity | undefined>(undefined);
+
   const [error, setError] = useState('');
 
   const router = useRouter();
@@ -47,6 +51,7 @@ const NewChannelIDPage = () => {
         channelID,
         guild: guildID,
         group: groupID,
+        severity,
       });
 
       toaster.success(`Added channel with ID ${channelID}.`);
@@ -120,6 +125,11 @@ const NewChannelIDPage = () => {
                 name="channelID"
                 component={CompactDangerMessageBox}
               />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="severity">Severity:</label>
+              <SeverityField onChange={setSeverity} />
             </div>
 
             <div className="input-group">

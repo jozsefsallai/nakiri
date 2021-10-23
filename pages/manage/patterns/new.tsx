@@ -28,6 +28,9 @@ import { bulkMapGuildMetadata } from '@/lib/guildMetadata';
 import { IGuild } from '@/controllers/guilds/IGuild';
 import { GroupMemberPermissionsUtil } from '@/lib/GroupMemberPermissions';
 
+import SeverityField from '@/components/common/fields/severity-field/SeverityField';
+import { Severity } from '@/db/common/Severity';
+
 const MySwal = withReactContent(Swal);
 
 const NewLinkPatternPage = () => {
@@ -40,6 +43,8 @@ const NewLinkPatternPage = () => {
 
   const [groupID, setGroupID] = useState<string | undefined>(undefined);
   const [guildID, setGuildID] = useState<string | undefined>(undefined);
+  const [severity, setSeverity] = useState<Severity | undefined>(undefined);
+
   const [error, setError] = useState('');
 
   const router = useRouter();
@@ -53,6 +58,7 @@ const NewLinkPatternPage = () => {
         pattern,
         guild: guildID,
         group: groupID,
+        severity,
       });
 
       toaster.success('Link pattern added successfully.');
@@ -150,6 +156,11 @@ const NewLinkPatternPage = () => {
                   Test
                 </Button>
               )}
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="severity">Severity:</label>
+              <SeverityField onChange={setSeverity} />
             </div>
 
             <div className="input-group">

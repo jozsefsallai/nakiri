@@ -17,6 +17,7 @@ export interface AddLinkPatternAPIRequest {
   pattern: string;
   guild?: string;
   group?: string;
+  severity?: number;
 }
 
 export interface AddLinkPatternAPIResponse extends APIResponse {}
@@ -53,9 +54,12 @@ export class LinkPatternsAPIService {
     pattern,
     guild,
     group,
+    severity,
   }: AddLinkPatternAPIRequest): Promise<AddLinkPatternAPIResponse> {
     const url = this.makeAddLinkPatternUrl(group, guild);
-    return axiosService.post(url, { pattern }).then((res) => res.data);
+    return axiosService
+      .post(url, { pattern, severity })
+      .then((res) => res.data);
   }
 
   public async deleteLinkPattern(

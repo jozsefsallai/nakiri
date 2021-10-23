@@ -40,6 +40,7 @@ export const errors = {
   USER_IDENTIFICATION_FAILED: 'Failed to identify the user.',
   USER_NOT_AUTHORIZED:
     'The user has not been authorized yet to access NakiriAPI.',
+  INVALID_SEVERITY: 'The supplied blacklist entry severity is invalid.',
 
   GROUP_NAME_NOT_PROVIDED: 'You have not provided the name of the group.',
 
