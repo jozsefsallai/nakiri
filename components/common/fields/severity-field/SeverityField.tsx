@@ -26,11 +26,13 @@ const SeverityField: React.FC<SeverityFieldProps> = ({ name, onChange }) => {
       name={name || 'severity'}
       id={name || 'severity'}
       onChange={handleSeverityChange}
-      defaultValue={Severity.HIGH}
+      defaultValue={Severity.MEDIUM}
     >
+      <option value={Severity.VERY_LOW}>Very low</option>
       <option value={Severity.LOW}>Low</option>
       <option value={Severity.MEDIUM}>Medium</option>
       <option value={Severity.HIGH}>High</option>
+      <option value={Severity.VERY_HIGH}>Very high</option>
     </select>
   );
 };

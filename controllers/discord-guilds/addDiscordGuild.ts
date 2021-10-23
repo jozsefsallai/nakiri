@@ -47,7 +47,7 @@ export const addDiscordGuild = async (
 
   const entry = new DiscordGuild();
   entry.blacklistedId = blacklistedId;
-  entry.severity = severity ?? Severity.HIGH;
+  entry.severity = severity ?? Severity.MEDIUM;
 
   if (name) {
     entry.name = name;

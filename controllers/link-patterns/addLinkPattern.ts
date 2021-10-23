@@ -50,7 +50,7 @@ export const addLinkPattern = async ({
 
   const entry = new LinkPattern();
   entry.pattern = pattern;
-  entry.severity = severity ?? Severity.HIGH;
+  entry.severity = severity ?? Severity.MEDIUM;
 
   if (groupId) {
     const membershipsRepository = db.getRepository(GroupMember);

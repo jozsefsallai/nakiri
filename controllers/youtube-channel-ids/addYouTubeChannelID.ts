@@ -53,7 +53,7 @@ export const addYouTubeChannelID = async ({
 
   const entry = new YouTubeChannelID();
   entry.channelId = channelId;
-  entry.severity = severity ?? Severity.HIGH;
+  entry.severity = severity ?? Severity.MEDIUM;
 
   if (groupId) {
     const membershipsRepository = db.getRepository(GroupMember);

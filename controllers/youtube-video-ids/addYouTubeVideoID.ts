@@ -51,7 +51,7 @@ export const addYouTubeVideoID = async ({
 
   const entry = new YouTubeVideoID();
   entry.videoId = videoId;
-  entry.severity = severity ?? Severity.HIGH;
+  entry.severity = severity ?? Severity.MEDIUM;
 
   if (groupId) {
     const membershipsRepository = db.getRepository(GroupMember);

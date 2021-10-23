@@ -38,7 +38,7 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
   @ManyToOne(() => Group, { nullable: true, onDelete: 'CASCADE' })
   group?: Group;
 
-  @Column({ type: 'enum', enum: Severity, default: Severity.HIGH })
+  @Column({ type: 'enum', enum: Severity, default: Severity.MEDIUM })
   severity: Severity;
 
   toJSON(): IGuildRestrictableBlacklist {
