@@ -3,6 +3,11 @@ import config from '@/config';
 
 import { handleError } from '@/lib/errors';
 
+export interface RedisScanMatch<T = string> {
+  key: string;
+  value: T;
+}
+
 class Redis {
   private static instance: Redis;
   private client: _redis.RedisClient;
@@ -82,6 +87,47 @@ class Redis {
         }
       });
     });
+  }
+
+  private async scan(prefix: string, cursor: string, keys: Set<string>) {
+    return this.client.scan(
+      cursor,
+      'MATCH',
+      prefix,
+      'COUNT',
+      '100',
+      (err, result) => {
+        const [nextCursor, matches] = result;
+        matches.forEach((key) => keys.add(key));
+
+        if (nextCursor !== '0') {
+          return this.scan(prefix, nextCursor, keys);
+        } else {
+          return keys;
+        }
+      },
+    );
+  }
+
+  public async findPrefix<T = string>(
+    prefix: string,
+    computeValues: boolean = false,
+  ): Promise<RedisScanMatch<T>[] | string[]> {
+    const keysSet = new Set<string>();
+    await this.scan(prefix, '0', keysSet);
+
+    const keys = Array.from(keysSet);
+
+    if (!computeValues) {
+      return keys;
+    }
+
+    const values = await Promise.all(keys.map((key) => this.get<T>(key)));
+
+    return keys.map((key, index) => ({
+      key,
+      value: values[index],
+    })) as RedisScanMatch<T>[];
   }
 }
 
