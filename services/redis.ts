@@ -89,11 +89,23 @@ class Redis {
     });
   }
 
+  public async delete(key: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.client.del(key, (err) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve();
+        }
+      });
+    });
+  }
+
   private async scan(prefix: string, cursor: string, keys: Set<string>) {
     return this.client.scan(
       cursor,
       'MATCH',
-      prefix,
+      `${prefix}:*`,
       'COUNT',
       '100',
       (err, result) => {
@@ -128,6 +140,13 @@ class Redis {
       key,
       value: values[index],
     })) as RedisScanMatch<T>[];
+  }
+
+  public async countPrefix(prefix: string): Promise<number> {
+    const keysSet = new Set<string>();
+    await this.scan(prefix, '0', keysSet);
+
+    return keysSet.size;
   }
 }
 

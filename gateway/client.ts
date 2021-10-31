@@ -1,6 +1,12 @@
 import WebSocket from 'ws';
 
-type GatewayEventHandler<T> = (data: T) => void | Promise<void>;
+import { handleError } from '@/lib/errors';
+
+export type GatewayContext<T> = {
+  client: GatewayClient;
+} & T;
+
+type GatewayEventHandler<T> = (ctx: GatewayContext<T>) => void | Promise<void>;
 
 interface GatewayEventHandlers {
   [key: string]: GatewayEventHandler<any>;
@@ -15,20 +21,43 @@ export class GatewayClient {
   isAlive: boolean;
   private handlers: GatewayEventHandlers = {};
 
+  private sessionId?: string;
+
   constructor(ws: WebSocket) {
     this.ws = ws;
     this.isAlive = true;
 
     this.ws.on('message', async (message) => {
+      let ctx: GatewayEvent;
+
       try {
-        const [event, data]: GatewayEvent = JSON.parse(message.toString());
-        const handler = this.handlers[event];
-        if (handler) {
-          await handler(data);
-        }
-      } catch (err) {
-        this.emit('error', {
+        ctx = JSON.parse(message.toString());
+      } catch (_) {
+        return this.emit('gatewayError', {
           code: 'INVALID_JSON',
+        });
+      }
+
+      const [event, data] = ctx;
+
+      try {
+        const handler = this.handlers[event];
+
+        if (!handler) {
+          return this.emit('gatewayError', {
+            code: 'UNKNOWN_EVENT',
+            event,
+          });
+        }
+
+        await handler({ client: this, ...data });
+      } catch (err) {
+        handleError(err);
+
+        this.emit('gatewayError', {
+          code: 'UNKNOWN_ERROR',
+          event,
+          error: err.message,
         });
       }
     });
@@ -36,6 +65,18 @@ export class GatewayClient {
     this.ws.on('pong', () => {
       this.isAlive = true;
     });
+  }
+
+  getSessionId(): string | undefined {
+    return this.sessionId;
+  }
+
+  setSessionId(sessionId: string) {
+    this.sessionId = sessionId;
+  }
+
+  get isAuthenticated(): boolean {
+    return !!this.sessionId;
   }
 
   on<T = any>(event: string, handler: GatewayEventHandler<T>): void {
