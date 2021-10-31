@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 
+import { Group } from '@/db/models/groups/Group';
 import { handleError } from '@/lib/errors';
 
 export type GatewayContext<T> = {
@@ -22,6 +23,7 @@ export class GatewayClient {
   private handlers: GatewayEventHandlers = {};
 
   private sessionId?: string;
+  private group?: Group;
 
   constructor(ws: WebSocket) {
     this.ws = ws;
@@ -77,6 +79,14 @@ export class GatewayClient {
 
   get isAuthenticated(): boolean {
     return !!this.sessionId;
+  }
+
+  getGroup(): Group | undefined {
+    return this.group;
+  }
+
+  setGroup(group: Group) {
+    this.group = group;
   }
 
   on<T = any>(event: string, handler: GatewayEventHandler<T>): void {

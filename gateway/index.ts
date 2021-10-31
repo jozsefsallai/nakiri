@@ -1,10 +1,19 @@
 import { Server as HTTPServer } from 'http';
 import { Server } from 'ws';
 
+import Redis from '@/services/redis';
+import { v4 as uuid } from 'uuid';
+
 import { GatewayClient } from './client';
 
 import { IdentifyRequest, ReconnectRequest } from './typings/requests';
+import {
+  GatewayClientACK,
+  GatewayNotification,
+  NotificationQueueEntry,
+} from './typings/notifications';
 
+import ackHandler from './handlers/ack';
 import reverseHandler, { IReverseRequest } from './handlers/reverse';
 import identifyHandler from './handlers/identify';
 import reconnectHandler from './handlers/reconnect';
@@ -23,6 +32,8 @@ export class Gateway {
     this.wss.on('connection', (ws) => {
       const client = new GatewayClient(ws);
       this.clients.push(client);
+
+      client.on<GatewayClientACK>('ack', ackHandler);
 
       client.on<IReverseRequest>('reverseMessage', reverseHandler);
       client.on<IdentifyRequest>('identify', identifyHandler);
@@ -47,11 +58,40 @@ export class Gateway {
     });
   }
 
-  emit<T = any>(event: string, data: T) {
-    this.clients.forEach((client) => {
-      if (client.isAlive && client.isAuthenticated) {
-        client.emit(event, data);
+  async emit<T extends GatewayNotification>(
+    event: string,
+    data: T,
+    condition?: (client: GatewayClient) => boolean,
+  ): Promise<void> {
+    const redis = Redis.getInstance();
+
+    for await (const client of this.clients) {
+      if (
+        !client.isAlive ||
+        !client.isAuthenticated ||
+        (condition && !condition(client))
+      ) {
+        continue;
       }
-    });
+
+      let notificationId = uuid();
+
+      while (await redis.countPrefix(`gatewayNotification:${notificationId}`)) {
+        notificationId = uuid();
+      }
+
+      client.emit(event, {
+        notificationId,
+        ...data,
+      });
+
+      const queueData: NotificationQueueEntry = {
+        sessionId: client.getSessionId(),
+        event,
+        data,
+      };
+
+      await redis.set(`gatewayNotification:${notificationId}`, queueData);
+    }
   }
 }

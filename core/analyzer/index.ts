@@ -4,6 +4,8 @@ import config from '@/config';
 import db from '@/services/db';
 import { FindConditions, IsNull, Repository } from 'typeorm';
 
+import { Gateway } from '@/gateway';
+
 import { YouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { YouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { LinkPattern } from '@/db/models/blacklists/LinkPattern';
@@ -50,14 +52,23 @@ export class Analyzer {
   private youTubeAPI?: YouTubeAPIService;
   private discordAPI?: DiscordAPIService;
 
+  private gateway?: Gateway;
+
   private youTubeVideoIDRepository: Repository<YouTubeVideoID>;
   private youTubeChannelIDRepository: Repository<YouTubeChannelID>;
   private discordGuildRepository: Repository<DiscordGuild>;
   private linkPatternRepository: Repository<LinkPattern>;
 
-  constructor(groupId: string, content: string, options: IAnalyzerOptions) {
+  constructor(
+    groupId: string,
+    content: string,
+    options: IAnalyzerOptions,
+    gateway?: Gateway,
+  ) {
     this.groupId = groupId;
     this.content = content;
+
+    this.gateway = gateway;
 
     this.analyzeYouTubeVideoIDs = options.analyzeYouTubeVideoIDs ?? true;
     this.analyzeYouTubeChannelIDs = options.analyzeYouTubeChannelIDs ?? true;

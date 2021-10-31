@@ -1,6 +1,11 @@
 // Type definitions for messages coming FROM the gateway server TO a websocket
 // client WITHOUT a prior gateway request.
 
+import {
+  IAnyBlacklistEntry,
+  IAnyBlacklistName,
+} from '@/typings/IAnyBlacklistEntry';
+
 // Fields all gateway notifications should have.
 export interface GatewayNotification {
   notificationId: string;
@@ -17,15 +22,10 @@ export interface GatewayClientACK {
 export interface BlacklistEntryAddedNotification extends GatewayNotification {
   value: string;
   kind: 'substring' | 'regex';
-  blacklist:
-    | 'youTubeVideoID'
-    | 'youTubeChannelID'
-    | 'linkPattern'
-    | 'discordGuildID'
-    | 'phrase';
+  blacklist: IAnyBlacklistName;
   global: boolean; // if true, the entry is global, otherwise it is scoped to the session's group
   guild?: string; // if present, the entry belongs to this guild's blacklist
-  metadata?: any; // arbitrary metadata from the blacklist's model
+  metadata?: IAnyBlacklistEntry; // arbitrary metadata from the blacklist's model
 }
 
 // The fields contained by a notification the gateway server sends to a client
@@ -34,13 +34,14 @@ export interface BlacklistEntryAddedNotification extends GatewayNotification {
 export interface BlacklistEntryRemovedNotification extends GatewayNotification {
   value: string;
   kind: 'substring' | 'regex';
-  blacklist:
-    | 'youTubeVideoID'
-    | 'youTubeChannelID'
-    | 'linkPattern'
-    | 'discordGuildID'
-    | 'phrase';
+  blacklist: IAnyBlacklistName;
   global: boolean;
   guild?: string;
-  metadata?: any;
+  metadata?: IAnyBlacklistEntry;
+}
+
+export interface NotificationQueueEntry<T = GatewayNotification> {
+  sessionId: string;
+  event: string;
+  data: T;
 }

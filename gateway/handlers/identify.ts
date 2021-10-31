@@ -21,13 +21,15 @@ const handler = async (ctx: GatewayContext<IdentifyRequest>) => {
   const connection = await db.getTemporaryNamedConnection('gateway');
   const groupsRepository = connection.getRepository(Group);
 
-  const ct = await groupsRepository.count({ apiKey });
-  if (ct === 0) {
+  const group = await groupsRepository.findOne({ apiKey });
+  if (!group) {
     return client.emit<IdentifyResponse>('identify', {
       ok: false,
       error: 'INVALID_API_KEY',
     });
   }
+
+  client.setGroup(group);
 
   const redis = Redis.getInstance();
 
@@ -38,6 +40,7 @@ const handler = async (ctx: GatewayContext<IdentifyRequest>) => {
 
   await redis.set(`gatewaySession:${sessionId}`, apiKey);
   client.setSessionId(sessionId);
+
   return client.emit<IdentifyResponse>('identify', {
     ok: true,
     data: {

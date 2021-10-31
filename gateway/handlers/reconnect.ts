@@ -1,8 +1,11 @@
+import db from '@/services/db';
 import Redis from '@/services/redis';
 
 import { GatewayContext } from '../client';
 import { ReconnectRequest } from '../typings/requests';
 import { ReconnectResponse } from '../typings/responses';
+
+import { Group } from '@/db/models/groups/Group';
 
 const handler = async (ctx: GatewayContext<ReconnectRequest>) => {
   const { client, apiKey, sessionId } = ctx;
@@ -38,7 +41,20 @@ const handler = async (ctx: GatewayContext<ReconnectRequest>) => {
     });
   }
 
+  const connection = await db.getTemporaryNamedConnection('gateway');
+  const groupsRepository = connection.getRepository(Group);
+
+  const group = await groupsRepository.findOne({ apiKey });
+  if (!group) {
+    return client.emit<ReconnectResponse>('reconnect', {
+      ok: false,
+      error: 'INVALID_API_KEY',
+    });
+  }
+
   client.setSessionId(sessionId);
+  client.setGroup(group);
+
   return client.emit<ReconnectResponse>('reconnect', {
     ok: true,
   });

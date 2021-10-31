@@ -8,6 +8,8 @@ import { GroupMember } from '@/db/models/groups/GroupMember';
 import { Group } from '@/db/models/groups/Group';
 import { Severity } from '@/db/common/Severity';
 
+import { queueGatewayMessage } from '@/jobs/queue';
+
 export class PhraseCreationError extends APIError {
   constructor(statusCode: number, code: string) {
     super(statusCode, code);
@@ -20,6 +22,7 @@ export const addPhrase = async ({
   groupId,
   guildId,
   severity,
+  gateway,
 }: IBlacklistAddParams<'content'>) => {
   await db.prepare();
   const phraseRepository = db.getRepository(Phrase);
@@ -73,4 +76,12 @@ export const addPhrase = async ({
   }
 
   await phraseRepository.insert(entry);
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryAdded',
+      blacklist: 'phrase',
+      entry,
+    });
+  }
 };

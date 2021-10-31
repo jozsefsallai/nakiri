@@ -26,18 +26,23 @@ export const analyze: NextApiHandler = async (req, res) => {
     });
   }
 
-  const result = await performAnalysis(groupId, content, {
-    analyzeYouTubeVideoIDs,
-    analyzeYouTubeChannelIDs,
-    analyzeYouTubeChannelHandles,
-    analyzeLinks,
-    followRedirects,
-    preemptiveVideoIDAnalysis,
-    greedy,
-    guildId,
-    strictGuildCheck,
-    strictGroupCheck,
-  });
+  const result = await performAnalysis(
+    groupId,
+    content,
+    {
+      analyzeYouTubeVideoIDs,
+      analyzeYouTubeChannelIDs,
+      analyzeYouTubeChannelHandles,
+      analyzeLinks,
+      followRedirects,
+      preemptiveVideoIDAnalysis,
+      greedy,
+      guildId,
+      strictGuildCheck,
+      strictGroupCheck,
+    },
+    req.gateway,
+  );
 
   return res.json({
     ok: true,
