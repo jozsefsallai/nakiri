@@ -5,6 +5,8 @@ import { APIError } from '@/lib/errors';
 import { User } from '@/lib/User';
 import { getUser } from '../users/getUser';
 import { fetchGuilds } from '../guilds/fetchGuilds';
+import { Gateway } from '@/gateway';
+import { queueGatewayMessage } from '@/jobs/queue';
 
 export class PhraseDeletionError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -13,7 +15,11 @@ export class PhraseDeletionError extends APIError {
   }
 }
 
-export const deletePhrase = async (session: Session, id: string) => {
+export const deletePhrase = async (
+  session: Session,
+  id: string,
+  gateway?: Gateway,
+) => {
   await db.prepare();
   const phraseRepository = db.getRepository(Phrase);
 
@@ -47,4 +53,12 @@ export const deletePhrase = async (session: Session, id: string) => {
   }
 
   await phraseRepository.delete({ id });
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryRemoved',
+      blacklist: 'phrase',
+      entry,
+    });
+  }
 };

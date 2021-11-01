@@ -5,6 +5,8 @@ import { APIError } from '@/lib/errors';
 import { User } from '@/lib/User';
 import { getUser } from '../users/getUser';
 import { fetchGuilds } from '../guilds/fetchGuilds';
+import { Gateway } from '@/gateway';
+import { queueGatewayMessage } from '@/jobs/queue';
 
 export class DiscordGuildDeletionError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -13,7 +15,11 @@ export class DiscordGuildDeletionError extends APIError {
   }
 }
 
-export const deleteDiscordGuild = async (session: Session, id: string) => {
+export const deleteDiscordGuild = async (
+  session: Session,
+  id: string,
+  gateway?: Gateway,
+) => {
   await db.prepare();
   const discordGuildRepository = db.getRepository(DiscordGuild);
 
@@ -50,4 +56,12 @@ export const deleteDiscordGuild = async (session: Session, id: string) => {
   }
 
   await discordGuildRepository.delete({ id });
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryRemoved',
+      blacklist: 'discordGuildID',
+      entry,
+    });
+  }
 };

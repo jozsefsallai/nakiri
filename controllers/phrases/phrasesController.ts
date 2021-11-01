@@ -102,7 +102,7 @@ export const destroy: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
 
   try {
-    await deletePhrase(session, id);
+    await deletePhrase(session, id, req.gateway);
     return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'PhraseDeletionError') {

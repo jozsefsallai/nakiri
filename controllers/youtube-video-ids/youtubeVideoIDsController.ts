@@ -102,7 +102,7 @@ export const destroy: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
 
   try {
-    await deleteYouTubeVideoID(session, id);
+    await deleteYouTubeVideoID(session, id, req.gateway);
     return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'YouTubeVideoIDDeletionError') {

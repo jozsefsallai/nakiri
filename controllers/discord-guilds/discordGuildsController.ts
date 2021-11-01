@@ -103,7 +103,7 @@ export const destroy: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
 
   try {
-    await deleteDiscordGuild(session, id);
+    await deleteDiscordGuild(session, id, req.gateway);
     return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'DiscordGuildDeletionError') {

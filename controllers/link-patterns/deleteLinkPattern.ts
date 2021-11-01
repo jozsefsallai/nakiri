@@ -5,6 +5,8 @@ import { APIError } from '@/lib/errors';
 import { User } from '@/lib/User';
 import { getUser } from '../users/getUser';
 import { fetchGuilds } from '../guilds/fetchGuilds';
+import { Gateway } from '@/gateway';
+import { queueGatewayMessage } from '@/jobs/queue';
 
 export class LinkPatternDeletionError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -13,7 +15,11 @@ export class LinkPatternDeletionError extends APIError {
   }
 }
 
-export const deleteLinkPattern = async (session: Session, id: string) => {
+export const deleteLinkPattern = async (
+  session: Session,
+  id: string,
+  gateway?: Gateway,
+) => {
   await db.prepare();
   const linkPatternRepository = db.getRepository(LinkPattern);
 
@@ -50,4 +56,12 @@ export const deleteLinkPattern = async (session: Session, id: string) => {
   }
 
   await linkPatternRepository.delete({ id });
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryRemoved',
+      blacklist: 'linkPattern',
+      entry,
+    });
+  }
 };

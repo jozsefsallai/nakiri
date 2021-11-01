@@ -5,6 +5,8 @@ import { APIError } from '@/lib/errors';
 import { User } from '@/lib/User';
 import { getUser } from '../users/getUser';
 import { fetchGuilds } from '../guilds/fetchGuilds';
+import { Gateway } from '@/gateway';
+import { queueGatewayMessage } from '@/jobs/queue';
 
 export class YouTubeVideoIDDeletionError extends APIError {
   constructor(statusCode: number, code: string) {
@@ -13,7 +15,11 @@ export class YouTubeVideoIDDeletionError extends APIError {
   }
 }
 
-export const deleteYouTubeVideoID = async (session: Session, id: string) => {
+export const deleteYouTubeVideoID = async (
+  session: Session,
+  id: string,
+  gateway?: Gateway,
+) => {
   await db.prepare();
   const youTubeVideoIDRepository = db.getRepository(YouTubeVideoID);
 
@@ -56,4 +62,12 @@ export const deleteYouTubeVideoID = async (session: Session, id: string) => {
   }
 
   await youTubeVideoIDRepository.delete({ id });
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryRemoved',
+      blacklist: 'youtubeVideoID',
+      entry,
+    });
+  }
 };
