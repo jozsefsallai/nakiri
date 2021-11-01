@@ -5,7 +5,7 @@ import { YouTubeChannelID } from '@/db/models/blacklists/YouTubeChannelID';
 import { APIError } from '@/lib/errors';
 import { isValidYouTubeChannelID } from '@/lib/commonValidators';
 
-import { collectChannelMetadata } from '@/jobs/queue';
+import { collectChannelMetadata, queueGatewayMessage } from '@/jobs/queue';
 
 import buildFindConditions from '@/lib/buildFindConditions';
 import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
@@ -25,6 +25,7 @@ export const addYouTubeChannelID = async ({
   groupId,
   guildId,
   severity,
+  gateway,
 }: IBlacklistAddParams<'channelId'>) => {
   await db.prepare();
   const youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
@@ -79,4 +80,12 @@ export const addYouTubeChannelID = async ({
   await youTubeChannelIDRepository.insert(entry);
 
   collectChannelMetadata.add({ entry });
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryAdded',
+      blacklist: 'youtubeChannelID',
+      entry,
+    });
+  }
 };

@@ -30,13 +30,21 @@ collectVideoMetadata.process(videoMetadataHandler);
 collectChannelMetadata.process(channelMetadataHandler);
 sendGatewayMessage.process(gatewayHandler);
 
-let gateway: Gateway;
+let gateway: Gateway | undefined;
+
+const setQueueGateway = async (_gateway: Gateway) => {
+  if (!gateway) {
+    gateway = _gateway;
+  }
+
+  return Promise.resolve();
+};
 
 const queueGatewayMessage = async (
   _gateway: Gateway,
   request: GatewayBlacklistNotificationJob,
 ) => {
-  gateway = _gateway;
+  await setQueueGateway(_gateway);
   await sendGatewayMessage.add(request);
 };
 
@@ -50,4 +58,9 @@ sendGatewayMessage.on('completed', async (job, result) => {
   });
 });
 
-export { collectVideoMetadata, collectChannelMetadata, queueGatewayMessage };
+export {
+  collectVideoMetadata,
+  collectChannelMetadata,
+  queueGatewayMessage,
+  setQueueGateway,
+};

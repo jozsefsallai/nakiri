@@ -78,6 +78,7 @@ export const create: NextApiHandler = async (req, res) => {
       guildId,
       groupId,
       severity,
+      gateway: req.gateway,
     });
 
     return res.json({ ok: true });

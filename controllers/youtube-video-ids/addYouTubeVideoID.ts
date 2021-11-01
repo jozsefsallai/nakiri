@@ -4,7 +4,11 @@ import { YouTubeVideoID } from '@/db/models/blacklists/YouTubeVideoID';
 import { APIError } from '@/lib/errors';
 import { isValidYouTubeVideoID } from '@/lib/commonValidators';
 
-import { collectVideoMetadata } from '@/jobs/queue';
+import {
+  collectVideoMetadata,
+  queueGatewayMessage,
+  setQueueGateway,
+} from '@/jobs/queue';
 import buildFindConditions from '@/lib/buildFindConditions';
 import { IBlacklistAddParams } from '@/typings/IBlacklistAddParams';
 import { GroupMember } from '@/db/models/groups/GroupMember';
@@ -23,6 +27,7 @@ export const addYouTubeVideoID = async ({
   groupId,
   guildId,
   severity,
+  gateway,
 }: IBlacklistAddParams<'videoId'>) => {
   await db.prepare();
   const youTubeVideoIDRepository = db.getRepository(YouTubeVideoID);
@@ -77,4 +82,12 @@ export const addYouTubeVideoID = async ({
   await youTubeVideoIDRepository.insert(entry);
 
   collectVideoMetadata.add({ entry });
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryAdded',
+      blacklist: 'youtubeVideoID',
+      entry,
+    });
+  }
 };

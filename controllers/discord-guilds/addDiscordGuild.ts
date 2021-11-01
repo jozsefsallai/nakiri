@@ -9,6 +9,8 @@ import { GroupMember } from '@/db/models/groups/GroupMember';
 import { Group } from '@/db/models/groups/Group';
 import { Severity } from '@/db/common/Severity';
 
+import { queueGatewayMessage } from '@/jobs/queue';
+
 export class DiscordGuildCreationError extends APIError {
   constructor(statusCode: number, code: string) {
     super(statusCode, code);
@@ -23,6 +25,7 @@ export const addDiscordGuild = async (
     guildId,
     groupId,
     severity,
+    gateway,
   }: IBlacklistAddParams<'blacklistedId'>,
 ) => {
   await db.prepare();
@@ -75,4 +78,12 @@ export const addDiscordGuild = async (
   }
 
   await discordGuildsRepository.insert(entry);
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryAdded',
+      blacklist: 'discordGuildID',
+      entry,
+    });
+  }
 };

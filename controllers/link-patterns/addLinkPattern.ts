@@ -10,6 +10,8 @@ import { GroupMember } from '@/db/models/groups/GroupMember';
 import { Group } from '@/db/models/groups/Group';
 import { Severity } from '@/db/common/Severity';
 
+import { queueGatewayMessage } from '@/jobs/queue';
+
 export class LinkPatternCreationError extends APIError {
   constructor(statusCode: number, code: string) {
     super(statusCode, code);
@@ -22,6 +24,7 @@ export const addLinkPattern = async ({
   groupId,
   guildId,
   severity,
+  gateway,
 }: IBlacklistAddParams<'pattern'>) => {
   await db.prepare();
   const linkPatternRepository = db.getRepository(LinkPattern);
@@ -74,4 +77,12 @@ export const addLinkPattern = async ({
   }
 
   await linkPatternRepository.insert(entry);
+
+  if (gateway) {
+    await queueGatewayMessage(gateway, {
+      event: 'entryAdded',
+      blacklist: 'linkPattern',
+      entry,
+    });
+  }
 };

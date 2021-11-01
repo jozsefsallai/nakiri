@@ -78,6 +78,7 @@ export const create: NextApiHandler = async (req, res) => {
       groupId,
       blacklistedId: id,
       severity,
+      gateway: req.gateway,
     });
     return res.json({ ok: true });
   } catch (err) {
