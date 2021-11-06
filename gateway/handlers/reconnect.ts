@@ -24,8 +24,10 @@ const handler = async (ctx: GatewayContext<ReconnectRequest>) => {
     });
   }
 
+  const sessionKey = `gatewaySession:${sessionId}`;
+
   const redis = Redis.getInstance();
-  const entry = await redis.get(`gatewaySession:${sessionId}`);
+  const entry = await redis.get(sessionKey);
 
   if (!entry) {
     return client.emit<ReconnectResponse>('reconnect', {
@@ -54,6 +56,8 @@ const handler = async (ctx: GatewayContext<ReconnectRequest>) => {
 
   client.setSessionId(sessionId);
   client.setGroup(group);
+
+  await redis.persist(sessionKey);
 
   return client.emit<ReconnectResponse>('reconnect', {
     ok: true,

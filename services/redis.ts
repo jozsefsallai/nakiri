@@ -148,6 +148,40 @@ class Redis {
 
     return keysSet.size;
   }
+
+  public async expire(key: string, ttl: number): Promise<boolean> {
+    const entry = await this.get(key);
+    if (!entry) {
+      return false;
+    }
+
+    return new Promise((resolve, reject) => {
+      this.client.expire(key, ttl, (err) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve(true);
+        }
+      });
+    });
+  }
+
+  public async persist(key: string): Promise<boolean> {
+    const entry = await this.get(key);
+    if (!entry) {
+      return false;
+    }
+
+    return new Promise((resolve, reject) => {
+      this.client.persist(key, (err) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve(true);
+        }
+      });
+    });
+  }
 }
 
 export default Redis;

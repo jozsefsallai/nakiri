@@ -252,6 +252,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.5.0.tgz#49dcbcd637099a55d3a61e590a00d6861393b1b5"
+  integrity sha512-2xsuyZ0R0RBFwjgae5NpXk8FcfH4qovj5cEM5VEeB7KXnKqzaisIu2HSV/mCEISolJJuR4wkViUGYujA8MH9tw==
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
 "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.14.0":
   version "7.14.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.6.tgz#535203bc0892efc7dec60bdc27b2ecf6e409062d"
@@ -765,6 +772,11 @@
   dependencies:
     "@types/mime" "^1"
     "@types/node" "*"
+
+"@types/set-interval-async@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/set-interval-async/-/set-interval-async-1.0.0.tgz#7769973e0ded3faee36018795a92b6ba239d668e"
+  integrity sha512-4twO6B7/dcd+lMyIHwUm/S1RMvVOsgZf0sCevNNCnwyAxn7t9mxLfuZxIGFimYCPhLjJYccsvo4HhXxp4UDoBg==
 
 "@types/through@*":
   version "0.0.30"
@@ -4893,6 +4905,11 @@ reflect-metadata@^0.1.13:
   resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.13.tgz#67ae3ca57c972a2aa1642b10fe363fe32d49dc08"
   integrity sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==
 
+regenerator-runtime@^0.13.2:
+  version "0.13.9"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
+  integrity sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==
+
 regenerator-runtime@^0.13.4:
   version "0.13.7"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.7.tgz#cac2dacc8a1ea675feaabaeb8ae833898ae46f55"
@@ -5105,6 +5122,13 @@ set-blocking@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
   integrity sha1-BF+XgtARrppoA93TgrJDkrPYkPc=
+
+set-interval-async@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/set-interval-async/-/set-interval-async-2.0.3.tgz#8d9e4904deaf8406fd98219c67fd9ef469f5fae2"
+  integrity sha512-8jJgvnhQYQc+XHzyKuJ2g4/0h4jPcT/q3x9VURk+AZohRKpcggcueNhPbS7wOXnamgpAn/enbGl4OnWXurVafg==
+  dependencies:
+    "@babel/runtime" "7.5.0"
 
 setimmediate@^1.0.4:
   version "1.0.5"

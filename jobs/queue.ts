@@ -30,11 +30,10 @@ collectVideoMetadata.process(videoMetadataHandler);
 collectChannelMetadata.process(channelMetadataHandler);
 sendGatewayMessage.process(gatewayHandler);
 
-let gateway: Gateway | undefined;
-
-const setQueueGateway = async (_gateway: Gateway) => {
-  if (!gateway) {
-    gateway = _gateway;
+const setQueueGateway = async (gateway: Gateway) => {
+  // Lord forgive me
+  if (!global.__gateway) {
+    global.__gateway = gateway;
   }
 
   return Promise.resolve();
@@ -49,7 +48,7 @@ const queueGatewayMessage = async (
 };
 
 sendGatewayMessage.on('completed', async (job, result) => {
-  await gateway.emit(job.data.event, result, (client) => {
+  await global.__gateway.emit(job.data.event, result, (client) => {
     if (!job.data.entry.group) {
       return true;
     }

@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 
 import { Group } from '@/db/models/groups/Group';
 import { handleError } from '@/lib/errors';
+import Redis from '@/services/redis';
 
 export type GatewayContext<T> = {
   client: GatewayClient;
@@ -97,11 +98,23 @@ export class GatewayClient {
     this.ws.send(JSON.stringify([event, data]));
   }
 
+  private async setSessionTTL() {
+    if (!this.sessionId) {
+      return;
+    }
+
+    const redis = Redis.getInstance();
+    await redis.expire(`gatewaySession:${this.sessionId}`, 60 * 60);
+  }
+
   ping() {
     this.ws.ping(noop);
   }
 
-  terminate() {
+  async terminate() {
+    // persist session for an hour after the client disconnects
+    await this.setSessionTTL();
+
     this.ws.terminate();
   }
 

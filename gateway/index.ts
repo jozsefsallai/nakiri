@@ -3,6 +3,11 @@ import { Server } from 'ws';
 
 import Redis from '@/services/redis';
 import { v4 as uuid } from 'uuid';
+import {
+  clearIntervalAsync,
+  setIntervalAsync,
+  SetIntervalAsyncTimer,
+} from 'set-interval-async/dynamic';
 
 import { GatewayClient } from './client';
 
@@ -21,7 +26,7 @@ import reconnectHandler from './handlers/reconnect';
 export class Gateway {
   private wss: Server;
   private clients: GatewayClient[] = [];
-  private pingInterval: NodeJS.Timeout;
+  private pingInterval: SetIntervalAsyncTimer;
 
   constructor(server: HTTPServer) {
     this.wss = new Server({
@@ -40,21 +45,21 @@ export class Gateway {
       client.on<ReconnectRequest>('reconnect', reconnectHandler);
     });
 
-    this.pingInterval = setInterval(() => {
-      this.clients.forEach((client) => {
+    this.pingInterval = setIntervalAsync(async () => {
+      for await (const client of this.clients) {
         if (!client.isAlive) {
-          client.terminate();
+          await client.terminate();
           this.clients = this.clients.filter((c) => c !== client);
           return;
         }
 
         client.isAlive = false;
         client.ping();
-      });
+      }
     }, 30000);
 
-    this.wss.on('close', () => {
-      clearInterval(this.pingInterval);
+    this.wss.on('close', async () => {
+      await clearIntervalAsync(this.pingInterval);
     });
   }
 
