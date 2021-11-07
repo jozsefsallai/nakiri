@@ -1,13 +1,10 @@
+import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  IModelWithSnowflakeID,
+  ModelWithSnowflakeID,
+} from '../../common/ModelWithSnowflakeID';
 
-export interface IKeywordWhitelistedChannel {
-  id: string;
+export interface IKeywordWhitelistedChannel extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
   channelId: string;
@@ -15,10 +12,10 @@ export interface IKeywordWhitelistedChannel {
 }
 
 @Entity()
-export class KeywordWhitelistedChannel implements IKeywordWhitelistedChannel {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class KeywordWhitelistedChannel
+  extends ModelWithSnowflakeID
+  implements IKeywordWhitelistedChannel
+{
   @CreateDateColumn()
   createdAt: Date;
 
@@ -33,7 +30,7 @@ export class KeywordWhitelistedChannel implements IKeywordWhitelistedChannel {
 
   toJSON(): IKeywordWhitelistedChannel {
     return {
-      id: this.id,
+      id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       channelId: this.channelId,

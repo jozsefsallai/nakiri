@@ -3,14 +3,17 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Group, IGroup } from '../models/groups/Group';
 import { Severity } from './Severity';
+import {
+  IModelWithSnowflakeID,
+  ModelWithSnowflakeID,
+} from './ModelWithSnowflakeID';
 
-export interface IGuildRestrictableBlacklist {
-  id: string;
+export interface IGuildRestrictableBlacklist extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
@@ -19,10 +22,10 @@ export interface IGuildRestrictableBlacklist {
   severity: Severity;
 }
 
-export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class GuildRestrictableBlacklist
+  extends ModelWithSnowflakeID
+  implements IGuildRestrictableBlacklist
+{
   @CreateDateColumn()
   createdAt: Date;
 
@@ -35,7 +38,11 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
   @Column('varchar', { nullable: true, default: null })
   guildId?: string;
 
-  @ManyToOne(() => Group, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Group, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   group?: Group;
 
   @Column({ type: 'enum', enum: Severity, default: Severity.MEDIUM })
@@ -43,7 +50,7 @@ export class GuildRestrictableBlacklist implements IGuildRestrictableBlacklist {
 
   toJSON(): IGuildRestrictableBlacklist {
     return {
-      id: this.id,
+      id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       deletedAt: this.deletedAt,

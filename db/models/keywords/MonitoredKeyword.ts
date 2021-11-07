@@ -3,13 +3,16 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import {
+  IModelWithSnowflakeID,
+  ModelWithSnowflakeID,
+} from '../../common/ModelWithSnowflakeID';
+
 import { KeywordSearchResult } from './KeywordSearchResult';
 
-export interface IMonitoredKeyword {
-  id: string;
+export interface IMonitoredKeyword extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
   keyword: string;
@@ -18,10 +21,10 @@ export interface IMonitoredKeyword {
 }
 
 @Entity()
-export class MonitoredKeyword implements IMonitoredKeyword {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class MonitoredKeyword
+  extends ModelWithSnowflakeID
+  implements IMonitoredKeyword
+{
   @CreateDateColumn()
   createdAt: Date;
 
@@ -45,7 +48,7 @@ export class MonitoredKeyword implements IMonitoredKeyword {
 
   toJSON(): IMonitoredKeyword {
     return {
-      id: this.id,
+      id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       keyword: this.keyword,

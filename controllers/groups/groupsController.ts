@@ -27,7 +27,6 @@ export const index: NextApiHandler = async (req, res) => {
     });
   } catch (err) {
     handleError(err);
-    console.error(err);
     return res.status(500).json({
       ok: false,
       error: 'INTERNAL_SERVER_ERROR',
@@ -161,7 +160,6 @@ export const addMember: NextApiHandler = async (req, res) => {
     }
 
     handleError(err);
-    console.error(err);
 
     return res.status(500).json({
       ok: false,

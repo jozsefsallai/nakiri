@@ -5,17 +5,20 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import {
+  IModelWithSnowflakeID,
+  ModelWithSnowflakeID,
+} from '../../common/ModelWithSnowflakeID';
+
 import { AuthorizedGuild, IAuthorizedGuild } from '../auth/AuthorizedGuild';
 import { AuthorizedUser, IAuthorizedUser } from '../auth/AuthorizedUser';
 import { GroupMember, IGroupMember } from './GroupMember';
 
 import omit from '../../../lib/omit';
 
-export interface IGroup {
-  id: string;
+export interface IGroup extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
   name: string;
@@ -29,10 +32,7 @@ export interface IGroup {
 }
 
 @Entity()
-export class Group implements IGroup {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Group extends ModelWithSnowflakeID implements IGroup {
   @CreateDateColumn()
   createdAt: Date;
 
@@ -48,7 +48,9 @@ export class Group implements IGroup {
   @Column()
   apiKey: string;
 
-  @ManyToOne(() => AuthorizedUser)
+  @ManyToOne(() => AuthorizedUser, {
+    onUpdate: 'CASCADE',
+  })
   creator: Partial<AuthorizedUser>;
 
   @OneToMany(() => GroupMember, (member) => member.group)
@@ -56,12 +58,13 @@ export class Group implements IGroup {
 
   @ManyToMany(() => AuthorizedGuild, (guild) => guild.groups, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   guilds: Partial<AuthorizedGuild>[];
 
   toJSON(): IGroup {
     return {
-      id: this.id,
+      id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       name: this.name,

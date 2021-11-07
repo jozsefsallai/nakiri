@@ -17,6 +17,6 @@ export const getUser = async (session: Session): Promise<IUser | null> => {
 
   return {
     ...session.user,
-    ...authorizedUser,
+    ...authorizedUser.toJSON(),
   };
 };

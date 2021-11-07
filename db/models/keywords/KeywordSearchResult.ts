@@ -3,13 +3,16 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import {
+  IModelWithSnowflakeID,
+  ModelWithSnowflakeID,
+} from '../../common/ModelWithSnowflakeID';
+
 import { IMonitoredKeyword, MonitoredKeyword } from './MonitoredKeyword';
 
-export interface IKeywordSearchResult {
-  id: string;
+export interface IKeywordSearchResult extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
   keyword?: Partial<IMonitoredKeyword>;
@@ -22,10 +25,10 @@ export interface IKeywordSearchResult {
 }
 
 @Entity()
-export class KeywordSearchResult implements IKeywordSearchResult {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class KeywordSearchResult
+  extends ModelWithSnowflakeID
+  implements IKeywordSearchResult
+{
   @CreateDateColumn()
   createdAt: Date;
 
@@ -35,6 +38,9 @@ export class KeywordSearchResult implements IKeywordSearchResult {
   @ManyToOne(
     () => MonitoredKeyword,
     (monitoredKeyword) => monitoredKeyword.results,
+    {
+      onUpdate: 'CASCADE',
+    },
   )
   keyword: Partial<MonitoredKeyword>;
 
@@ -58,7 +64,7 @@ export class KeywordSearchResult implements IKeywordSearchResult {
 
   toJSON(): IKeywordSearchResult {
     return {
-      id: this.id,
+      id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       keyword: this.keyword,

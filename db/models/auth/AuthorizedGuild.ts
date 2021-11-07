@@ -4,15 +4,18 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import {
+  IModelWithSnowflakeID,
+  ModelWithSnowflakeID,
+} from '../../common/ModelWithSnowflakeID';
+
 import { Group, IGroup } from '../groups/Group';
 
 import omit from '../../../lib/omit';
 
-export interface IAuthorizedGuild {
-  id: string;
+export interface IAuthorizedGuild extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
   key: string;
@@ -21,10 +24,10 @@ export interface IAuthorizedGuild {
 }
 
 @Entity()
-export class AuthorizedGuild implements IAuthorizedGuild {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class AuthorizedGuild
+  extends ModelWithSnowflakeID
+  implements IAuthorizedGuild
+{
   @CreateDateColumn()
   createdAt: Date;
 
@@ -39,13 +42,14 @@ export class AuthorizedGuild implements IAuthorizedGuild {
 
   @ManyToMany(() => Group, (group) => group.guilds, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinTable()
   groups: Partial<Group>[];
 
   toJSON(): IAuthorizedGuild {
     return {
-      id: this.id,
+      id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       key: this.key,

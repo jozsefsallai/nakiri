@@ -3,16 +3,19 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import {
+  IModelWithSnowflakeID,
+  ModelWithSnowflakeID,
+} from '../../common/ModelWithSnowflakeID';
+
 import { UserPermissionsUtil } from '../../../lib/UserPermissions';
 import { GroupMember, IGroupMember } from '../groups/GroupMember';
 
 import omit from '../../../lib/omit';
 
-export interface IAuthorizedUser {
-  id: string;
+export interface IAuthorizedUser extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
   discordId: string;
@@ -25,10 +28,10 @@ export interface IAuthorizedUser {
 }
 
 @Entity()
-export class AuthorizedUser implements IAuthorizedUser {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class AuthorizedUser
+  extends ModelWithSnowflakeID
+  implements IAuthorizedUser
+{
   @CreateDateColumn()
   createdAt: Date;
 
@@ -84,7 +87,7 @@ export class AuthorizedUser implements IAuthorizedUser {
 
   toJSON(): IAuthorizedUser {
     return {
-      id: this.id,
+      id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       discordId: this.discordId,

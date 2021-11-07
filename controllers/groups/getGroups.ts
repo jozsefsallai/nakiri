@@ -30,7 +30,7 @@ export const getGroups = async (session: Session): Promise<IGroup[]> => {
 
   const groups = memberships
     .map((membership) => {
-      const group = Object.assign({}, membership.group) as IGroup;
+      const group = Object.assign({}, membership.group.toJSON());
       group.myPermissions = membership.permissions;
       group.isCreator = group.creator.id === user.id;
 
@@ -38,7 +38,7 @@ export const getGroups = async (session: Session): Promise<IGroup[]> => {
         delete group.apiKey;
       }
 
-      return group as IGroup;
+      return group;
     })
     .sort(
       (a, b) =>
@@ -82,7 +82,7 @@ export const getGroup = async (
     throw new GetGroupError(404, 'GROUP_NOT_FOUND');
   }
 
-  const group = Object.assign({}, membership.group) as IGroup;
+  const group = Object.assign({}, membership.group.toJSON());
 
   group.myPermissions = membership.permissions;
   group.isCreator = group.creator.id === user.id;

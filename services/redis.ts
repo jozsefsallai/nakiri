@@ -16,7 +16,6 @@ class Redis {
     this.client = _redis.createClient(config.redis.buildRedisUrl(0));
 
     this.client.on('error', (err) => {
-      console.error(err);
       handleError(err);
     });
   }
