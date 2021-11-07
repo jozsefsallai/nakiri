@@ -1,4 +1,7 @@
-import { PrimaryGeneratedSnowflakeColumn, snowflake } from '@/lib/snowflake';
+import {
+  PrimaryGeneratedSnowflakeColumn,
+  snowflake,
+} from '../../lib/snowflake';
 import { BeforeInsert } from 'typeorm';
 
 export interface IModelWithSnowflakeID {
