@@ -23,24 +23,32 @@ export const index: NextApiHandler = async (req, res) => {
 
   const skip = limit !== Infinity ? (page - 1) * limit : undefined;
   const take = limit !== Infinity ? limit : undefined;
+  const cursor = firstOf(req.query.cursor);
 
-  const { discordGuilds, totalCount } = await getDiscordGuilds({
+  const { discordGuilds, totalCount, nextCursor } = await getDiscordGuilds({
     guildId: firstOf(req.query.guild),
     groupId: firstOf(req.query.group),
     strict,
     skip,
     take,
+    cursor,
   });
   const pageCount = limit !== Infinity ? Math.ceil(totalCount / limit) : 1;
 
-  const pagination = {
-    page,
-    limit,
-    pageCount,
-    totalCount,
-    hasPrevious: hasPreviousPages(req),
-    hasNext: hasNextPages(req)(pageCount),
-  };
+  const pagination = cursor
+    ? {
+        limit,
+        remainingItems: totalCount - discordGuilds.length,
+        nextCursor,
+      }
+    : {
+        page,
+        limit,
+        pageCount,
+        totalCount,
+        hasPrevious: hasPreviousPages(req),
+        hasNext: hasNextPages(req)(pageCount),
+      };
 
   if (compact) {
     return res.json({

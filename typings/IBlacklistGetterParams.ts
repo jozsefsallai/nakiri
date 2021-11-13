@@ -4,4 +4,5 @@ export interface IBlacklistGetterParams {
   strict?: boolean;
   skip?: number;
   take?: number;
+  cursor?: string;
 }

@@ -4009,10 +4009,10 @@ negotiator@0.6.2:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
 
-next-api-paginate@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/next-api-paginate/-/next-api-paginate-1.0.0.tgz#7914d9f6b5657eac93e02fc6a368623defb48b57"
-  integrity sha512-Q4JibC/Tz8zR7oznuG80GRSAufx4GzsKBMlF7OWk6vSz7ysUZui3Uw+Qq55Bu9IQ+EWDXyR5YoLkF9yo1hAWkw==
+next-api-paginate@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/next-api-paginate/-/next-api-paginate-1.1.0.tgz#6a82317a6611f30fc39c9eb967490bd4314d1731"
+  integrity sha512-+aLVqNFVUUgDjUsrrYZq/LasHPGwlW5oRqAnLguWN/LR03n37FWj27YbnApRGbl59Z5J4xcFLcGbmoSpTgaQNg==
 
 next-auth@^3.27.3:
   version "3.27.3"

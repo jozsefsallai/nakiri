@@ -1,5 +1,5 @@
 import { UniqueID } from 'nodejs-snowflake';
-import { Column } from 'typeorm';
+import { Column, FindOperator } from 'typeorm';
 
 const generator = new UniqueID({
   returnNumber: true,
@@ -19,8 +19,12 @@ export const PrimaryGeneratedSnowflakeColumn = (): PropertyDecorator => {
     type: 'varchar',
     length: 36, // backwards compatibility
     transformer: {
-      to: (value: string | bigint) => {
+      to: (value: string | bigint | FindOperator<any>) => {
         if (typeof value === 'string') {
+          return value;
+        }
+
+        if (value instanceof FindOperator) {
           return value;
         }
 
@@ -34,4 +38,12 @@ export const PrimaryGeneratedSnowflakeColumn = (): PropertyDecorator => {
     },
     primary: true,
   });
+};
+
+export const encodeSnowflake = (id: bigint | string): string => {
+  return Buffer.from(id.toString()).toString('base64').replace(/=/g, '');
+};
+
+export const decodeSnowflake = (id: string): string => {
+  return Buffer.from(id, 'base64').toString();
 };

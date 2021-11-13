@@ -23,25 +23,33 @@ export const index: NextApiHandler = async (req, res) => {
 
   const skip = limit !== Infinity ? (page - 1) * limit : undefined;
   const take = limit !== Infinity ? limit : undefined;
+  const cursor = firstOf(req.query.cursor);
 
-  const { channelIDs, totalCount } = await getYouTubeChannelIDs({
+  const { channelIDs, totalCount, nextCursor } = await getYouTubeChannelIDs({
     groupId: firstOf(req.query.group),
     guildId: firstOf(req.query.guild),
     strict,
     skip,
     take,
+    cursor,
   });
 
   const pageCount = limit !== Infinity ? Math.ceil(totalCount / limit) : 1;
 
-  const pagination = {
-    page,
-    limit,
-    pageCount,
-    totalCount,
-    hasPrevious: hasPreviousPages(req),
-    hasNext: hasNextPages(req)(pageCount),
-  };
+  const pagination = cursor
+    ? {
+        limit,
+        remainingItems: totalCount - channelIDs.length,
+        nextCursor,
+      }
+    : {
+        page,
+        limit,
+        pageCount,
+        totalCount,
+        hasPrevious: hasPreviousPages(req),
+        hasNext: hasNextPages(req)(pageCount),
+      };
 
   if (compact) {
     return res.json({
