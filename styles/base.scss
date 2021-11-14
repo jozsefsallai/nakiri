@@ -6,7 +6,10 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #__next, .app {
+html,
+body,
+#__next,
+.app {
   @apply min-h-screen;
   @apply overflow-x-hidden;
 }
@@ -24,7 +27,11 @@ a {
   }
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   @apply font-bold;
   @apply my-3;
 }
@@ -69,7 +76,9 @@ label {
   @apply font-bold;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   @apply block;
   @apply w-full;
   @apply px-4;
@@ -85,7 +94,7 @@ input, textarea, select {
     @apply border-ayame-primary;
   }
 
-  &[type="checkbox"] {
+  &[type='checkbox'] {
     @apply inline-block;
     @apply mr-2;
     @apply w-auto;
@@ -111,7 +120,8 @@ input, textarea, select {
   @apply bg-nakiri-base-invert #{!important};
 }
 
-.swal2-content, .swal2-html-container {
+.swal2-content,
+.swal2-html-container {
   @apply text-nakiri-base #{!important};
 }
 

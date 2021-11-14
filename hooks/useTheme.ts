@@ -11,7 +11,7 @@ export const useTheme = (): IThemeHook => {
   const [currentTheme, setCurrentTheme] = useState(Theme.LIGHT);
 
   useEffect(() => {
-    const actualTheme = localStorage.getItem('theme');
+    const actualTheme = localStorage.getItem('nakiri_theme');
 
     if (actualTheme === Theme.LIGHT || actualTheme === Theme.DARK) {
       setCurrentTheme(actualTheme);
@@ -21,7 +21,7 @@ export const useTheme = (): IThemeHook => {
   const toggleTheme = () => {
     const newTheme = currentTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
     document.documentElement.classList.replace(currentTheme, newTheme);
-    localStorage.setItem('theme', newTheme);
+    localStorage.setItem('nakiri_theme', newTheme);
     setCurrentTheme(newTheme);
   };
 

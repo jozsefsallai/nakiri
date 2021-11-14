@@ -1,1 +1,2 @@
-document.documentElement.className = localStorage.getItem('theme') || 'theme-light';
+document.documentElement.className =
+  localStorage.getItem('nakiri_theme') || 'theme-light';

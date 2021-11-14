@@ -1,17 +1,35 @@
-import Document, { Html, Head, Main, NextScript } from 'next/document';
+import clsx from 'clsx';
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+} from 'next/document';
 
-class NakiriFrontend extends Document {
-  static async getInitialProps(ctx) {
+interface FrontendDocumentProps {
+  pathname?: string;
+}
+
+class NakiriFrontend extends Document<FrontendDocumentProps> {
+  static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx);
-    return { ...initialProps };
+    const pathname = ctx.asPath;
+    return { pathname, ...initialProps };
   }
 
   render() {
+    const isDocsPage = this.props.pathname?.startsWith('/docs');
+
     return (
-      <Html lang="en" className="theme-light">
-        <Head>
-          <script src="/js/theme.js"></script>
-        </Head>
+      <Html
+        lang="en"
+        className={clsx({
+          'theme-light': !isDocsPage,
+          '__nextra-app': isDocsPage,
+        })}
+      >
+        <Head>{!isDocsPage && <script src="/js/theme.js"></script>}</Head>
 
         <body>
           <Main />

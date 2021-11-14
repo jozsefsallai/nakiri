@@ -1,0 +1,39 @@
+import 'nextra-theme-docs/style.css';
+
+# Getting Started
+
+Welcome to the documentation of the Nakiri project. This is where you'll be able
+to find instructions about how to use the Nakiri web UI and API, as well as how
+to self-host an instance.
+
+## What is Nakiri?
+
+Nakiri is a centralized database for storing and syncing blacklist entries for
+communities (primarily targeted towards Hololive fan Discord servers). It
+provides:
+
+- A **web UI** for managing users, groups, and blacklist entries,
+- A **REST API** for managing blacklists,
+- A **WebSocket gateway** for live updates,
+- An **analysis endpoint** that allows you to check whether a given message
+  contains any problematic content,
+- A **worker service** for monitoring keywords on YouTube.
+
+Right now it supports the following blacklist types:
+
+- **YouTube videos**: specify a video ID to prevent people from posting it
+- **YouTube channels**: specify a channel ID to prevent people from posting it,
+  or videos from that channel
+- **Discord servers**: specify the ID of a server to detect malicious invites
+- **Link patterns**: specify a regex pattern to detect problematic links
+- **Generic phrases**: phrases/substrings that you don't want your members to
+  say.
+
+## How To Get Access
+
+Currently, Nakiri is invite-only. You can request an invite by sending an email
+to **admin@nakiri.one**. Make sure to include your Discord tag, so we can
+discuss the level of access you will get.
+
+Alternatively, you can self-host Nakiri yourself and have full control over the
+entire ecosystem. (WIP)

@@ -101,12 +101,6 @@ node bin/generateKey
 node bin/import
 ```
 
-### Update documentation assets
-
-```
-sh bin/makedocs.sh
-```
-
 ## Deploying for Production
 
 Create a production build:
