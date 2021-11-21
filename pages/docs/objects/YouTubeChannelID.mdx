@@ -1,0 +1,47 @@
+---
+title: YouTubeChannelID
+---
+
+import 'nextra-theme-docs/style.css';
+
+# YouTubeChannelID
+
+`LinkPattern` is a blacklist model that stores blacklisted YouTube channel.
+
+## Fields
+
+| Name           | Type                                           | Description                                                                                 |
+| -------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `id`           | string                                         | The [Snowflake ID](/docs/objects/Snowflake) of the entry.                                   |
+| `createdAt`    | date                                           | The date the entry was created.                                                             |
+| `updatedAt`    | date                                           | The date the entry was last updated.                                                        |
+| `deletedAt`    | date                                           | The date the entry was deleted.                                                             |
+| `guildId`      | string, null                                   | The Discord guild ID the entry belongs to. If null, the entry is not restricted to a guild. |
+| `group`        | [Group](/docs/objects/Group), null             | The group the entry belongs to. If null, the entry belongs to the global blacklist.         |
+| `severity`     | [Severity](/docs/objects/Severity)             | The severity of the entry.                                                                  |
+| `channelId`    | string                                         | The ID of the blacklisted channel.                                                          |
+| `status`       | [ProcessingState](/docs/enums/ProcessingState) | The processing state of the entry.                                                          |
+| `name`         | string?                                        | The name of the YouTube channel.                                                            |
+| `description`  | string?                                        | The description of the YouTube channel.                                                     |
+| `publishedAt`  | date?                                          | The date the YouTube channel was created.                                                   |
+| `thumbnailUrl` | string?                                        | The URL of the YouTube channel's thumbnail.                                                 |
+
+## Example object
+
+```json
+{
+  "id": "2741015136808815616",
+  "createdAt": "2021-11-20T18:15:34.214Z",
+  "updatedAt": "2021-11-20T18:15:34.000Z",
+  "deletedAt": null,
+  "guildId": null,
+  "group": null,
+  "severity": 4,
+  "channelId": "UCuAXFkgsw1L7xaCfnd5JJOw",
+  "status": 2,
+  "name": "Rick Astley",
+  "description": "Official YouTube channel for Rick Astley.",
+  "publishedAt": "2015-02-01T16:32:30.000Z",
+  "thumbnailUrl": "https://yt3.ggpht.com/Si7ZhtmpX84wj6MoJYLs8kwALw2Hm53wzbrPamoU-z3qvCKs2X3zPNYKMSJEvPDLUHzbvTfLcg=s800-c-k-c0x00ffffff-no-nd-rj"
+}
+```

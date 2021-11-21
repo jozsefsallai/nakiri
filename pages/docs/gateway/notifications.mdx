@@ -1,0 +1,108 @@
+---
+title: Gateway Notifications
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Gateway Notifications
+
+Notifications are messages that the server sends out to clients when certain
+events happen. For example, when a new blacklist entry is added, the server will
+inform the clients about it.
+
+## General notification flow
+
+Every single time the server sends out a notification to the clients, it will
+also assign a unique ID to the notification. Clients will then have to report
+back to the server that they have received the notification. This is done using
+an ACK message.
+
+**Example notification** (server to client):
+
+```json
+[
+  "eventName",
+  {
+    "notificationId": "dfac9fb7-f8cc-464e-aa9a-535aa43571ec"
+    // other data
+  }
+]
+```
+
+**Example ACK** (client to server):
+
+```json
+[
+  "ack",
+  {
+    "notificationId": "dfac9fb7-f8cc-464e-aa9a-535aa43571ec"
+  }
+]
+```
+
+**Example ACK response** (server to client):
+
+```json
+[
+  "ack",
+  {
+    "ok": true,
+    "notificationId": "dfac9fb7-f8cc-464e-aa9a-535aa43571ec"
+  }
+]
+```
+
+You may also receive `ok: false` and an error in case something went wrong while
+attempting to acknowledge the received notification. The errors can be one of
+the following:
+
+| Code                               | Description                                                                                                                                                                                    |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NOTIFICATION_ID_NOT_PROVIDED`     | You are sending an empty ACK to the server.                                                                                                                                                    |
+| `NOT_AUTHENTICATED`                | You are not authenticated to the gateway to acknowledge the notification. Please use the [`identify` or `reconnect`](/docs/gateway/sessions) request to establish an authenticated connection. |
+| `NOTIFICATION_NOT_FOUND`           | The notification you are trying to acknowledge does not exist.                                                                                                                                 |
+| `UNAUTHORIZED_TO_ACK_NOTIFICATION` | You are trying to acknowledge someone else's notification.                                                                                                                                     |
+| `UNKNOWN_ERROR`                    | Something went wrong and we have received a report about the error.                                                                                                                            |
+
+## `entryAdded`
+
+These notifications are sent out when a new entry is added to a blacklist the
+group has access to (i.e. global blacklist, per-group blacklist, and per-guild
+blacklists).
+
+**Example notification:**
+
+```json
+[
+  "entryAdded",
+  {
+    "notificationId": "dfac9fb7-f8cc-464e-aa9a-535aa43571ec"
+    // BlacklistMutationData
+  }
+]
+```
+
+**See also**:
+
+- [BlacklistMutationData](/docs/gateway/objects/BlacklistMutationData)
+
+## `entryRemoved`
+
+These notifications are sent out when an entry is removed from a blacklist the
+group has access to.
+
+**Example notification:**
+
+```json
+[
+  "entryRemoved",
+  {
+    "notificationId": "dfac9fb7-f8cc-464e-aa9a-535aa43571ec"
+    // BlacklistMutationData
+  }
+]
+```
+
+**See also**:
+
+- [BlacklistMutationData](/docs/gateway/objects/BlacklistMutationData)

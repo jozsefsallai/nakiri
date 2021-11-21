@@ -1,0 +1,38 @@
+---
+title: Nakiri Gateway
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Nakiri Gateway
+
+The Nakiri Gateway is a versatile websocket server that allows clients to be
+notified about certain events that are happening within the app. The gateway
+does not require any special setup, and is very simple to get started with.
+
+## Gateway URL
+
+```
+wss://nakiri.one/gateway
+```
+
+## Communicating with the Nakiri Gateway
+
+Once connected to the gateway, you can send and receive messages. A message is
+either a **request**, a **response**, or a **notification**. The generic format
+of a message is a JSON array with the following format:
+
+```json
+[
+  "eventName",
+  {
+    // additional data
+  }
+]
+```
+
+Where `eventName` is the name of the message's type.
+
+The gateway will occasionally ping the clients to check if they are still
+connected. This is a generic RFC-6455 ping message. If the client does not send
+a pong back to the server, the client will be disconnected.

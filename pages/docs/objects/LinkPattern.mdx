@@ -1,0 +1,37 @@
+---
+title: LinkPattern
+---
+
+import 'nextra-theme-docs/style.css';
+
+# LinkPattern
+
+`LinkPattern` is a blacklist model that stores blacklisted URL regex patterns.
+
+## Fields
+
+| Name        | Type                               | Description                                                                                 |
+| ----------- | ---------------------------------- | ------------------------------------------------------------------------------------------- |
+| `id`        | string                             | The [Snowflake ID](/docs/objects/Snowflake) of the entry.                                   |
+| `createdAt` | date                               | The date the entry was created.                                                             |
+| `updatedAt` | date                               | The date the entry was last updated.                                                        |
+| `deletedAt` | date                               | The date the entry was deleted.                                                             |
+| `guildId`   | string, null                       | The Discord guild ID the entry belongs to. If null, the entry is not restricted to a guild. |
+| `group`     | [Group](/docs/objects/Group), null | The group the entry belongs to. If null, the entry belongs to the global blacklist.         |
+| `severity`  | [Severity](/docs/objects/Severity) | The severity of the entry.                                                                  |
+| `pattern`   | string                             | A regex pattern that can be matched against URLs.                                           |
+
+## Example object
+
+```json
+{
+  "id": "2695777957787656192",
+  "createdAt": "2021-07-18T22:19:10.269Z",
+  "updatedAt": "2021-11-07T11:26:40.352Z",
+  "deletedAt": null,
+  "guildId": null,
+  "group": null,
+  "severity": 2,
+  "pattern": "discord((app)?.(com/invite|gg))/nakiritest"
+}
+```

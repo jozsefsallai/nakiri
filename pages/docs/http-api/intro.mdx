@@ -1,0 +1,228 @@
+---
+title: Introduction to the Nakiri HTTP API
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Introduction to the Nakiri HTTP API
+
+Nakiri provides a simple REST API to access blacklist entries as well as add new
+ones.
+
+Please note that most of these API endpoints will need to be authenticated using
+a [group API key](/docs/groups/what-are-groups). If an endpoint doesn't require
+authentication, we will make sure to mention that.
+
+**Nakiri provides API access to the following resources:**
+
+- [YouTube videos](/docs/http-api/endpoints/youtube-videos)
+- [YouTube channels](/docs/http-api/endpoints/youtube-channels)
+- [Link patterns](/docs/http-api/endpoints/link-patterns)
+- [Discord guilds](/docs/http-api/endpoints/discord-guilds)
+- [Generic phrases](/docs/http-api/endpoints/phrases)
+
+## Common query parameters
+
+For blacklist-related API endpoints, there are several query parameters that you
+can use in your requests.
+
+### `compact`
+
+- **type**: `boolean`, **default**: `true`
+
+Will return a compact response for each blacklist entry. A compact response is
+a response that only contains the most important data (i.e. an array of video
+IDs, link patterns, etc.). It will not contain any other data about the
+blacklist entry, such as the metadata (if applicable), description, added date,
+severity, etc.
+
+By default, the compact response is returned. If you want to get the full
+response for each blacklist entry, you can use the `compact=false` query.
+
+When compact mode is disabled, the response will contain the full data object of
+the blacklisted entries, which will be elaborated in the following sections.
+
+### `strict`
+
+- **type**: `boolean`, **default**: `false`
+
+Toggles strict mode. In strict mode, only the entries that belong to a given
+group/guild will be returned.
+
+For example, if a `group` parameter is also supplied, only the per-group entries
+of the group will be returned. If a `guild` parameter is also supplied, only the
+per-guild entries from the the guild from the supplied group will be returned.
+
+This query parameter is only available for `GET` requests.
+
+### `group`
+
+- **type**: `string`
+
+The ID of the group whose entries you want to include in your request.
+
+When supplied to a `GET` request, in addition to global blacklist entries, the group's per-group
+entries will be returned as well. This will not return entries that belong to
+guilds within the group.
+
+You can use the `strict` query parameter to omit global blacklist entries.
+
+When supplied to a `POST` request, the blacklist entry will be added to the
+group's per-group blacklist.
+
+### `guild`
+
+- **type**: `string`
+
+The Discord ID of the guild whose entries you want to include in your request.
+When specifying this query parameter, you must also specify a `group`.
+
+When supplied to a `GET` request, in addition to global blacklist entries and per-group entries,
+the group's per-guild entries will be returned as well.
+
+You can use the `strict` query parameter to omit global blacklist entries and
+per-group entries.
+
+When supplied to a `POST` request, the blacklist entry will be added to the
+guild's own blacklist from within the provided group.
+
+## Pagination
+
+Nakiri offers two ways to limit the results within the response and paginate
+between them, depending on use case.
+
+### Offset-based pagination
+
+This is the kind of pagination you'd see on most websites and it's also what the
+web UI uses.
+
+For each blacklist, you can specify the following query parameters in a `GET`
+request:
+
+- **`page`**: The page number you want to retrieve. The first page is 1, which
+  is also the default value if you don't supply this parameter. Negative page
+  numbers will default to 1. If a page exceeds the number of pages available, an
+  empty array of results will be returned.
+- **`limit`**: The number of entries you want to retrieve per page. The default
+  limit is 25. The maximum limit is 50. If you supply a higher limit, the
+  maximum limit will be used instead.
+
+Each response will contain a pagination object:
+
+```json
+"pagination": {
+  "page": 1, // the current page
+  "limit": 25, // the limit per page
+  "pageCount": 8, // the number of available pages
+  "totalCount": 178, // the total number of entries
+  "hasPrevious": false, // whether there is a page before the current one
+  "hasNext": true // whether there's a page after the current one
+},
+```
+
+**When you should use this pagination method:**
+
+- You want to know ahead how many pages there are.
+- You want to know the previous page.
+
+**When you should NOT use this pagination method:**
+
+- You don't want to skip entries in case an entry gets deleted during
+  pagination.
+- You want to have more granular control over the starting point of the
+  pagination mechanism.
+
+### Cursor-based pagination
+
+This is the recommended way to paginate between entries in API consumers. It
+allows you to specify a unique cursor and a limit to only return the first `n`
+results starting from that cursor. The distinction between the pagination
+methods is done using the `cursor` query parameter. If supplied, the API will
+paginate using the cursor-based method, otherwise it will default to
+offset-based pagination.
+
+You can specify the following query parameters in a `GET` request:
+
+- **`cursor`**: The cursor you want to start from. For the first page, the value
+  of this parameter should be `0`. This is the base64-encoded string of an
+  entry's numerical ID. You will be able to see the next cursor in the
+  pagination response. If you supply an invalid cursor, the API will return the
+  first page.
+- **`limit`**: The number of entries you want to retrieve per page. The default
+  limit is 25. The maximum limit is 50. If you supply a higher limit, the
+  maximum limit will be used instead.
+
+Each response will contain a pagination object:
+
+```json
+"pagination": {
+  "limit": 25, // the limit of the response array
+  "remainingItems": 153, // how many items are there left to consume
+  "nextCursor": "MjY5NTc3ODcwOTY0MTgxNDAxNg" // the cursor of the next page
+}
+```
+
+**When you should use this pagination method:**
+
+- You care about consuming all entries, even if deletions happen in-between
+  paginations.
+
+**When you should NOT use this pagination method:**
+
+- You want to move backwards in the pagination. There is no way to know the
+  previous cursor, creating a pagination UI will not be an easy task.
+
+## Generic API request
+
+When making a request to the API, you have to provide the `Authorization` header
+with the value of your API key. You can get the API key from the group's page if
+you have the necessary permissions to do that.
+
+Here is an example in JavaScript:
+
+```js
+fetch('https://nakiri.one/api/lists/something', {
+  method: 'GET',
+  headers: {
+    'Authorization': '<token>',
+  },
+});
+```
+
+## Generic API response
+
+Each API response will contain the following fields:
+
+- **`ok`**: boolean, specifying whether or not the request was successful.
+- **`error`**: string, specifying an error code if the request failed.
+- **`...`** (optional): the main field that the request needs to return (for
+  example, `phrases` would be an array of phrase blacklist entries). This field
+  will not be included if the request failed. Some requests do not have to
+  return this custom field.
+- **`pagination`** (optional): pagination object, if the request was successful
+  and it's a paginated request.
+
+**Example response (successful blacklist query):**
+
+```json
+{
+  "ok": true,
+  "pagination": {
+    "limit": 25,
+    "remainingItems": 153,
+    "nextCursor": "MjY5NTc3ODcwOTY0MTgxNDAxNg"
+  },
+  "videoIDs": [
+    // ...
+  ]
+}
+```
+
+**Example response (failed request):**
+
+```json
+{
+  "ok": false,
+  "error": "INSUFFICIENT_PERMISSIONS"
+}
+```

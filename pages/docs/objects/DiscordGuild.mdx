@@ -1,0 +1,39 @@
+---
+title: DiscordGuild
+---
+
+import 'nextra-theme-docs/style.css';
+
+# DiscordGuild
+
+`DiscordGuild` is a blacklist model that stores blacklisted Discord guild IDs.
+
+## Fields
+
+| Name            | Type                               | Description                                                                                 |
+| --------------- | ---------------------------------- | ------------------------------------------------------------------------------------------- |
+| `id`            | string                             | The [Snowflake ID](/docs/objects/Snowflake) of the entry.                                   |
+| `createdAt`     | date                               | The date the entry was created.                                                             |
+| `updatedAt`     | date                               | The date the entry was last updated.                                                        |
+| `deletedAt`     | date                               | The date the entry was deleted.                                                             |
+| `guildId`       | string, null                       | The Discord guild ID the entry belongs to. If null, the entry is not restricted to a guild. |
+| `group`         | [Group](/docs/objects/Group), null | The group the entry belongs to. If null, the entry belongs to the global blacklist.         |
+| `severity`      | [Severity](/docs/objects/Severity) | The severity of the entry.                                                                  |
+| `name`          | string                             | A friendly name for the entry to make it easier to identify.                                |
+| `blacklistedId` | string                             | The blacklisted Discord guild ID.                                                           |
+
+## Example object
+
+```json
+{
+  "id": "2711735547495374848",
+  "createdAt": "2021-08-31T23:08:56.133Z",
+  "updatedAt": "2021-11-07T11:26:40.357Z",
+  "deletedAt": null,
+  "guildId": null,
+  "group": null,
+  "severity": 2,
+  "blacklistedId": "...",
+  "name": "Test"
+}
+```

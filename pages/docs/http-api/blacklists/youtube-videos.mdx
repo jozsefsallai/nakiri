@@ -1,0 +1,66 @@
+---
+title: YouTube videos
+---
+
+import 'nextra-theme-docs/style.css';
+
+# YouTube videos
+
+## Fetching entries
+
+```
+GET /api/lists/youtube/videos
+```
+
+Returns a list of blacklisted YouTube videos.
+
+**See also:** [Common query parameters](/docs/http-api/intro#common-query-parameters)
+
+### Response object
+
+```ts
+interface Response {
+  ok: boolean; // specifies whether the request has succeeded
+  pagination?: PaginationData; // pagination data
+  videoIDs?: (string | YouTubeVideoID)[]; // list of blacklisted YouTube video IDs or video entries
+  error?: string; // error message
+}
+```
+
+**See also:**
+
+- [YouTubeVideoID](/docs/objects/YouTubeVideoID)
+- [Generic response](/docs/http-api/intro#generic-api-response)
+- [Pagination data](/docs/http-api/intro#pagination)
+- [Errors](/docs/http-api/errors)
+
+## Adding a new entry
+
+```
+POST /api/lists/youtube/videos
+```
+
+```json
+{
+  "videoID": "dQw4w9WgXcQ",
+  "group": "123456789012345678", // optional, if present, the entry will be added to this group's blacklist
+  "guild": "123456789012345678", // optional, if present, the entry will be added to this guild's blacklist
+  "severity": 3 // optional, will default to 2 if not supplied
+}
+```
+
+**See also:** [Severity](/docs/objects/Severity)
+
+### Response object
+
+```ts
+interface Response {
+  ok: boolean; // specifies whether the request has succeeded
+  error?: string; // error message
+}
+```
+
+**See also:**
+
+- [Generic response](/docs/http-api/intro#generic-api-response)
+- [Errors](/docs/http-api/errors)

@@ -1,6 +1,7 @@
 export default {
-  projectLink: 'https://github.com/jozsefsallai/nakiri',
-  docsRepositoryBase: 'https://github.com/jozsefsallai/nakiri',
+  github: 'https://github.com/jozsefsallai/nakiri',
+  docsRepositoryBase:
+    'https://github.com/jozsefsallai/nakiri/blob/master/pages/docs',
   titleSuffix: ' - Nakiri',
   logo: (
     <>

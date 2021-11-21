@@ -1,0 +1,63 @@
+---
+title: Errors
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Errors
+
+This sections describes the errors Nakiri can return. To make things easier to
+work with, errors are string-based error codes, instead of raw strings. This not
+only makes it easier to read errors reliably but will also leave room for things
+such as internationalization in the future.
+
+| Error Code                            | Description                                                                                                            |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `CANNOT_MANAGE_GUILD`                 | You do not have `MANAGE_MESSAGES` permission (or higher) in the group you are trying to manage.                        |
+| `GUILD_ALREADY_ADDED`                 | You are trying to authorize a guild that has already been added to Nakiri.                                             |
+| `GUILD_ID_NOT_PROVIDED`               | You haven't specified the guild ID to add.                                                                             |
+| `GROUP_NOT_FOUND`                     | You are trying to refer to a group that does not exist in the database.                                                |
+| `CANNOT_MANAGE_ENTRIES_IN_THIS_GROUP` | You do not have the required permissions to manage entries in the specified group.                                     |
+| `CANNOT_MANAGE_GUILDS_IN_THIS_GROUP`  | You do not have the required permissions to manage guilds in the specified group.                                      |
+| `CANNOT_MANAGE_MEMBERS_IN_THIS_GROUP` | You do not have the required permissions to manage members in the specified group.                                     |
+| `GUILD_NOT_AUTHORIZED`                | You are trying to use a guild in a request that has not yet been authorized in Nakiri. Authorize it first!             |
+| `GUILD_ALREADY_IN_GROUP`              | You are trying to add a guild that is already in the specified group.                                                  |
+| `USER_ALREADY_IN_GROUP`               | You are trying to add a user that is already in the specified group.                                                   |
+| `MISSING_DISCORD_ID`                  | You are required to include a Discord user ID in your request, but you did not do that.                                |
+| `FAILED_TO_FETCH_USER_DATA`           | You have specified a Discord user ID that doesn't exist or is not accessible.                                          |
+| `MISSING_PERMISSIONS`                 | You have not specified the permissions of the user you're trying to add.                                               |
+| `USER_ALREADY_AUTHORIZED`             | You are trying to authorize a user that has already been added to Nakiri.                                              |
+| `FORBIDDEN_PERMISSIONS`               | The permissions you have provided contain malformed or invalid permissions.                                            |
+| `USER_IDENTIFICATION_FAILED`          | Due to an unexpected error, your user data could not be retrieved from the server. Perhaps you have been unauthorized. |
+| `USER_NOT_AUTHORIZED`                 | You are trying to use a user in a request that has not yet been authorized to use Nakiri.                              |
+| `INVALID_SEVERITY`                    | You have specified an invalid [Severity](/docs/objects/Severity)                                                       |
+| `GROUP_NAME_NOT_PROVIDED`             | You are trying to create a group without a name.                                                                       |
+| `MISSING_VIDEO_ID`                    | You did not specify a YouTube video ID to add.                                                                         |
+| `INVALID_VIDEO_ID`                    | You specified an invalid YouTube video ID.                                                                             |
+| `ID_ALREADY_EXISTS`                   | You are trying to add an entry that already exists in the database.                                                    |
+| `MISSING_CHANNEL_ID`                  | You did not specify a YouTube channel ID to add.                                                                       |
+| `INVALID_CHANNEL_ID`                  | You specified an invalid YouTube channel ID.                                                                           |
+| `MISSING_REGEX_PATTERN`               | You did not specify a regex link pattern to add.                                                                       |
+| `INVALID_REGEX_PATTERN`               | You specified an invalid regex link pattern.                                                                           |
+| `PATTERN_ALREADY_EXISTS`              | You are trying to add a pattern that already exists in the database.                                                   |
+| `MISSING_PHRASE_CONTENT`              | You did not specify a phrase to add.                                                                                   |
+| `PHRASE_TOO_SHORT`                    | You specified a phrase that is too short.                                                                              |
+| `PHRASE_ALREADY_EXISTS`               | You are trying to add a phrase that already exists in the database.                                                    |
+| `ENTRY_NOT_FOUND`                     | You are trying to access an entry that does not exist.                                                                 |
+| `UNAUTHORIZED`                        | You are trying to perform an action that you are not authorized to perform.                                            |
+| `CANNOT_MANAGE_OWN_BLACKLISTS`        | You do not have the necessary permissions to manage your own blacklists.                                               |
+| `CANNOT_ACCESS_ENTRY_FROM_THIS_GUILD` | You do not have the necessary permissions to access the entry from the guild you are trying to manage.                 |
+| `CANNOT_UPDATE_ENTRY_FROM_THIS_GUILD` | You do not have the necessary permissions to update the entry from the guild you are trying to manage.                 |
+| `CANNOT_DELETE_ENTRY_FROM_THIS_GUILD` | You do not have the necessary permissions to delete the entry from the guild you are trying to manage.                 |
+| `CANNOT_MANAGE_GLOBAL_BLACKLISTS`     | You do not have the necessary permissions to manage the global Nakiri blacklists.                                      |
+| `CANNOT_MANAGE_MONITORED_KEYWORDS`    | You do not have the necessary permissions to manage the monitored keywords.                                            |
+| `KEYWORD_NOT_PROVIDED`                | You have not specified the keyword to monitor.                                                                         |
+| `GUILD_NOT_PROVIDED`                  | Monitored keywords are guild-specific. You must specify a Discord guild ID.                                            |
+| `WEBHOOK_URL_NOT_PROVIDED`            | Nakiri Workers will use this URL to send notifications to the specified guild.                                         |
+| `INVALID_WEBHOOK_URL`                 | You specified an invalid webhook URL.                                                                                  |
+| `KEYWORD_ALREADY_EXISTS`              | This keyword is already being monitored.                                                                               |
+| `NOT_AUTHENTICATED`                   | The page or API endpoint you are trying to access requires authentication.                                             |
+| `NOT_ANONYMOUS`                       | The page or API endpoint you are trying to access requires you to be logged out.                                       |
+| `INSUFFICIENT_PERMISSIONS`            | You are trying to perform an action that requires permissions your user does not have.                                 |
+| `ACCESS_TO_GUILD_DENIED`              | You are trying to access a guild **or group** that you are not authorized to access.                                   |
+| `INTERNAL_SERVER_ERROR`               | An internal server error has occurred.                                                                                 |

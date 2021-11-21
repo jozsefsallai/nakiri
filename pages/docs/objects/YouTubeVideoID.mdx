@@ -1,0 +1,51 @@
+---
+title: YouTubeVideoID
+---
+
+import 'nextra-theme-docs/style.css';
+
+# YouTubeVideoID
+
+`LinkPattern` is a blacklist model that stores blacklisted YouTube videos.
+
+## Fields
+
+| Name           | Type                                           | Description                                                                                 |
+| -------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `id`           | string                                         | The [Snowflake ID](/docs/objects/Snowflake) of the entry.                                   |
+| `createdAt`    | date                                           | The date the entry was created.                                                             |
+| `updatedAt`    | date                                           | The date the entry was last updated.                                                        |
+| `deletedAt`    | date                                           | The date the entry was deleted.                                                             |
+| `guildId`      | string, null                                   | The Discord guild ID the entry belongs to. If null, the entry is not restricted to a guild. |
+| `group`        | [Group](/docs/objects/Group), null             | The group the entry belongs to. If null, the entry belongs to the global blacklist.         |
+| `severity`     | [Severity](/docs/objects/Severity)             | The severity of the entry.                                                                  |
+| `videoId`      | string                                         | The ID of the blacklisted video.                                                            |
+| `status`       | [ProcessingState](/docs/enums/ProcessingState) | The processing state of the entry.                                                          |
+| `title`        | string?                                        | The title of the YouTube video.                                                             |
+| `description`  | string?                                        | The description of the YouTube video.                                                       |
+| `thumbnailUrl` | string?                                        | The URL of the YouTube video's thumbnail.                                                   |
+| `uploaderId`   | string?                                        | The ID of the channel that uploaded the video.                                              |
+| `uploaderName` | string?                                        | The name of the channel that uploaded the video.                                            |
+| `uploadDate`   | date?                                          | The date the YouTube video was uploaded.                                                    |
+
+## Example object
+
+```json
+{
+  "id": "2741015931646302208",
+  "createdAt": "2021-11-20T18:18:43.718Z",
+  "updatedAt": "2021-11-20T18:18:43.000Z",
+  "deletedAt": null,
+  "guildId": null,
+  "group": null,
+  "severity": 4,
+  "videoId": "dQw4w9WgXcQ",
+  "status": 2,
+  "title": "Rick Astley - Never Gonna Give You Up (Official Music Video)",
+  "description": "...",
+  "thumbnailUrl": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+  "uploadDate": "2009-10-25T06:57:33.000Z",
+  "uploaderId": "UCuAXFkgsw1L7xaCfnd5JJOw",
+  "uploaderName": "Rick Astley"
+}
+```

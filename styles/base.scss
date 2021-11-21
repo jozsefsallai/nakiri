@@ -6,10 +6,10 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body,
-#__next,
-.app {
+html:not(.__nextra-app),
+html:not(.__nextra-app) body,
+html:not(.__nextra-app) #__next,
+html:not(.__nextra-app) .app {
   @apply min-h-screen;
   @apply overflow-x-hidden;
 }
@@ -125,15 +125,15 @@ select {
   @apply text-nakiri-base #{!important};
 }
 
-::-webkit-scrollbar {
+html:not(.__nextra-app) ::-webkit-scrollbar {
   @apply w-3;
 }
 
-::-webkit-scrollbar-track {
+html:not(.__nextra-app) ::-webkit-scrollbar-track {
   @apply bg-ayame-primary-300;
 }
 
-::-webkit-scrollbar-thumb {
+html:not(.__nextra-app) ::-webkit-scrollbar-thumb {
   @apply bg-ayame-primary-700;
 
   &:hover {

@@ -1,0 +1,119 @@
+---
+title: Gateway Sessions
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Gateway Sessions
+
+In order to authenticate to the Nakiri Gateway, you have to send your group API
+key to the server through an `identify` request. This will create a session for
+your client which will be stored for as long as the client is connected, or one
+hour after the client disconnects.
+
+## identify
+
+This message is used to create a session for your client after connecting to the
+gateway for the first time.
+
+### Request
+
+```json
+[
+  "identify",
+  {
+    "apiKey": "a6bc1e6b-6602-4b25-8532-3388825d41cf"
+  }
+]
+```
+
+### Response
+
+On successful authentication, the gateway will create a session for the client
+and send back the session ID to you. Your client can save this session ID now in
+case the connection drops and you need to reconnect later.
+
+```json
+[
+  "identify",
+  {
+    "ok": true,
+    "data": {
+      "sessionId": "769ae64f-0751-4574-8c66-1ec923358204"
+    }
+  }
+]
+```
+
+You may also receive an error in case the authentication was unsuccessful.
+
+```json
+[
+  "identify",
+  {
+    "ok": false,
+    "error": "[[error code]]"
+  }
+]
+```
+
+Where `[[error code]]` is one of:
+
+| Code                   | Description                                                           |
+| ---------------------- | --------------------------------------------------------------------- |
+| `API_KEY_NOT_PROVIDED` | You have called the `identify` method but did not provide an API key. |
+| `INVALID_API_KEY`      | The API key you provided is invalid/nonexistent.                      |
+
+## reconnect
+
+Your client or the server may unexpectedly drop the connection. In this case,
+you can implement a way to reconnect to the gateway's already existing session.
+Sessions are persisted for one hour after the client disconnects.
+
+You can reinitialize a session using the session ID you have received from an
+`identify` request.
+
+### Request
+
+```json
+[
+  "reconnect",
+  {
+    "apiKey": "a6bc1e6b-6602-4b25-8532-3388825d41cf",
+    "sessionId": "769ae64f-0751-4574-8c66-1ec923358204"
+  }
+]
+```
+
+### Response
+
+```json
+[
+  "reconnect",
+  {
+    "ok": true
+  }
+]
+```
+
+You may also receive an error in case the authentication was unsuccessful.
+
+```json
+[
+  "reconnect",
+  {
+    "ok": false,
+    "error": "[[error code]]"
+  }
+]
+```
+
+Where `[[error code]]` is one of:
+
+| Code                                      | Description                                                                                                                                                                                                             |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `API_KEY_NOT_PROVIDED`                    | You have called the `reconnect` method but did not provide an API key.                                                                                                                                                  |
+| `SESSION_ID_NOT_PROVIDED`                 | You have called the `reconnect` method but did not provide a session ID.                                                                                                                                                |
+| `INVALID_SESSION`                         | The session ID you provided is invalid/nonexistent.                                                                                                                                                                     |
+| `API_KEY_DOES_NOT_MATCH_PREVIOUS_SESSION` | You are trying to reconnect to a session using a different API key than the one you've originally authenticated with. If you want to use a different API key, create a new session instead using the `identify` method. |
+| `INVALID_API_KEY`                         | The API key you provided is invalid/nonexistent.                                                                                                                                                                        |

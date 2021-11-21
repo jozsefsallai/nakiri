@@ -1,0 +1,31 @@
+---
+title: Snowflake
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Snowflake
+
+Nakiri uses [Twitter's snowflake](https://developer.twitter.com/en/docs/twitter-ids)
+format to assign unique identifiers to everything in the app's database. These
+IDs are 64-bit integers and are returned as strings in API responses.
+
+## Snowflake format
+
+### Snowflake ID broken down in binary
+
+```
+111111111111111111111111111111111111111111 11111 11111 111111111111
+64                                         22    17    12          0
+```
+
+### Format structure (left to right)
+
+---
+
+| Field               | Bits     | Number of bits | Description                                                                         | Retrieval                          |
+| ------------------- | -------- | -------------- | ----------------------------------------------------------------------------------- | ---------------------------------- |
+| Timestamp           | 63 to 22 | 42 bits        | Milliseconds since Nakiri epoch, the first second of March 7, 2001 or 983923200000. | `(snowflake >> 22) + 983923200000` |
+| Internal worker ID  | 21 to 17 | 5 bits         |                                                                                     | `(snowflake & 0x3E0000) >> 17`     |
+| Internal process ID | 16 to 12 | 5 bits         |                                                                                     | `(snowflake & 0x1F000) >> 12`      |
+| Increment           | 11 to 0  | 12 bits        | For every ID that is generated on a given process, this number is incremented.      | `snowflake & 0xFFF`                |

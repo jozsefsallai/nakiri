@@ -1,0 +1,67 @@
+---
+title: Discord guilds
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Discord guilds
+
+## Fetching entries
+
+```
+GET /api/lists/discord
+```
+
+Returns a list of blacklisted link regex patterns.
+
+**See also:** [Common query parameters](/docs/http-api/intro#common-query-parameters)
+
+### Response object
+
+```ts
+interface Response {
+  ok: boolean; // specifies whether the request has succeeded
+  pagination?: PaginationData; // pagination data
+  patterns?: (string | DiscordGuild)[]; // list of blacklisted Discord guilds or Discord guild entries
+  error?: string; // error message
+}
+```
+
+**See also:**
+
+- [DiscordGuild](/docs/objects/DiscordGuild)
+- [Generic response](/docs/http-api/intro#generic-api-response)
+- [Pagination data](/docs/http-api/intro#pagination)
+- [Errors](/docs/http-api/errors)
+
+## Adding a new entry
+
+```
+POST /api/lists/discord
+```
+
+```json
+{
+  "name": "Bad discord server very very bad",
+  "id": "123456789012345678",
+  "group": "123456789012345678", // optional, if present, the entry will be added to this group's blacklist
+  "guild": "123456789012345678", // optional, if present, the entry will be added to this guild's blacklist
+  "severity": 3 // optional, will default to 2 if not supplied
+}
+```
+
+**See also:** [Severity](/docs/objects/Severity)
+
+### Response object
+
+```ts
+interface Response {
+  ok: boolean; // specifies whether the request has succeeded
+  error?: string; // error message
+}
+```
+
+**See also:**
+
+- [Generic response](/docs/http-api/intro#generic-api-response)
+- [Errors](/docs/http-api/errors)

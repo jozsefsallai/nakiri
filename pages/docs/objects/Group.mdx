@@ -1,0 +1,57 @@
+---
+title: Group
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Group
+
+This model defines a Nakiri group.
+
+## Fields
+
+| Name            | Type                                                                  | Description                                                                                                 |
+| --------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `id`            | string                                                                | The [Snowflake ID](/docs/objects/Snowflake) of the entry.                                                   |
+| `createdAt`     | date                                                                  | The date the entry was created.                                                                             |
+| `updatedAt`     | date                                                                  | The date the entry was last updated.                                                                        |
+| `name`          | string                                                                | The name of the group.                                                                                      |
+| `description`   | string?                                                               | The description of the group.                                                                               |
+| `apiKey`        | string?                                                               | The API key of the group. Not visible if the current user doesn't have the `SEE_API_KEY` member permission. |
+| `creator`       | [AuthorizedUser](/docs/objects/AuthorizedUser)                        | The owner of the group.                                                                                     |
+| `members`       | [GroupMember](/docs/objects/GroupMember)[]?                           | The members of the group.                                                                                   |
+| `guilds`        | [AuthorizedGuild](/docs/objects/AuthorizedGuild)[]?                   | The guilds of the group.                                                                                    |
+| `myPermissions` | [GroupMemberPermission](/docs/objects/GroupMember#member-permissions) | The permissions of the current user.                                                                        |
+| `isCreator`     | boolean                                                               | Whether the current user is the creator of the group.                                                       |
+
+## Example response
+
+```json
+{
+  "id": "2733833987845886976",
+  "createdAt": "2021-10-31T22:40:14.881Z",
+  "updatedAt": "2021-11-07T00:18:04.138Z",
+  "name": "another test group",
+  "description": "hey, this is a group",
+  "apiKey": "a6bc1e6b-6602-4b25-8532-3388825d41cf",
+  "creator": {
+    "id": "2693957845911704576",
+    "createdAt": "2021-07-13T21:46:41.781Z",
+    "updatedAt": "2021-11-07T00:18:04.132Z",
+    "discordId": "245890903133257730",
+    "permissions": 15,
+    "name": "joexyz",
+    "discriminator": "0137",
+    "image": "89c8947fc45861ab97c1aa680ee13547",
+    "hideThumbnails": true
+  },
+  "guilds": [
+    // ...
+  ],
+  "members": [
+    // ...
+  ],
+  "myPermissions": 31,
+  "isCreator": true
+}
+```

@@ -1,0 +1,20 @@
+---
+title: ProcessingState
+---
+
+import 'nextra-theme-docs/style.css';
+
+# ProcessingState
+
+This is an enum that represents the processing state of a YouTube video or
+channel entry. When adding an entry to these blacklists, Nakiri will start a
+background job to fetch metadata about the entry.
+
+The following processing states exist:
+
+- `QUEUED = 0` - if the entry was queued for metadata retrieval
+- `PENDING = 1` - if the entry is currently being processed
+- `DONE = 2` - if the entry has been processed
+- `FAILED = 3` - if the entry failed to be processed
+
+API responses will return the numerical representation of the processing state.

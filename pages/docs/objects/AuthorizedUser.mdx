@@ -1,0 +1,62 @@
+---
+title: AuthorizedUser
+---
+
+import 'nextra-theme-docs/style.css';
+
+# AuthorizedUser
+
+`AuthorizedUser` is a model that represents a user who has access to Nakiri.
+
+## Fields
+
+| Field name       | Type                                        | Description                                               |
+| ---------------- | ------------------------------------------- | --------------------------------------------------------- |
+| `id`             | string                                      | The [Snowflake ID](/docs/objects/Snowflake) of the entry. |
+| `createdAt`      | date                                        | The date and time when the user was authorized.           |
+| `updatedAt`      | date                                        | The date and time when the user's entry was last updated. |
+| `discordId`      | string                                      | The Discord ID of the user.                               |
+| `permissions`    | [Permission](#user-permissions)             | The permissions of the user.                              |
+| `name`           | string                                      | The username of the user (from Discord).                  |
+| `discriminator`  | string                                      | The discriminator of the user (from Discord).             |
+| `image`          | string or null                              | The URL of the user's avatar (from Discord).              |
+| `hideThumbnails` | boolean                                     | Whether thumbnails should be hidden in the web UI.        |
+| `memberships`    | [GroupMember](/docs/objects/GroupMember)[]? | The groups the user is a member of.                       |
+
+The model's metadata will be updated on a regular interval through a cron job.
+
+## User Permissions
+
+User permissions are stored as a bitfield. Each permission corresponds to a bit
+that is a power of 2. These permissions are then added together to form the
+user's permission set. The values are stored as 32-bit signed integers.
+
+| Bit value | Name                          | Description                                                    |
+| --------- | ----------------------------- | -------------------------------------------------------------- |
+| `1`       | `MANAGE_OWN_GUILD_BLACKLISTS` | Whether the user can manage blacklists of their own guilds.    |
+| `2`       | `MANAGE_GLOBAL_BLACKLISTS`    | Whether the user can manage the global Nakiri blacklists.      |
+| `4`       | `MANAGE_AUTHORIZED_USERS`     | Whether the user authorize or unauthorize users to Nakiri.     |
+| `8`       | `MANAGE_MONITORED_KEYWORDS`   | Whether the user can manage the monitored keywords in a guild. |
+| `16`      | `CREATE_GROUPS`               | Whether the user can create and manage groups.                 |
+
+To check if a user has a permission, use the following example:
+
+```js
+(user.permissions & CREATE_GROUPS) === CREATE_GROUPS;
+```
+
+## Example object
+
+```json
+{
+  "name": "joexyz",
+  "image": "e5c081e64667a48753ed6589f923181d",
+  "id": "2693972945403043840",
+  "discriminator": "0137",
+  "createdAt": "2021-07-13T22:46:41.781Z",
+  "updatedAt": "2021-11-20T17:30:06.000Z",
+  "discordId": "245890903133257730",
+  "permissions": 15,
+  "hideThumbnails": true
+}
+```

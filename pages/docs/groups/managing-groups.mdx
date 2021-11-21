@@ -1,3 +1,124 @@
+---
+title: Managing groups
+---
+
 import 'nextra-theme-docs/style.css';
 
-# Creating groups
+import Callout from 'nextra-theme-docs/callout';
+
+# Managing groups
+
+You can create and manage a group through the Nakiri web interface.
+
+1. Go to https://nakiri.one/manage/login
+1. Log in using an authorized Discord account
+1. Click on the **Groups** link in the menu bar (or just click [here](https://nakiri.one/manage/groups))
+
+On this page, you will see every group you've created or are a member of. You
+can also use the **Create Group** button in the top right corner to create a new
+group.
+
+## Creating a group
+
+To create a group, click on the **Create Group** button in the top right corner
+and on the following page, specify the name of the group and an optional
+description. Don't worry, you can change these later.
+
+Once you've filled in the fields, click on the **Create** button and the group
+will be created. You can now invite other users to the group and add Discord
+guilds to it.
+
+## Adding Discord guilds
+
+The main purpose of a group is to encapsulate multiple Discord servers in it, so
+they can all share the same per-group global blacklist and have individual
+blacklists as well. This is useful in scenarios where the same bot is used
+across multiple guilds.
+
+Before adding a guild to a Nakiri group, you have to authorize it within Nakiri.
+You can only do this if you have at least `MANAGE_MESSAGES` in the guild you
+want to authorize. Any other guild will not show up in your list.
+
+You can authorize a Discord guild by going to the **My Guilds** page and
+clicking on the **Add Guild** button. From that page, you can select the guild
+you want to authorize and it will be authorized immediately.
+
+If someone else has already authorized the guild you want to add, you will see
+it in the list of your guilds.
+
+Once the guild you want to add has been authorized, you can go back to the
+group's page and click on the **Add guild** button. You will see a popup asking
+you to select the guild you want to add.
+
+<Callout emoji="⚠️" type="warning">
+  You will only be able to add a guild to a group if your group membership has
+  the `MANAGE_GROUP_GUILDS` permission.
+</Callout>
+
+## Removing Discord guilds
+
+On the group's page you will see a **Remove** button next to each guild. You can
+click on this button to remove the guild from the group. The app will prompt you
+to confirm the removal.
+
+<Callout emoji="ℹ️">
+  Removing a guild from a group will not remove the blacklist entries associated
+  to that guild in the group. Therefore, if you re-add the guild to the group,
+  all previously added blacklist entries will still be present. Removing a guild
+  from a group will also not unauthorize it from Nakiri.
+</Callout>
+
+<Callout emoji="⚠️" type="warning">
+  You will only be able to remove a guild from a group if your group membership
+  has the `MANAGE_GROUP_GUILDS` permission.
+</Callout>
+
+## Adding group members
+
+On the group's page you will see a button called **Add member**. Clicking on it
+will prompt you for the user's Discord ID. Note that this has to be the Discord
+account's numerical ID and **not** the username + discriminator combination.
+
+You will only be able to add a user to a group if the user you want to add has
+been authorized to access Nakiri. If the user you want to add is not authorized,
+please talk to an administrator to get them authorized.
+
+When adding a user to a group, you will be able to choose between the following
+permissions for them:
+
+- **View the group's blacklists** - allows them to view the group's blacklist
+  entries.
+- **Manage group blacklist entries** - allows them to add, edit, and remove
+  blacklist entries.
+- **See the group's API key** - if this permission is enabled, the user will be
+  able to see the group's API key. Generally, you only want a few select people,
+  or only the group's owner, to be able to see the API key, as it gives you
+  programmatic access to everything in the group.
+- **Manage group guilds** - allows them to add and remove guilds from the group.
+- **Manage group members** - allows them to add and remove members from the
+  group.
+
+<Callout emoji="ℹ️">
+  A user will only be able to access a group's global blacklist, as well as the
+  blacklists of every guild they have access to. In this context, having access
+  to a guild means having at least `MANAGE_MESSAGES` permission in said guild.
+</Callout>
+
+<Callout emoji="⚠️" type="warning">
+  You will only be able to add a user to a group if your group membership has
+  the `MANAGE_GROUP_MEMBERS` permission.
+</Callout>
+
+## Removing group members
+
+On the group's page, you will see a **Remove** button next to each member in the
+members list. Clicking on this button will prompt you to confirm the removal,
+and once confirmed, will remove the member from the group.
+
+Permissions are not preserved, so removing a member from a group and then adding
+them again allows you to specify new permissions to them.
+
+<Callout emoji="⚠️" type="warning">
+  You will only be able to remove a user from a group if your group membership
+  has the `MANAGE_GROUP_MEMBERS` permission.
+</Callout>

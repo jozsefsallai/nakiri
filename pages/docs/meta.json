@@ -1,3 +1,10 @@
 {
-  "index": "Getting Started"
+  "index": "Getting Started",
+  "blacklist-structure": "How blacklists are structured",
+  "groups": "Groups",
+  "objects": "Objects",
+  "http-api": "HTTP API",
+  "gateway": "Gateway",
+  "workers": "Workers",
+  "selfhost": "Self-hosting"
 }

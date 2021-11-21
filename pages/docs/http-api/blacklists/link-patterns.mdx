@@ -1,0 +1,66 @@
+---
+title: Link patterns
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Link patterns
+
+## Fetching entries
+
+```
+GET /api/lists/link-patterns
+```
+
+Returns a list of blacklisted link regex patterns.
+
+**See also:** [Common query parameters](/docs/http-api/intro#common-query-parameters)
+
+### Response object
+
+```ts
+interface Response {
+  ok: boolean; // specifies whether the request has succeeded
+  pagination?: PaginationData; // pagination data
+  patterns?: (string | LinkPattern)[]; // list of blacklisted link patterns or link pattern entries
+  error?: string; // error message
+}
+```
+
+**See also:**
+
+- [LinkPattern](/docs/objects/LinkPattern)
+- [Generic response](/docs/http-api/intro#generic-api-response)
+- [Pagination data](/docs/http-api/intro#pagination)
+- [Errors](/docs/http-api/errors)
+
+## Adding a new entry
+
+```
+POST /api/lists/link-patterns
+```
+
+```json
+{
+  "pattern": "discord.(com|gg)",
+  "group": "123456789012345678", // optional, if present, the entry will be added to this group's blacklist
+  "guild": "123456789012345678", // optional, if present, the entry will be added to this guild's blacklist
+  "severity": 3 // optional, will default to 2 if not supplied
+}
+```
+
+**See also:** [Severity](/docs/objects/Severity)
+
+### Response object
+
+```ts
+interface Response {
+  ok: boolean; // specifies whether the request has succeeded
+  error?: string; // error message
+}
+```
+
+**See also:**
+
+- [Generic response](/docs/http-api/intro#generic-api-response)
+- [Errors](/docs/http-api/errors)

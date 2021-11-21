@@ -1,0 +1,33 @@
+---
+title: AuthorizedGuild
+---
+
+import 'nextra-theme-docs/style.css';
+
+# AuthorizedGuild
+
+`AuthorizedGuild` is a model that represents a guild that was authorized for
+usage in the Nakiri app.
+
+## Fields
+
+| Field name  | Type   | Description                                               |
+| ----------- | ------ | --------------------------------------------------------- |
+| `id`        | string | The [Snowflake ID](/docs/objects/Snowflake) of the entry. |
+| `createdAt` | date   | The date and time when the guild was authorized.          |
+| `updatedAt` | date   | The date and time when the guild entry was last updated.  |
+| `guildId`   | string | The Discord ID of the guild.                              |
+
+The model does not save metadata info about the Discord guilds. They are
+retrieved on the fly from the Discord API when you open the web interface.
+
+## Example object
+
+```json
+{
+  "id": "2695079200959946752",
+  "createdAt": "2021-07-17T00:02:33.659Z",
+  "updatedAt": "2021-11-07T11:26:39.948Z",
+  "guildId": "560153816616665098"
+}
+```

@@ -1,0 +1,64 @@
+---
+title: How blacklists are structured
+---
+
+import 'nextra-theme-docs/style.css';
+import Bleed from 'nextra-theme-docs/bleed';
+
+# How blacklists are structured
+
+As we've discussed in the previous section, Nakiri has multiple blacklist types.
+However, most of them share the same logic and structure, in terms of storage,
+management, and access.
+
+There are three levels of blacklists:
+
+### Global blacklists
+
+These are blacklists that all Nakiri groups will have access to. When using the
+analyzer in non-strict mode, the global blacklists will always be included in
+the checks.
+
+Only a select few people can modify the entries in the global blacklists, as
+these entries can affect all users of the Nakiri platform.
+
+### Per-group blacklists
+
+Nakiri introduces the concept of [Groups](/docs/what-are-groups). Every group
+will have its own set of blacklists, independent of the global blacklists. These
+blacklists are only accessible by the members of the group and will be shared
+across all guilds of the group.
+
+### Per-guild blacklists
+
+These are blacklists that are only accessible and monitored by a single guild in
+a group. These blacklist entries will **always** be checked as long as you
+specify a guild ID in your requests.
+
+## Practical example
+
+Consider the following scenario:
+
+<Bleed>
+  ![Example for the blacklist hierarchy](/docs-images/groups-hierarchy.png)
+</Bleed>
+
+In this example, **Hololive Fan Discords** is a group within Nakiri, which
+contains multiple guilds. Each guild's blacklist entries are isolated from each
+other and access is defined on a down-to-top level.
+
+This means that the guild named **Gura's Gawrdians** will have access to the
+following blacklists:
+
+- **Gura's Gawrdians** (per-guild blacklist)
+- **Hololive Fan Discords** (per-group blacklist)
+- **Global blacklists**
+
+Similarly, **Ame's Detective Bureau** will have access to the following
+blacklists:
+
+- **Ame's Detective Bureau** (per-guild blacklist)
+- **Hololive Fan Discords** (per-group blacklist)
+- **Global blacklists**
+
+... and so on.

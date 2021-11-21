@@ -1,0 +1,48 @@
+---
+title: GroupMember
+---
+
+import 'nextra-theme-docs/style.css';
+
+# GroupMember
+
+This model defines a group-user relationship. It also stores the permission
+levels of a member.
+
+## Fields
+
+| Name          | Type                                           | Description                                               |
+| ------------- | ---------------------------------------------- | --------------------------------------------------------- |
+| `id`          | string                                         | The [Snowflake ID](/docs/objects/Snowflake) of the entry. |
+| `user`        | [AuthorizedUser](/docs/objects/AuthorizedUser) | The user's data object.                                   |
+| `group`       | [Group](/docs/objects/Group)                   | The group's data object.                                  |
+| `permissions` | [GroupMemberPermissions](#member-permissions)  | The permissions of the member.                            |
+
+## Member permissions
+
+Member permissions are stored as a bitfield. Each permission corresponds to a
+bit that is a power of 2. These permissions are then added together to form the
+member's permission set. The values stored are 32-bit signed integers.
+
+| Bit value | Name                    | Description                                                                                                |
+| --------- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `1`       | `VIEW_GROUP_BLACKLISTS` | View the group's blacklists, as well as the blacklists of the guilds that the user has access to.          |
+| `2`       | `MANAGE_GROUP_MEMBERS`  | Manage the group's blacklist entries, as well as the entries that belong to guilds the user has access to. |
+| `4`       | `SEE_API_KEY`           | See the group's API key.                                                                                   |
+| `8`       | `MANAGE_GROUP_GUILDS`   | Add/remove guilds from the group.                                                                          |
+| `16`      | `MANAGE_GROUP_MEMBERS`  | Add/remove members from the group.                                                                         |
+
+## Example response
+
+```json
+{
+  "id": "2736032932504376320",
+  "user": {
+    // ...
+  },
+  "group": {
+    // ...
+  },
+  "permissions": 31
+}
+```

@@ -1,0 +1,37 @@
+---
+title: BlacklistMutationData
+---
+
+import 'nextra-theme-docs/style.css';
+
+# BlacklistMutationData
+
+This is an object that is sent through a gateway notification when a blacklist
+entry is added or removed.
+
+## Fields
+
+| Field name  | Type    | Description                                                                                                 |
+| ----------- | ------- | ----------------------------------------------------------------------------------------------------------- |
+| `value`     | string  | The blacklisted value (i.e. video/channel ID, link pattern, etc.)                                           |
+| `blacklist` | string  | The name of the blacklist (`youtubeVideoID`, `youtubeChannelID`, `linkPattern`, `discordGuildID`, `phrase`) |
+| `kind`      | string  | The kind of the blacklisted value (`regex` or `substring`)                                                  |
+| `global`    | boolean | Whether or not the blacklisted entry belongs to the global Nakiri blacklist                                 |
+| `guild`     | string? | The ID of the guild the blacklisted entry belongs to, if applicable.                                        |
+| `metadata`  | any     | The raw blacklist entry object.                                                                             |
+
+## Example payload
+
+```json
+{
+  "notificationId": "dfac9fb7-f8cc-464e-aa9a-535aa43571ec",
+  "value": "dQw4w9WgXcQ",
+  "blacklist": "youtubeVideoID",
+  "kind": "substring",
+  "global": false,
+  "guild": "123456789012345678",
+  "metadata": {
+    // ...
+  }
+}
+```

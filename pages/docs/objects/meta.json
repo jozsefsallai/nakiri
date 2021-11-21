@@ -1,0 +1,14 @@
+{
+  "AuthorizedGuild": "AuthorizedGuild",
+  "AuthorizedUser": "AuthorizedUser",
+  "Group": "Group",
+  "GroupMember": "GroupMember",
+  "DiscordGuild": "DiscordGuild",
+  "LinkPattern": "LinkPattern",
+  "Phrase": "Phrase",
+  "YouTubeChannelID": "YouTubeChannelID",
+  "YouTubeVideoID": "YouTubeVideoID",
+  "ProcessingState": "ProcessingState",
+  "Severity": "Severity",
+  "Snowflake": "Snowflake"
+}
