@@ -6,5 +6,179 @@ import 'nextra-theme-docs/style.css';
 
 # Self-hosting Nakiri
 
-This section of the documentation is a work in progress. Please check back
-later!
+Thank you for showing interest in self-hosting Nakiri. A self-hosted instance of
+the Nakiri ecosystem will allow you to have full control over your data and its
+usage. It will also allow you to modify or extend the app's functionality.
+
+The code is licensed under the MIT license, so you can do whatever you want
+without any restrictions.
+
+The only possible drawback of running a self-hosted instance is that you won't
+have access to the global Nakiri database, but depending on your use case, this
+might be exactly what you want to do.
+
+## Minimum hardware requirements
+
+- **CPU**: at least 2 cores
+- **RAM**: at least 2 GB, but more is recommended
+- **Storage**: at least 2 GB, not including the space required for installing
+  certain dependencies + the space required for the database as well as the
+  Redis data
+
+Generally you'd be able to run Nakiri on any server/VPS that's not very minimal.
+For reference, the official instance is running on a VPS with 2 cores, 2 GB of
+RAM, and 40 GB of storage.
+
+## Getting started
+
+There are two ways you can get Nakiri running on your own server.
+
+1. Using Docker and Docker Compose
+2. Manual installation
+
+### Self-hosting using Docker and Docker Compose
+
+**Prerequisites**:
+
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- git
+
+**1. Clone the repository**
+
+```sh
+git clone git@github.com:jozsefsallai/nakiri.git
+cd nakiri
+```
+
+**2. Configure your instance**
+
+```sh
+cp .env.example .env
+nano .env
+```
+
+**3. Start it all**
+
+```sh
+docker-compose up -d
+```
+
+To shut the app down, just run:
+
+```sh
+docker-compose down
+```
+
+### Self-hosting manually
+
+**Prerequisites**:
+
+- git
+- [Node.js](https://nodejs.org/) v12 or newer
+- MySQL or MariaDB
+- Redis
+- A process manager like [pm2](https://www.pm2.io/)
+- Go
+
+First, you have to clone the repository:
+
+```sh
+git clone git@github.com:jozsefsallai/nakiri.git
+cd nakiri
+```
+
+Once that is done, create a database for the app:
+
+```sh
+mysql -u root -p
+```
+
+```sql
+CREATE USER ayame@localhost IDENTIFIED BY 'nakiri';
+CREATE DATABASE nakiriapi;
+GRANT ALL PRIVILEGES ON nakiriapi.* TO ayame@localhost WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+exit;
+-- note: you might want to use better/more secure credentials
+```
+
+Lastly, you have to change the configuration file:
+
+```sh
+cp .env.example .env
+nano .env
+```
+
+#### Building and running Nakiri
+
+**Install the dependencies using Yarn:**
+
+```sh
+npm i -g yarn
+yarn
+```
+
+**Run the migrations:**
+
+```sh
+yarn migrate
+```
+
+**Authorize the first Discord user:**
+
+```sh
+node bin/authorizeUser
+```
+
+It is recommended that you grant all permissions to the first user.
+
+**Build the app:**
+
+```sh
+yarn build
+```
+
+**Start the app:**
+
+```sh
+yarn start
+```
+
+If you want the app to run continuously, you can use a process manager like PM2.
+
+In production environments, you may want to add this as a crontab entry and run
+it on a tidy schedule:
+
+```
+NODE_ENV=production node bin/updateUsers
+```
+
+#### Building and running Nakiri Workers
+
+**Open the `workers` directory:**
+
+```sh
+cd workers
+```
+
+**Build the binary:**
+
+```
+go build .
+```
+
+**Then run it:**
+
+```
+./workers
+```
+
+---
+
+You can find more information about the options you can specify while hosting
+the project yourself in the [project's README][nakiri-readme] as well as the
+[Nakiri Workers README][nakiri-workers-readme].
+
+[nakiri-readme]: https://github.com/jozsefsallai/nakiri#readme
+[nakiri-workers-readme]: https://github.com/jozsefsallai/nakiri/tree/master/workers#readme

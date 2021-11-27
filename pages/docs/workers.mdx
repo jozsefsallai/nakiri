@@ -1,0 +1,49 @@
+---
+title: Nakiri Workers
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Nakiri Workers
+
+Nakiri Workers is a separate service that allows you to set up worker pools for
+monitoring keywords as well as cleaning up the blacklists and updating them with
+metadata. From an end-user endpoint, you will only really care about the former.
+
+## What are monitored keywords?
+
+**Monitored keywords** allow you to instruct the pool of workers to monitor a
+set of keywords on YouTube. These keywords are created on a per-guild basis and
+use Discord-compatible webhooks to send notifications to a channel. The channel
+does not actually have to be in the same guild as the keyword, as specifying a
+guild is merely for access-control purposes.
+
+## How does it work?
+
+There are two separate worker types in Nakiri Workers:
+
+- **Keyword monitors** are user-instructed and will run at an interval specified
+  using the `WORKER_SCAN_INTERVAL` environment variable in the app. By default,
+  this is set to 12 hours.
+- **Cleanup workers** will run at an interval specified using the
+  `WORKER_CLEANUP_INTERVAL` environment variable in the app. By default, this is
+  set to 24 hours.
+
+The cleanup worker will run through every single blacklist entry in the YouTube
+video and channel blacklists and check if they are available. If they are not,
+they will be removed from the blacklist. This is merely to keep the database
+clean while also minimizing used storage and compute time.
+
+The keyword monitors will scan YouTube for the latest videos that reference any
+of the monitored keywords. If a video is found, it will be added to a designated
+list of videos that belong to the keyword. You can access this list by clicking
+on the keyword in the web UI. Apart from adding the video to the list, the
+worker will also send a notification to the webhook specified in the keyword's
+entry.
+
+This is done using the YouTube data API, which is a bit janky at times with very
+unpredictable results. The YouTube search API is also very rate-limited, which
+is the reason why the keyword monitors are run at such a large interval. Sadly,
+in its current form, this is not scalable enough, however in the future, we can
+look into the possibility of connecting your own YouTube API-compatible app and
+use that instead.
