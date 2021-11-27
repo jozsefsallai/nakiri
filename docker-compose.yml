@@ -5,13 +5,19 @@ services:
     container_name: mysql
     ports:
       - '3306:3306'
-    image: mysql:5.7
+    image: mariadb:10.5.8
     restart: always
     environment:
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - /database:/var/lib/mysql
+      - database:/var/lib/mysql
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    expose:
+      - 6379
 
   nakiriapi:
     container_name: nakiriapi
@@ -20,15 +26,25 @@ services:
       dockerfile: ./Dockerfile
     depends_on:
       - mysql
+      - redis
     links:
       - mysql
+      - redis
     command: sh -c "yarn migrate && node ./bin/authorizeInitialUser.js && yarn start"
     environment:
       PROTOCOL: ${PROTOCOL}
       DOMAIN: ${DOMAIN}
       PORT: ${PORT}
+      APP_SECRET: ${APP_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
 
-      DATABASE_DIALECT: mysql
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+      DATABASE_DIALECT: mariadb
       DATABASE_HOST: mysql
       DATABASE_PORT: 3306
       DATABASE_USERNAME: root
@@ -44,5 +60,32 @@ services:
       NEXTAUTH_URL: ${NEXTAUTH_URL}
 
       INITIAL_USER_DISCORD_ID: ${INITIAL_USER_DISCORD_ID}
+
+      WAIT_HOSTS: mysql:3306, redis:6379
     ports:
       - 3000:3000
+
+  workers:
+    container_name: workers
+    build:
+      context: .
+      dockerfile: ./workers/Dockerfile
+    depends_on:
+      - nakiriapi
+    links:
+      - nakiriapi
+    environment:
+      WORKER_COUNT: ${WORKER_COUNT}
+      WORKER_SCAN_INTERVAL: ${WORKER_SCAN_INTERVAL}
+      WORKER_CLEANUP_INTERVAL: ${WORKER_CLEANUP_INTERVAL}
+      WORKERS_YOUTUBE_API_KEY: ${WORKERS_YOUTUBE_API_KEY}
+      DATABASE_HOST: mysql
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+      WAIT_HOSTS: mysql:3306
+
+volumes:
+  database:

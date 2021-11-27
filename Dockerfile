@@ -1,5 +1,5 @@
 FROM node:14-alpine AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --update --no-cache libc6-compat python3 make g++
 
 WORKDIR /app
 COPY package.json yarn.lock ./
@@ -25,4 +25,6 @@ COPY --from=builder --chown=ayame:ayame /app .
 
 USER ayame
 
-RUN sh ./bin/makedocs.sh
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+RUN chmod +x /wait
+RUN /wait

@@ -40,6 +40,7 @@ export class KeywordSearchResult
     (monitoredKeyword) => monitoredKeyword.results,
     {
       onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
   )
   keyword: Partial<MonitoredKeyword>;
