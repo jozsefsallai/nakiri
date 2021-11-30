@@ -7,8 +7,6 @@ import { IAuthorizedUser } from '@/db/models/auth/AuthorizedUser';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import UserList from '@/components/users/UserList';
 
-import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
-import { UserPermissions } from '@/lib/UserPermissions';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -122,17 +120,6 @@ const ManageUsersIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(
-    req,
-    res,
-    UserPermissions.MANAGE_AUTHORIZED_USERS,
-  );
-  return {
-    props: {},
-  };
 };
 
 export default ManageUsersIndexPage;

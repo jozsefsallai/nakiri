@@ -21,7 +21,7 @@ export class YouTubeVideoID
   extends GuildRestrictableBlacklist
   implements IYouTubeVideoID
 {
-  @Column()
+  @Column('varchar')
   videoId: string;
 
   @Column({
@@ -31,22 +31,22 @@ export class YouTubeVideoID
   })
   status: ProcessingState;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   title?: string;
 
   @Column({ type: 'text', nullable: true, default: null })
   description?: string;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   thumbnailUrl?: string;
 
   @Column({ type: 'datetime', nullable: true, default: null })
   uploadDate?: Date;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   uploaderId?: string;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   uploaderName?: string;
 
   toJSON(): IYouTubeVideoID {

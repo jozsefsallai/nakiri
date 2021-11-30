@@ -13,8 +13,6 @@ import MessageBox, {
   CompactDangerMessageBox,
   MessageBoxLevel,
 } from '@/components/common/messagebox/MessageBox';
-import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
-import { UserPermissions } from '@/lib/UserPermissions';
 import { IMonitoredKeyword } from '@/db/models/keywords/MonitoredKeyword';
 import Loading from '@/components/loading/Loading';
 
@@ -135,13 +133,7 @@ const EditMonitoredKeywordPage: React.FC<IEditMonitoredKeywordPageProps> = ({
   );
 };
 
-export const getServerSideProps = async ({ req, res, query }) => {
-  await redirectIfDoesNotHavePermission(
-    req,
-    res,
-    UserPermissions.MANAGE_MONITORED_KEYWORDS,
-  );
-
+export const getServerSideProps = async ({ query }) => {
   const { id } = query;
 
   return {

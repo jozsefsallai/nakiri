@@ -7,7 +7,6 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 import YouTubeChannelEntry from '@/components/blacklist/entry-data/YouTubeChannelEntry';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -125,13 +124,6 @@ const ManageChannelsIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-  return {
-    props: {},
-  };
 };
 
 export default ManageChannelsIndexPage;

@@ -22,10 +22,10 @@ export class KeywordWhitelistedChannel
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column('varchar')
   channelId: string;
 
-  @Column()
+  @Column('varchar')
   guildId: string;
 
   toJSON(): IKeywordWhitelistedChannel {

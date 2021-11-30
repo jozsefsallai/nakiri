@@ -38,19 +38,19 @@ export class AuthorizedUser
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column('varchar')
   discordId: string;
 
   @Column('int', { default: 1 })
   permissions: number;
 
-  @Column()
+  @Column('varchar')
   name: string;
 
-  @Column()
+  @Column('varchar')
   discriminator: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   image?: string;
 
   @Column('bool', { default: false })

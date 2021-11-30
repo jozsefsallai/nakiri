@@ -34,10 +34,10 @@ export class AuthorizedGuild
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column('varchar')
   key: string;
 
-  @Column()
+  @Column('varchar')
   guildId: string;
 
   @ManyToMany(() => Group, (group) => group.guilds, {

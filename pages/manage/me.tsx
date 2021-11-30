@@ -1,7 +1,6 @@
 import Button from '@/components/common/button/Button';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import toaster from '@/lib/toaster';
 import { User } from '@/lib/User';
 import apiService from '@/services/apis';
@@ -68,14 +67,6 @@ const UpdateUserPage = () => {
       </form>
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-
-  return {
-    props: {},
-  };
 };
 
 export default UpdateUserPage;

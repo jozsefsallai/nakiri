@@ -31,13 +31,13 @@ export class MonitoredKeyword
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column('varchar')
   keyword: string;
 
-  @Column()
+  @Column('varchar')
   guildId: string;
 
-  @Column()
+  @Column('varchar')
   webhookUrl: string;
 
   @OneToMany(

@@ -45,22 +45,22 @@ export class KeywordSearchResult
   )
   keyword: Partial<MonitoredKeyword>;
 
-  @Column()
+  @Column('varchar')
   title: string;
 
-  @Column()
+  @Column('varchar')
   videoId: string;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   thumbnailUrl?: string | null;
 
   @Column('datetime')
   uploadDate: Date;
 
-  @Column()
+  @Column('varchar')
   uploader: string;
 
-  @Column()
+  @Column('varchar')
   uploaderName: string;
 
   toJSON(): IKeywordSearchResult {

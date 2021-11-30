@@ -8,7 +8,6 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 import YouTubeVideoEntry from '@/components/blacklist/entry-data/YouTubeVideoEntry';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
@@ -260,16 +259,5 @@ const KeywordSearchResultsIndexPage: React.FC<KeywordSearchResultsIndexPageProps
       </DashboardLayout>
     );
   };
-
-export const getServerSideProps = async ({ req, res, query }) => {
-  await redirectIfAnonmyous(req, res);
-  const { id } = query;
-
-  return {
-    props: {
-      id,
-    },
-  };
-};
 
 export default KeywordSearchResultsIndexPage;

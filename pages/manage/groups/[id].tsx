@@ -6,7 +6,6 @@ import Loading from '@/components/loading/Loading';
 import { IGroup } from '@/db/models/groups/Group';
 import DashboardLayout from '@/layouts/DashboardLayout';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 
 import { useEffect, useState } from 'react';
@@ -49,17 +48,6 @@ const GroupPage: React.FC<GroupPageProps> = ({ id }) => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res, query }) => {
-  await redirectIfAnonmyous(req, res);
-  const { id } = query;
-
-  return {
-    props: {
-      id,
-    },
-  };
 };
 
 export default GroupPage;

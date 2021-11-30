@@ -9,7 +9,6 @@ import { CreateGroupAPIRequest } from '@/services/apis/groups/GroupsAPIService';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { useRouter } from 'next/router';
 import { CompactDangerMessageBox } from '@/components/common/messagebox/MessageBox';
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import { useUserGroups } from '@/hooks/useGroups';
 
 const CreateGroupPage = () => {
@@ -74,14 +73,6 @@ const CreateGroupPage = () => {
       </Formik>
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-
-  return {
-    props: {},
-  };
 };
 
 export default CreateGroupPage;

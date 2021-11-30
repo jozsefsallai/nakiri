@@ -7,7 +7,6 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 import YouTubeVideoEntry from '@/components/blacklist/entry-data/YouTubeVideoEntry';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -128,13 +127,6 @@ const ManageVideosIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-  return {
-    props: {},
-  };
 };
 
 export default ManageVideosIndexPage;

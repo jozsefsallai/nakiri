@@ -9,7 +9,6 @@ import { useGuilds } from '@/hooks/useGuilds';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { errors } from '@/lib/errors';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import toaster from '@/lib/toaster';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
@@ -109,13 +108,6 @@ const ManageGuildsIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-  return {
-    props: {},
-  };
 };
 
 export default ManageGuildsIndexPage;

@@ -15,8 +15,6 @@ import MessageBox, {
   CompactDangerMessageBox,
   MessageBoxLevel,
 } from '@/components/common/messagebox/MessageBox';
-import { redirectIfDoesNotHaveOneOfPermissions } from '@/lib/redirects';
-import { UserPermissions } from '@/lib/UserPermissions';
 
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -221,17 +219,6 @@ const NewLinkPatternPage = () => {
       </Formik>
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHaveOneOfPermissions(req, res, [
-    UserPermissions.MANAGE_GLOBAL_BLACKLISTS,
-    UserPermissions.MANAGE_OWN_GUILD_BLACKLISTS,
-  ]);
-
-  return {
-    props: {},
-  };
 };
 
 export default NewLinkPatternPage;

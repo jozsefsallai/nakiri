@@ -4,7 +4,6 @@ import MessageBox, {
 import Loading from '@/components/loading/Loading';
 import DashboardLayout from '@/layouts/DashboardLayout';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import { useRouter } from 'next/router';
 import { useUserGroups } from '@/hooks/useGroups';
 
@@ -36,11 +35,6 @@ const ManageGroupsPage: React.FC = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-  return { props: {} };
 };
 
 export default ManageGroupsPage;

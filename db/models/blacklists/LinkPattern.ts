@@ -13,7 +13,7 @@ export class LinkPattern
   extends GuildRestrictableBlacklist
   implements ILinkPattern
 {
-  @Column()
+  @Column('varchar')
   pattern: string;
 
   toJSON(): ILinkPattern {

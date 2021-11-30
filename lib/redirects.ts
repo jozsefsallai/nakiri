@@ -1,88 +1,64 @@
+import { NextRequest, NextResponse } from 'next/server';
+
 import apiService from '@/services/apis';
 import { UserPermissions, UserPermissionsUtil } from './UserPermissions';
 
-export const redirectIfAnonmyous = async (req, res): Promise<boolean> => {
+export const redirectIfAnonymous = async (
+  req: NextRequest,
+): Promise<Response | undefined> => {
   try {
     await apiService.users.getLoggedInUser(req.headers);
-    return false;
-  } catch (_) {
-    res.writeHead(302, {
-      location: '/manage/login',
-    });
-    res.end();
-
-    return true;
+    NextResponse.next();
+  } catch (err) {
+    return NextResponse.redirect('/manage/login', 302);
   }
 };
 
-export const redirectIfAuthenticated = async (req, res): Promise<boolean> => {
+export const redirectIfAuthenticated = async (
+  req: NextRequest,
+): Promise<Response | undefined> => {
   try {
     await apiService.users.getLoggedInUser(req.headers);
-
-    res.writeHead(302, {
-      location: '/manage/guilds',
-    });
-    res.end();
-
-    return true;
+    return Response.redirect('/manage/guilds', 302);
   } catch (_) {
-    return false;
+    NextResponse.next();
   }
 };
 
 export const redirectIfDoesNotHavePermission = async (
-  req,
-  res,
+  req: NextRequest,
   permission: UserPermissions,
-): Promise<boolean> => {
+): Promise<Response | undefined> => {
   try {
     const { user } = await apiService.users.getLoggedInUser(req.headers);
 
     if (!UserPermissionsUtil.hasPermission(user.permissions, permission)) {
-      res.writeHead(302, {
-        location: '/manage/guilds',
-      });
-      res.end();
-
-      return true;
+      return Response.redirect('/manage/guilds', 302);
     }
 
-    return false;
+    NextResponse.next();
   } catch (_) {
-    res.writeHead(302, {
-      location: '/manage/login',
-    });
-    res.end();
-
-    return false;
+    return Response.redirect('/manage/login', 302);
   }
 };
 
 export const redirectIfDoesNotHaveOneOfPermissions = async (
-  req,
-  res,
+  req: NextRequest,
   permissions: UserPermissions[],
-): Promise<boolean> => {
+): Promise<Response | undefined> => {
   try {
     const { user } = await apiService.users.getLoggedInUser(req.headers);
 
     const userPermissions = permissions.filter((permission) =>
       UserPermissionsUtil.hasPermission(user.permissions, permission),
     );
+
     if (userPermissions.length === 0) {
-      res.writeHead(302, {
-        location: '/manage/guilds',
-      });
-      res.end();
-
-      return true;
+      return Response.redirect('/manage/guilds', 302);
     }
-  } catch (_) {
-    res.writeHead(302, {
-      location: '/manage/login',
-    });
-    res.end();
 
-    return false;
+    NextResponse.next();
+  } catch (_) {
+    return Response.redirect('/manage/login', 302);
   }
 };

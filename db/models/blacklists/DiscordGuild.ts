@@ -14,10 +14,10 @@ export class DiscordGuild
   extends GuildRestrictableBlacklist
   implements IDiscordGuild
 {
-  @Column()
+  @Column('varchar')
   blacklistedId: string;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   name?: string;
 
   toJSON(): IDiscordGuild {

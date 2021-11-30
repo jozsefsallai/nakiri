@@ -6,7 +6,6 @@ import { IPhrase } from '@/db/models/blacklists/Phrase';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -111,13 +110,6 @@ const ManagePhrasesIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-  return {
-    props: {},
-  };
 };
 
 export default ManagePhrasesIndexPage;

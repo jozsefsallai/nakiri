@@ -39,13 +39,13 @@ export class Group extends ModelWithSnowflakeID implements IGroup {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column('varchar')
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   description?: string;
 
-  @Column()
+  @Column('varchar')
   apiKey: string;
 
   @ManyToOne(() => AuthorizedUser, {

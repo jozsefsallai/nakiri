@@ -6,7 +6,6 @@ import { ILinkPattern } from '@/db/models/blacklists/LinkPattern';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -125,13 +124,6 @@ const ManageLinkPatternsIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-  return {
-    props: {},
-  };
 };
 
 export default ManageLinkPatternsIndexPage;

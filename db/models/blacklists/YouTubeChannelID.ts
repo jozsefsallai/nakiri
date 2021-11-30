@@ -19,7 +19,7 @@ export class YouTubeChannelID
   extends GuildRestrictableBlacklist
   implements IYouTubeChannelID
 {
-  @Column()
+  @Column('varchar')
   channelId: string;
 
   @Column({
@@ -29,7 +29,7 @@ export class YouTubeChannelID
   })
   status: ProcessingState;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   name?: string;
 
   @Column({ type: 'text', nullable: true, default: null })
@@ -38,7 +38,7 @@ export class YouTubeChannelID
   @Column({ type: 'datetime', nullable: true, default: null })
   publishedAt?: Date;
 
-  @Column({ nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null })
   thumbnailUrl?: string;
 
   toJSON(): IYouTubeChannelID {

@@ -7,7 +7,6 @@ import Loading from '@/components/loading/Loading';
 import { useGuilds } from '@/hooks/useGuilds';
 import DashboardLayout from '@/layouts/DashboardLayout';
 
-import { redirectIfAnonmyous } from '@/lib/redirects';
 import { useRouter } from 'next/router';
 
 const ManageGuildsIndexPage = () => {
@@ -40,13 +39,6 @@ const ManageGuildsIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfAnonmyous(req, res);
-  return {
-    props: {},
-  };
 };
 
 export default ManageGuildsIndexPage;

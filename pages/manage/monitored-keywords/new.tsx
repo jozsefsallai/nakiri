@@ -14,8 +14,6 @@ import MessageBox, {
   CompactDangerMessageBox,
   MessageBoxLevel,
 } from '@/components/common/messagebox/MessageBox';
-import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
-import { UserPermissions } from '@/lib/UserPermissions';
 
 const CreateMonitoredKeywordPage = () => {
   const [guilds, , guildsErrored] = useGuilds();
@@ -121,18 +119,6 @@ const CreateMonitoredKeywordPage = () => {
       </Formik>
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(
-    req,
-    res,
-    UserPermissions.MANAGE_MONITORED_KEYWORDS,
-  );
-
-  return {
-    props: {},
-  };
 };
 
 export default CreateMonitoredKeywordPage;

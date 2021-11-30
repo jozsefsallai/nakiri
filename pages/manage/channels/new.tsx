@@ -15,8 +15,6 @@ import MessageBox, {
   CompactDangerMessageBox,
   MessageBoxLevel,
 } from '@/components/common/messagebox/MessageBox';
-import { redirectIfDoesNotHaveOneOfPermissions } from '@/lib/redirects';
-import { UserPermissions } from '@/lib/UserPermissions';
 
 import { useUserGroups } from '@/hooks/useGroups';
 import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
@@ -190,17 +188,6 @@ const NewChannelIDPage = () => {
       </Formik>
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHaveOneOfPermissions(req, res, [
-    UserPermissions.MANAGE_GLOBAL_BLACKLISTS,
-    UserPermissions.MANAGE_OWN_GUILD_BLACKLISTS,
-  ]);
-
-  return {
-    props: {},
-  };
 };
 
 export default NewChannelIDPage;

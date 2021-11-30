@@ -7,9 +7,6 @@ import { IKeywordWhitelistedChannel } from '@/db/models/keywords/KeywordWhitelis
 import DashboardLayout from '@/layouts/DashboardLayout';
 import Blacklist, { IFetcherOptions } from '@/components/blacklist/Blacklist';
 
-import { redirectIfDoesNotHavePermission } from '@/lib/redirects';
-import { UserPermissions } from '@/lib/UserPermissions';
-
 import apiService from '@/services/apis';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -123,17 +120,6 @@ const ManageWhitelistedChannelsIndexPage = () => {
       )}
     </DashboardLayout>
   );
-};
-
-export const getServerSideProps = async ({ req, res }) => {
-  await redirectIfDoesNotHavePermission(
-    req,
-    res,
-    UserPermissions.MANAGE_MONITORED_KEYWORDS,
-  );
-  return {
-    props: {},
-  };
 };
 
 export default ManageWhitelistedChannelsIndexPage;
