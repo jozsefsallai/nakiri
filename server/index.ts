@@ -7,6 +7,8 @@ import middleware from './core/middleware';
 import routes from './core/routes';
 import boot from './core/boot';
 
+import getPort from 'get-port';
+
 export default async function server() {
   const dev = process.env.NODE_ENV !== 'production';
 
@@ -15,11 +17,14 @@ export default async function server() {
 
   await nextApp.prepare();
 
+  const port = parseInt(process.env.APP_PORT, 10) || 3000;
+  const gatewayPort: number = await getPort({ port: port + 100 });
+
   const app = express();
   const server = new http.Server(app);
-  const gateway = new Gateway(server);
+  const gateway = new Gateway(gatewayPort);
 
-  middleware(app, gateway);
+  middleware(app, server, gateway);
   routes(app, nextHandler);
-  boot(server);
+  boot(server, port);
 }

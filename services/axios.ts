@@ -1,7 +1,23 @@
 import buildUrl from '@/lib/buildUrl';
 
-import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
+import { Response, Options, default as redaxios } from 'redaxios';
 import NProgress from 'nprogress';
+
+type RequestMethod =
+  | 'get'
+  | 'GET'
+  | 'post'
+  | 'put'
+  | 'patch'
+  | 'delete'
+  | 'options'
+  | 'head'
+  | 'POST'
+  | 'PUT'
+  | 'PATCH'
+  | 'DELETE'
+  | 'OPTIONS'
+  | 'HEAD';
 
 export interface APIPaginationData {
   page: number;
@@ -24,82 +40,71 @@ export interface APIErrorResponse extends APIResponse {
   };
 }
 
-axios.interceptors.request.use(
-  (req) => {
-    if (typeof window !== 'undefined' && !['get', 'GET'].includes(req.method)) {
-      NProgress.start();
-    }
-
-    return req;
-  },
-  (err) => {
-    if (typeof window !== 'undefined') {
-      NProgress.done();
-    }
-
-    return Promise.reject(err);
-  },
-);
-
-axios.interceptors.response.use(
-  (res) => {
-    if (typeof window !== 'undefined') {
-      NProgress.done();
-    }
-
-    return res;
-  },
-  (err) => {
-    if (typeof window !== 'undefined') {
-      NProgress.done();
-    }
-
-    return Promise.reject(err);
-  },
-);
-
 class AxiosService {
-  public async get<T = any, R = AxiosResponse<T>>(
-    url: string,
-    config?: AxiosRequestConfig,
-  ): Promise<R> {
-    const requestUrl: string = buildUrl(url);
-    return axios.get(requestUrl, config);
-  }
-
-  public async post<T = any, R = AxiosResponse<T>>(
+  private async perform<T = any>(
+    method: RequestMethod,
     url: string,
     data?: any,
-    config?: AxiosRequestConfig,
-  ): Promise<R> {
-    const requestUrl: string = buildUrl(url);
-    return axios.post(requestUrl, data, config);
+    options?: Options,
+  ): Promise<Response<T>> {
+    try {
+      if (typeof window !== 'undefined' && !['get', 'GET'].includes(method)) {
+        NProgress.start();
+      }
+
+      const requestUrl: string = buildUrl(url);
+      const response = await redaxios<T>(requestUrl, options, method, data);
+
+      if (typeof window !== 'undefined') {
+        NProgress.done();
+      }
+
+      return response;
+    } catch (err) {
+      if (typeof window !== 'undefined') {
+        NProgress.done();
+      }
+
+      return Promise.reject(err);
+    }
   }
 
-  public async put<T = any, R = AxiosResponse<T>>(
+  public async get<T = any>(
+    url: string,
+    options?: Options,
+  ): Promise<Response<T>> {
+    return this.perform<T>('get', url, undefined, options);
+  }
+
+  public async post<T = any>(
     url: string,
     data?: any,
-    config?: AxiosRequestConfig,
-  ): Promise<R> {
-    const requestUrl: string = buildUrl(url);
-    return axios.put(requestUrl, data, config);
+    options?: Options,
+  ): Promise<Response<T>> {
+    return this.perform<T>('post', url, data, options);
   }
 
-  public async patch<T = any, R = AxiosResponse<T>>(
+  public async put<T = any>(
     url: string,
     data?: any,
-    config?: AxiosRequestConfig,
-  ): Promise<R> {
-    const requestUrl: string = buildUrl(url);
-    return axios.patch(requestUrl, data, config);
+    options?: Options,
+  ): Promise<Response<T>> {
+    return this.perform<T>('put', url, data, options);
   }
 
-  public async delete<T = any, R = AxiosResponse<T>>(
+  public async patch<T = any>(
     url: string,
-    config?: AxiosRequestConfig,
-  ): Promise<R> {
-    const requestUrl: string = buildUrl(url);
-    return axios.delete(requestUrl, config);
+    data?: any,
+    options?: Options,
+  ): Promise<Response<T>> {
+    return this.perform<T>('patch', url, data, options);
+  }
+
+  public async delete<T = any>(
+    url: string,
+    options?: Options,
+  ): Promise<Response<T>> {
+    return this.perform<T>('delete', url, undefined, options);
   }
 }
 

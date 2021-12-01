@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-sync-scripts */
+
 import clsx from 'clsx';
 import Document, {
   Html,

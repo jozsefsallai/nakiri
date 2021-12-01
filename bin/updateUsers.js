@@ -14,22 +14,29 @@ const axios = require('axios');
   const users = await authorizedUserRepository.find();
 
   for await (const user of users) {
-    const { data } = await axios.get(`https://discordapp.com/api/users/${user.discordId}`, {
-      headers: {
-        Authorization: `Bot ${config.discord.botToken}`,
-      }
-    });
+    const { data } = await axios.get(
+      `https://discordapp.com/api/users/${user.discordId}`,
+      {
+        headers: {
+          Authorization: `Bot ${config.discord.botToken}`,
+        },
+      },
+    );
 
     const { username, discriminator, avatar } = data;
     await authorizedUserRepository.update(user.id, {
       name: username,
       discriminator,
-      image: avatar
+      image: avatar,
     });
 
-    console.log(`Updated user ${username}#${discriminator} (ID: ${user.discordId})`);
+    console.log(
+      `Updated user ${username}#${discriminator} (ID: ${user.discordId})`,
+    );
   }
-})().then(() => {
-  console.log('Done!');
-  process.exit(0);
-}).catch(console.error);
+})()
+  .then(() => {
+    console.log('Done!');
+    process.exit(0);
+  })
+  .catch(console.error);

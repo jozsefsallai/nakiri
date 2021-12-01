@@ -1,5 +1,6 @@
-import clsx from 'clsx';
 import { ImgHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
+
+import clsx from 'clsx';
 
 export interface DiscordAvatarProps
   extends DetailedHTMLProps<
@@ -22,6 +23,7 @@ const DiscordAvatar = (
       }.png`;
 
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={userAvatarUrl}
       {...props}

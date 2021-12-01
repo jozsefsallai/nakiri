@@ -20,11 +20,13 @@ const { AuthorizedUser } = require('../db/models/auth/AuthorizedUser');
     return;
   }
 
-  const discordResponse = await axios.get(`https://discordapp.com/api/users/${discordId}`, {
-    headers: {
-      Authorization: `Bot ${config.discord.botToken}`
-    }
-  }).then(res => res.data);
+  const discordResponse = await axios
+    .get(`https://discordapp.com/api/users/${discordId}`, {
+      headers: {
+        Authorization: `Bot ${config.discord.botToken}`,
+      },
+    })
+    .then((res) => res.data);
 
   const user = new AuthorizedUser();
   user.discordId = discordId;
@@ -35,4 +37,6 @@ const { AuthorizedUser } = require('../db/models/auth/AuthorizedUser');
 
   await authorizedUserRepository.insert(user);
   console.log('Initial user authorized successfully.');
-})().then(() => process.exit(0)).catch(console.error);
+})()
+  .then(() => process.exit(0))
+  .catch(console.error);

@@ -17,21 +17,21 @@ const { UserPermissions } = require('../lib/UserPermissions');
     {
       type: 'input',
       name: 'discordId',
-      message: 'Discord ID:'
+      message: 'Discord ID:',
     },
     {
       type: 'checkbox',
       name: 'permissionsList',
       message: 'Permissions:',
       choices: Object.keys(UserPermissions)
-        .filter(value => !isNaN(Number(value)))
-        .map(key => {
+        .filter((value) => !isNaN(Number(value)))
+        .map((key) => {
           return {
             name: UserPermissions[key],
-            value: Number(key)
+            value: Number(key),
           };
-        })
-    }
+        }),
+    },
   ]);
 
   const userCount = await authorizedUserRepository.count({ discordId });
@@ -40,15 +40,16 @@ const { UserPermissions } = require('../lib/UserPermissions');
     throw new Error('User already added to the list of authorized users.');
   }
 
-  const permissions = permissionsList.length === 0
-    ? 1
-    : permissionsList.reduce((a, b) => a + b);
+  const permissions =
+    permissionsList.length === 0 ? 1 : permissionsList.reduce((a, b) => a + b);
 
-  const discordResponse = await axios.get(`https://discordapp.com/api/users/${discordId}`, {
-    headers: {
-      Authorization: `Bot ${config.discord.botToken}`
-    }
-  }).then(res => res.data);
+  const discordResponse = await axios
+    .get(`https://discordapp.com/api/users/${discordId}`, {
+      headers: {
+        Authorization: `Bot ${config.discord.botToken}`,
+      },
+    })
+    .then((res) => res.data);
 
   const user = new AuthorizedUser();
   user.discordId = discordId;
@@ -60,12 +61,19 @@ const { UserPermissions } = require('../lib/UserPermissions');
   await authorizedUserRepository.insert(user);
   return {
     discordId,
-    permissions: permissionsList.length === 0
-      ? [ UserPermissions.MANAGE_OWN_GUILD_BLACKLISTS ]
-      : permissionsList
+    permissions:
+      permissionsList.length === 0
+        ? [UserPermissions.MANAGE_OWN_GUILD_BLACKLISTS]
+        : permissionsList,
   };
-})().then(({ discordId, permissions }) => {
-  console.log(`Authorized Discord user with ID ${discordId} with the following permissions:`);
-  permissions.forEach(permission => console.log(`  - ${UserPermissions[permission]}`));
-  process.exit(0);
-}).catch(console.error);
+})()
+  .then(({ discordId, permissions }) => {
+    console.log(
+      `Authorized Discord user with ID ${discordId} with the following permissions:`,
+    );
+    permissions.forEach((permission) =>
+      console.log(`  - ${UserPermissions[permission]}`),
+    );
+    process.exit(0);
+  })
+  .catch(console.error);

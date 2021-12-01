@@ -27,12 +27,12 @@ export class Gateway {
   private wss: Server;
   private clients: GatewayClient[] = [];
   private pingInterval: SetIntervalAsyncTimer;
+  private port: number;
 
-  constructor(server: HTTPServer) {
-    this.wss = new Server({
-      server,
-      path: '/gateway',
-    });
+  constructor(port: number) {
+    this.wss = new Server({ port });
+
+    this.port = port;
 
     this.wss.on('connection', (ws) => {
       const client = new GatewayClient(ws);
@@ -43,6 +43,10 @@ export class Gateway {
       client.on<IReverseRequest>('reverseMessage', reverseHandler);
       client.on<IdentifyRequest>('identify', identifyHandler);
       client.on<ReconnectRequest>('reconnect', reconnectHandler);
+    });
+
+    this.wss.on('error', (error) => {
+      console.error(error);
     });
 
     this.pingInterval = setIntervalAsync(async () => {
@@ -98,5 +102,9 @@ export class Gateway {
 
       await redis.set(`gatewayNotification:${notificationId}`, queueData);
     }
+  }
+
+  getPort(): number {
+    return this.port;
   }
 }

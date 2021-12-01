@@ -6,6 +6,7 @@ import { Clock } from 'react-feather';
 import clsx from 'clsx';
 import truncate from 'lodash.truncate';
 import { format as formatDate } from 'date-fns';
+
 import { Severity } from '@/db/common/Severity';
 
 export interface YouTubeChannelEntryProps {
@@ -30,6 +31,7 @@ const YouTubeChannelEntry: React.FC<YouTubeChannelEntryProps> = ({
     <div className="flex justify-center gap-3">
       <div className="w-20 cursor-pointer" onClick={handleItemClick}>
         {item.thumbnailUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item.thumbnailUrl}
             alt={item.name}

@@ -7,6 +7,7 @@ import { Clock, Video } from 'react-feather';
 import clsx from 'clsx';
 import truncate from 'lodash.truncate';
 import { format as formatDate } from 'date-fns';
+
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Severity } from '@/db/common/Severity';
 
@@ -38,6 +39,7 @@ const YouTubeVideoEntry: React.FC<YouTubeVideoEntryProps> = ({
     <div className="flex justify-center gap-3">
       <div className="w-36 cursor-pointer" onClick={handleItemClick}>
         {item.thumbnailUrl && !currentUser.hideThumbnails && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item.thumbnailUrl}
             alt={item.title}

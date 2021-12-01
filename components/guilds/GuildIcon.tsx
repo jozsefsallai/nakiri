@@ -1,7 +1,7 @@
-import { IGuild } from '@/controllers/guilds/IGuild';
-import { IDiscordGuild } from '@/db/models/blacklists/DiscordGuild';
-import clsx from 'clsx';
 import { HTMLProps, forwardRef } from 'react';
+
+import { IGuild } from '@/controllers/guilds/IGuild';
+import clsx from 'clsx';
 
 export interface GuildIconProps extends HTMLProps<HTMLDivElement> {
   guild: IGuild;
@@ -40,6 +40,7 @@ const GuildIcon = ({ guild, compact, ...props }: GuildIconProps, ref) => {
   return (
     <div {...props} className={classNames} title={guild.name} ref={ref}>
       {icon && (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={icon}
           className="rounded-full w-full h-full"
