@@ -23,7 +23,7 @@
     "@mdx-js/react": "^1.6.22",
     "@next/eslint-plugin-next": "^12.0.4",
     "@sentry/nextjs": "^6.11.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bull": "^3.29.0",
     "camelcase": "^6.2.0",
     "clsx": "^1.1.1",
