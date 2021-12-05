@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -14,6 +13,7 @@ import (
 	"github.com/jozsefsallai/nakiri/workers/database/models"
 	"github.com/jozsefsallai/nakiri/workers/utils"
 	"github.com/jozsefsallai/nakiri/workers/youtube"
+	"gopkg.in/guregu/null.v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -124,30 +124,11 @@ func UpdateYouTubeVideoIDState(id string, state dbutils.ProcessingState) {
 func UpdateYouTubeVideoID(entry *models.YouTubeVideoID, data *youtube.YTVideoListItem) {
 	uploadDate, _ := time.Parse(time.RFC3339, data.Snippet.PublishedAt)
 
-	entry.Title = sql.NullString{
-		String: data.Snippet.Title,
-		Valid:  true,
-	}
-
-	entry.ThumbnailURL = sql.NullString{
-		String: data.Snippet.Thumbnails.Best(),
-		Valid:  true,
-	}
-
-	entry.UploadDate = sql.NullTime{
-		Time:  uploadDate,
-		Valid: true,
-	}
-
-	entry.UploaderID = sql.NullString{
-		String: data.Snippet.ChannelID,
-		Valid:  true,
-	}
-
-	entry.UploaderName = sql.NullString{
-		String: data.Snippet.ChannelTitle,
-		Valid:  true,
-	}
+	entry.Title = null.StringFrom(data.Snippet.Title)
+	entry.ThumbnailURL = null.StringFrom(data.Snippet.Thumbnails.Best())
+	entry.UploadDate = null.TimeFrom(uploadDate)
+	entry.UploaderID = null.StringFrom(data.Snippet.ChannelID)
+	entry.UploaderName = null.StringFrom(data.Snippet.ChannelTitle)
 
 	db.Save(entry)
 }
@@ -175,25 +156,10 @@ func UpdateYouTubeChannelIDState(id string, state dbutils.ProcessingState) {
 func UpdateYouTubeChannelID(entry *models.YouTubeChannelID, data *youtube.YTChannelListItem) {
 	publishedAt, _ := time.Parse(time.RFC3339, data.Snippet.PublishedAt)
 
-	entry.Name = sql.NullString{
-		String: data.Snippet.Title,
-		Valid:  true,
-	}
-
-	entry.Description = sql.NullString{
-		String: data.Snippet.Description,
-		Valid:  true,
-	}
-
-	entry.ThumbnailURL = sql.NullString{
-		String: data.Snippet.Thumbnails.Best(),
-		Valid:  true,
-	}
-
-	entry.PublishedAt = sql.NullTime{
-		Time:  publishedAt,
-		Valid: true,
-	}
+	entry.Name = null.StringFrom(data.Snippet.Title)
+	entry.Description = null.StringFrom(data.Snippet.Description)
+	entry.ThumbnailURL = null.StringFrom(data.Snippet.Thumbnails.Best())
+	entry.PublishedAt = null.TimeFrom(publishedAt)
 
 	db.Save(entry)
 }

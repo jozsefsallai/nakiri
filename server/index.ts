@@ -7,6 +7,8 @@ import middleware from './core/middleware';
 import routes from './core/routes';
 import boot from './core/boot';
 
+import IPCServer from '@/services/ipc';
+
 import getPort from 'get-port';
 
 export default async function server() {
@@ -26,5 +28,8 @@ export default async function server() {
 
   middleware(app, server, gateway);
   routes(app, nextHandler);
-  boot(server, port);
+  boot(server, port, gateway);
+
+  const ipc = new IPCServer(gateway);
+  ipc.start();
 }

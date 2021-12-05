@@ -1,4 +1,3 @@
-import { Server as HTTPServer } from 'http';
 import { Server } from 'ws';
 
 import Redis from '@/services/redis';

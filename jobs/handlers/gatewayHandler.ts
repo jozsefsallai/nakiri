@@ -54,7 +54,7 @@ const handler: ProcessCallbackFunction<GatewayBlacklistNotificationJob> =
       value: getValue(job.data.blacklist, job.data.entry),
       blacklist: job.data.blacklist,
       kind: job.data.blacklist === 'linkPattern' ? 'regex' : 'substring',
-      global: !job.data.entry.group,
+      global: !job.data.entry.group && !job.data.entry['groupId'],
       guild: job.data.entry.group && job.data.entry.guildId,
       metadata: job.data.entry,
     };

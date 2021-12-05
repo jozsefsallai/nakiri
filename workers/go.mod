@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/joho/godotenv v1.3.0
+	gopkg.in/guregu/null.v3 v3.5.0 // indirect
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/gorm v1.21.12
 )
