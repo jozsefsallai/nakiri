@@ -64,6 +64,8 @@ services:
       WAIT_HOSTS: mysql:3306, redis:6379
     ports:
       - 3000:3000
+    volumes:
+      - nakiri-tmp:/tmp # probably a very bad practice
 
   workers:
     container_name: workers
@@ -85,7 +87,10 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_NAME: ${DATABASE_NAME}
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
-      WAIT_HOSTS: mysql:3306
+      WAIT_HOSTS: mysql:3306, nakiriapi:3000
+    volumes:
+      - nakiri-tmp:/tmp # probably still a very bad practice
 
 volumes:
   database:
+  nakiri-tmp:

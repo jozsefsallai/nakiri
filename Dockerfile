@@ -25,6 +25,6 @@ COPY --from=builder --chown=ayame:ayame /app .
 
 USER ayame
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+ADD --chown=ayame:ayame https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
 RUN chmod +x /wait
 RUN /wait
