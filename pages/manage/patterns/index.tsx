@@ -20,6 +20,21 @@ import { APIPaginationData } from '@/services/axios';
 
 const MySwal = withReactContent(Swal);
 
+const InfoBox = () => (
+  <>
+    <p>
+      Here you can manage the blacklisted link patterns. Using this blacklist
+      assumes you have prior experience with and knowledge of
+      JavaScript-compatible regular expressions. These patterns will be used to
+      detect malicious URLs.
+    </p>
+    <p>
+      The handy testing utility will allow you to test your patterns against an
+      arbitrary message.
+    </p>
+  </>
+);
+
 const ManageLinkPatternsIndexPage = () => {
   const { groups, errored } = useUserGroups();
   const [items, setItems] = useState<ILinkPattern[] | null>(null);
@@ -100,6 +115,7 @@ const ManageLinkPatternsIndexPage = () => {
     <DashboardLayout
       hasContainer
       title="Blacklisted Link Patterns"
+      infoBox={<InfoBox />}
       buttonText="Add pattern"
       onButtonClick={handleNewButtonClick}
     >

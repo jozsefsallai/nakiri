@@ -16,6 +16,23 @@ import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
 import Swal from 'sweetalert2';
 
+const InfoBox = () => (
+  <>
+    <p>
+      In this section you can manage the monitored keywords for your guild.
+      These keywords will be scanned on a regular basis to inform about new
+      YouTube videos that contain them.
+    </p>
+    <p>
+      For more information about monitored keywords, please refer to the{' '}
+      <a href="/docs/workers" target="_blank">
+        Nakiri Developer Documentation
+      </a>
+      .
+    </p>
+  </>
+);
+
 const ManageMonitoredKeywordsIndexPage = () => {
   const [items, setItems] = useState<IMonitoredKeyword[] | null>(null);
   const [guilds, _, guildsErrored] = useGuilds();
@@ -94,6 +111,7 @@ const ManageMonitoredKeywordsIndexPage = () => {
     <DashboardLayout
       hasContainer
       title="Monitored Keywords"
+      infoBox={<InfoBox />}
       buttonText="Add keyword"
       onButtonClick={handleNewButtonClick}
     >

@@ -1,14 +1,19 @@
 import clsx from 'clsx';
-import { HTMLProps, forwardRef } from 'react';
+import { HTMLProps, forwardRef, ReactNode } from 'react';
 import Button, { ButtonSize } from '../button/Button';
+import InfoBox from '../infobox/InfoBox';
 
 export interface BoxProps extends HTMLProps<HTMLDivElement> {
   title?: string;
+  infoBox?: ReactNode;
   buttonText?: string;
   onButtonClick?();
 }
 
-const Box = ({ title, buttonText, onButtonClick, ...props }: BoxProps, ref) => {
+const Box = (
+  { title, infoBox, buttonText, onButtonClick, ...props }: BoxProps,
+  ref,
+) => {
   const classNames = clsx(
     'px-8 py-5 bg-nakiri-base-invert shadow-sm rounded-md mb-5',
     props.className,
@@ -35,6 +40,9 @@ const Box = ({ title, buttonText, onButtonClick, ...props }: BoxProps, ref) => {
           )}
         </div>
       )}
+
+      {infoBox && <InfoBox>{infoBox}</InfoBox>}
+
       {props.children}
     </section>
   );

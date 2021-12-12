@@ -10,6 +10,7 @@ export interface DashboardLayoutProps {
   children: ReactNode;
   hasContainer?: boolean;
   title?: string;
+  infoBox?: ReactNode;
   buttonText?: string;
   onButtonClick?();
 }
@@ -20,6 +21,7 @@ const DashboardLayout = ({
   buttonText,
   onButtonClick,
   title,
+  infoBox,
 }: DashboardLayoutProps) => {
   return (
     <>
@@ -36,6 +38,7 @@ const DashboardLayout = ({
           {hasContainer && (
             <Box
               title={title}
+              infoBox={infoBox}
               buttonText={buttonText}
               onButtonClick={onButtonClick}
             >

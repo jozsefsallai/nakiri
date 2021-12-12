@@ -17,6 +17,21 @@ import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
 
+const InfoBox = () => (
+  <>
+    <p>
+      Here you can manage the YouTube channel blacklists. These blacklists will
+      be used to filter out YouTube channel IDs (i.e. channels that frequently
+      upload videos that you wouldn't want to be posted in your server).
+    </p>
+    <p>
+      <strong>Note:</strong> when you add a new entry, the channel's metadata
+      will be collected for it. It will also be periodically updated and removed
+      from the blacklist if the channel is no longer available.
+    </p>
+  </>
+);
+
 const ManageChannelsIndexPage = () => {
   const { groups, errored } = useUserGroups();
   const [items, setItems] = useState<IYouTubeChannelID[] | null>(null);
@@ -101,6 +116,7 @@ const ManageChannelsIndexPage = () => {
     <DashboardLayout
       hasContainer
       title="Blacklisted YouTube Channel IDs"
+      infoBox={<InfoBox />}
       buttonText="Add channel ID"
       onButtonClick={handleNewButtonClick}
     >

@@ -16,6 +16,16 @@ import { errors } from '@/lib/errors';
 
 import Swal from 'sweetalert2';
 
+const InfoBox = () => (
+  <>
+    <p>
+      In this section, you can manage the users who have access to the Nakiri
+      web UI. You can grant them various permissions and revoke their access
+      altogether.
+    </p>
+  </>
+);
+
 const ManageUsersIndexPage = () => {
   const [users, setUsers] = useState<IAuthorizedUser[] | null>(null);
   const [error, setError] = useState<string>('');
@@ -100,6 +110,7 @@ const ManageUsersIndexPage = () => {
     <DashboardLayout
       hasContainer
       title="Authorized Users"
+      infoBox={<InfoBox />}
       buttonText="Add User"
       onButtonClick={handleNewButtonClick}
     >

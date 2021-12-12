@@ -7,6 +7,14 @@ import apiService from '@/services/apis';
 import { UpdateUserAPIRequest } from '@/services/apis/users/UsersAPIService';
 import { useEffect, useState } from 'react';
 
+const InfoBox = () => (
+  <>
+    This is where you can change the settings that will shape your experience in
+    the Nakiri Dashboard. Currently, these settings are limited to display
+    preferences.
+  </>
+);
+
 const UpdateUserPage = () => {
   const [currentUser, setCurrentUser] = useCurrentUser();
   const [requestInProgress, setRequestInProgress] = useState(false);
@@ -44,7 +52,7 @@ const UpdateUserPage = () => {
   };
 
   return (
-    <DashboardLayout hasContainer title="My Settings">
+    <DashboardLayout hasContainer title="My Settings" infoBox={<InfoBox />}>
       <h4>Display Preferences</h4>
       <form onSubmit={handleDisplayPreferencesSubmit}>
         <div className="input-group">

@@ -9,6 +9,23 @@ import { useUserGroups } from '@/hooks/useGroups';
 
 import GroupList from '@/components/groups/GroupList';
 
+const InfoBox = () => (
+  <>
+    <p>
+      In this section, you will be able to view the groups that you have access
+      to and create new groups yourself.
+    </p>
+    <p>
+      Groups are Nakiri's way of organizing API access across multiple guilds
+      and users/clients. You can learn more about groups in the{' '}
+      <a href="/docs/groups/what-are-groups" target="_blank">
+        Nakiri documentation
+      </a>
+      .
+    </p>
+  </>
+);
+
 const ManageGroupsPage: React.FC = () => {
   const { groups, errored } = useUserGroups();
 
@@ -22,6 +39,7 @@ const ManageGroupsPage: React.FC = () => {
     <DashboardLayout
       hasContainer
       title="Groups"
+      infoBox={<InfoBox />}
       buttonText="Create Group"
       onButtonClick={handleNewButtonClick}
     >

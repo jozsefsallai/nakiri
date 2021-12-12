@@ -17,6 +17,15 @@ import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
 import PhraseEntry from '@/components/blacklist/entry-data/PhraseEntry';
 
+const InfoBox = () => (
+  <>
+    <p>
+      Here you can manage the blacklists for generic phrases. These phrases will
+      be detected using a fuzzy text matching algorithm within the analyzer.
+    </p>
+  </>
+);
+
 const ManagePhrasesIndexPage = () => {
   const { groups, errored } = useUserGroups();
   const [items, setItems] = useState<IPhrase[] | null>(null);
@@ -88,6 +97,7 @@ const ManagePhrasesIndexPage = () => {
     <DashboardLayout
       hasContainer
       title="Blacklisted Phrases"
+      infoBox={<InfoBox />}
       buttonText="Add phrase"
       onButtonClick={handleNewButtonClick}
     >

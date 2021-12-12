@@ -16,6 +16,28 @@ import Swal from 'sweetalert2';
 import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
+import Link from 'next/link';
+
+const InfoBox = () => (
+  <>
+    <p>
+      Here you can manage the YouTube video blacklists. These blacklists will be
+      used to filter out YouTube video IDs (i.e. videos that mention past
+      identities or real-life information).
+    </p>
+    <p>
+      <strong>Note:</strong> when you add a new entry, the video's metadata will
+      be collected for it. It will also be periodically updated and removed from
+      the blacklist if the video is no longer available. The metadata also
+      contains the thumbnail of the video. If you are not comfortable with being
+      exposed to such thumbnails, you can disable them in your{' '}
+      <Link href="/manage/me">
+        <a>display settings</a>
+      </Link>
+      .
+    </p>
+  </>
+);
 
 const ManageVideosIndexPage = () => {
   const { groups, errored } = useUserGroups();
@@ -104,6 +126,7 @@ const ManageVideosIndexPage = () => {
     <DashboardLayout
       hasContainer
       title="Blacklisted YouTube Video IDs"
+      infoBox={<InfoBox />}
       buttonText="Add video ID"
       onButtonClick={handleNewButtonClick}
     >

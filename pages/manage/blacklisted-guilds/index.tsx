@@ -16,6 +16,25 @@ import toaster from '@/lib/toaster';
 import { errors } from '@/lib/errors';
 import { APIPaginationData } from '@/services/axios';
 import DiscordGuildEntry from '@/components/blacklist/entry-data/DiscordGuildEntry';
+import Link from 'next/link';
+
+const InfoBox = () => (
+  <>
+    <p>
+      Here you can manage the Discord guild ID blacklist. This is a list of
+      Discord guilds that are forbidden from posting. The analyzer will detect
+      if an invite link that points to any of these guilds is posted.
+    </p>
+    <p>
+      <strong>Note:</strong> this is NOT where you manage your authorized
+      guilds. You can do that on the{' '}
+      <Link href="/manage/guilds">
+        <a>My Guilds</a>
+      </Link>{' '}
+      page.
+    </p>
+  </>
+);
 
 const ManageGuildsIndexPage = () => {
   const { groups, errored } = useUserGroups();
@@ -85,6 +104,7 @@ const ManageGuildsIndexPage = () => {
     <DashboardLayout
       hasContainer
       title="Blacklisted Discord Guilds"
+      infoBox={<InfoBox />}
       buttonText="Add guild ID"
       onButtonClick={handleNewButtonClick}
     >
