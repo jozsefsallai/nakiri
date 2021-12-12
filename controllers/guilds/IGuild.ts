@@ -7,7 +7,3 @@ export interface IGuild {
   features: string[];
   permissions_new: string;
 }
-
-export interface IGuildWithKey extends IGuild {
-  key: string;
-}

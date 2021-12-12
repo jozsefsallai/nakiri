@@ -1,8 +1,8 @@
-import { IGuild, IGuildWithKey } from '@/controllers/guilds/IGuild';
+import { IGuild } from '@/controllers/guilds/IGuild';
 import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 
 export const mapGuildMetadata = (
-  guilds: (IGuild | IGuildWithKey)[],
+  guilds: IGuild[],
   rawGuild: IAuthorizedGuild,
 ): IGuild | null => {
   const targetGuild = guilds.find((g) => g.id === rawGuild.guildId);
@@ -10,7 +10,7 @@ export const mapGuildMetadata = (
 };
 
 export const bulkMapGuildMetadata = (
-  guilds: (IGuild | IGuildWithKey)[],
+  guilds: IGuild[],
   rawGuilds: IAuthorizedGuild[],
 ): IGuild[] => {
   const guildsWithMetadata = rawGuilds.map((g) => mapGuildMetadata(guilds, g));

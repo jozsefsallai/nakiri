@@ -1,19 +1,17 @@
 import axiosService from '@/services/axios';
 import { APIResponse } from '@/services/axios';
 
-import { IGuild, IGuildWithKey } from '@/controllers/guilds/IGuild';
+import { IGuild } from '@/controllers/guilds/IGuild';
 
 export interface GetGuildsAPIResponse extends APIResponse {
-  guilds: IGuildWithKey[];
+  guilds: IGuild[];
 }
 
 export interface GetAllGuildsAPIResponse extends APIResponse {
   guilds: IGuild[];
 }
 
-export interface AddNewGuildAPIResponse extends APIResponse {
-  key: string;
-}
+export interface AddNewGuildAPIResponse extends APIResponse {}
 
 export class GuildsAPIService {
   static GET_GUILDS_URL = '/api/guilds';

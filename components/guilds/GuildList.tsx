@@ -1,9 +1,9 @@
-import { IGuild, IGuildWithKey } from '@/controllers/guilds/IGuild';
+import { IGuild } from '@/controllers/guilds/IGuild';
 import CompactGuildListItem from './CompactGuildListItem';
 import GuildListItem from './GuildListItem';
 
 export interface GuildListProps {
-  guilds: (IGuild | IGuildWithKey)[];
+  guilds: IGuild[];
   onGuildClick?(guild: IGuild);
   activeGuild?: IGuild;
   compact?: boolean;

@@ -4,13 +4,13 @@ import Redis from '@/services/redis';
 import axios from 'axios';
 import { Session } from 'next-auth';
 
-import { IGuild, IGuildWithKey } from './IGuild';
+import { IGuild } from './IGuild';
 
 export const fetchGuilds = async (
   session: Session,
   all?: boolean,
   cached: boolean = true,
-): Promise<IGuild[] | IGuildWithKey[]> => {
+): Promise<IGuild[]> => {
   const redis = Redis.getInstance();
   const key = `guilds:${session.user.id}`;
 
@@ -41,12 +41,12 @@ export const fetchGuilds = async (
 
   const allGuilds = await guildRepository.find();
 
-  const finalGuilds: IGuildWithKey[] = [];
+  const finalGuilds: IGuild[] = [];
   guilds.forEach((guild) => {
     const keyEntry = allGuilds.find((entry) => entry.guildId === guild.id);
 
     if (keyEntry) {
-      finalGuilds.push({ ...guild, key: keyEntry.key });
+      finalGuilds.push({ ...guild });
     }
   });
 

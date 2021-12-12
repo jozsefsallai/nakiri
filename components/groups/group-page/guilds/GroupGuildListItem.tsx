@@ -1,11 +1,11 @@
 import Button, { ButtonSize } from '@/components/common/button/Button';
 import GuildIcon from '@/components/guilds/GuildIcon';
-import { IGuildWithKey } from '@/controllers/guilds/IGuild';
+import { IGuild } from '@/controllers/guilds/IGuild';
 import { IAuthorizedGuild } from '@/db/models/auth/AuthorizedGuild';
 
 export interface GroupGuildListItemProps {
   guild: IAuthorizedGuild;
-  metadata?: IGuildWithKey;
+  metadata?: IGuild;
   canManageGuilds: boolean;
   onGuildRemoveClicked: (guild: IAuthorizedGuild) => void;
 }

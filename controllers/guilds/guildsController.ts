@@ -52,8 +52,8 @@ export const insert: NextApiHandler = async (req, res) => {
   }
 
   try {
-    const key = await addGuild(session, guildId);
-    return res.json({ ok: true, key });
+    await addGuild(session, guildId);
+    return res.json({ ok: true });
   } catch (err) {
     if (err.name === 'AddGuildError') {
       return res.status(err.statusCode).json({

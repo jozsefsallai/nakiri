@@ -4,7 +4,7 @@ import MessageBox, {
 import ZeroDataState from '@/components/common/zds/ZeroDataState';
 import GuildList from '@/components/guilds/GuildList';
 import Loading from '@/components/loading/Loading';
-import { IGuild, IGuildWithKey } from '@/controllers/guilds/IGuild';
+import { IGuild } from '@/controllers/guilds/IGuild';
 import { useGuilds } from '@/hooks/useGuilds';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import { errors } from '@/lib/errors';
@@ -42,16 +42,14 @@ const ManageGuildsIndexPage = () => {
     try {
       setRequestInProgress(true);
 
-      const { key } = await apiService.guilds.addNewGuild(guild.id);
-      toaster.success(`Added "${guild.name}" with key "${key}".`);
-
-      const finalGuild: IGuildWithKey = { ...guild, key };
+      await apiService.guilds.addNewGuild(guild.id);
+      toaster.success(`Authorized "${guild.name}" with key.`);
 
       if (!currentGuilds) {
-        setCurrentGuilds([finalGuild]);
+        setCurrentGuilds([guild]);
       } else {
         const newGuilds = currentGuilds.slice(0);
-        newGuilds.push(finalGuild);
+        newGuilds.push(guild);
         setCurrentGuilds(newGuilds.sort((a, b) => b.id.localeCompare(a.id)));
       }
 

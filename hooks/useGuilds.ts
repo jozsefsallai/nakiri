@@ -1,4 +1,4 @@
-import { IGuildWithKey } from '@/controllers/guilds/IGuild';
+import { IGuild } from '@/controllers/guilds/IGuild';
 import toaster from '@/lib/toaster';
 import apiService from '@/services/apis';
 
@@ -6,8 +6,8 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useCurrentUser } from './useCurrentUser';
 
 export type IUserGuilds = [
-  guilds: IGuildWithKey[] | null,
-  setGuilds: (guilds: IGuildWithKey[]) => void,
+  guilds: IGuild[] | null,
+  setGuilds: (guilds: IGuild[]) => void,
   errored: boolean,
 ];
 
@@ -18,7 +18,7 @@ export const GuildContext = createContext<IUserGuilds>([
 ]);
 
 export const useUserGuildsState = (): IUserGuilds => {
-  const [guilds, setGuilds] = useState<IGuildWithKey[] | null>(null);
+  const [guilds, setGuilds] = useState<IGuild[] | null>(null);
   const [errored, setErrored] = useState(false);
   const [currentUser, _] = useCurrentUser();
 
