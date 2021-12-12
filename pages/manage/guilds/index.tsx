@@ -21,7 +21,7 @@ const ManageGuildsIndexPage = () => {
   return (
     <DashboardLayout
       hasContainer
-      title="Guild API Keys"
+      title="Authorized Guilds"
       buttonText="Add Guild"
       onButtonClick={handleNewButtonClick}
     >

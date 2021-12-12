@@ -18,7 +18,6 @@ import omit from '../../../lib/omit';
 export interface IAuthorizedGuild extends IModelWithSnowflakeID {
   createdAt: Date;
   updatedAt: Date;
-  key: string;
   guildId: string;
   groups?: Partial<IGroup>[];
 }
@@ -35,9 +34,6 @@ export class AuthorizedGuild
   updatedAt: Date;
 
   @Column('varchar')
-  key: string;
-
-  @Column('varchar')
   guildId: string;
 
   @ManyToMany(() => Group, (group) => group.guilds, {
@@ -52,7 +48,6 @@ export class AuthorizedGuild
       id: this.id.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-      key: this.key,
       guildId: this.guildId,
       groups: this.groups?.map((g) => omit(g, 'guilds').toJSON()),
     };

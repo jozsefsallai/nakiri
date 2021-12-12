@@ -16,7 +16,7 @@ export class APIError extends Error {
 
 export const errors = {
   CANNOT_MANAGE_GUILD: 'You do not have access to managing this guild.',
-  GUILD_ALREADY_ADDED: 'An API key for this guild has already been generated.',
+  GUILD_ALREADY_ADDED: 'The guild has already been authorized.',
   GUILD_ID_NOT_PROVIDED: 'You have not specified a guild.',
 
   GROUP_NOT_FOUND: 'The specified guild coult not be found.',
