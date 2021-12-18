@@ -260,4 +260,14 @@ const KeywordSearchResultsIndexPage: React.FC<KeywordSearchResultsIndexPageProps
     );
   };
 
+export const getServerSideProps = async ({ query }) => {
+  const { id } = query;
+
+  return {
+    props: {
+      id,
+    },
+  };
+};
+
 export default KeywordSearchResultsIndexPage;

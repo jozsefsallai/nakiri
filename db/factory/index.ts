@@ -10,6 +10,7 @@ import TypeORMAdapter from './support/TypeORMAdapter';
 
 import { v4 as uuid } from 'uuid';
 import { GroupMember } from '../models/groups/GroupMember';
+import { ALL_PERMISSIONS } from '@/lib/GroupMemberPermissions';
 
 factory.setAdapter(new TypeORMAdapter());
 
@@ -55,6 +56,7 @@ factory.define('group', Group, {
 
 factory.define('groupMember', GroupMember, {
   groupId: factory.assoc('group', 'id'),
+  permissions: ALL_PERMISSIONS,
 });
 
 export default factory;

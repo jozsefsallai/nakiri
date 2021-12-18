@@ -50,4 +50,14 @@ const GroupPage: React.FC<GroupPageProps> = ({ id }) => {
   );
 };
 
+export const getServerSideProps = async ({ query }) => {
+  const { id } = query;
+
+  return {
+    props: {
+      id,
+    },
+  };
+};
+
 export default GroupPage;
