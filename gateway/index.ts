@@ -89,8 +89,11 @@ export class Gateway {
       }
 
       client.emit(event, {
-        notificationId,
-        ...data,
+        ok: true,
+        data: {
+          notificationId,
+          ...data,
+        },
       });
 
       const queueData: NotificationQueueEntry = {
