@@ -51,7 +51,7 @@ factory.define('phrase', Phrase, {
 factory.define('group', Group, {
   name: factory.chance('sentence', { words: 3 }),
   description: factory.chance('sentence', { words: 10 }),
-  apiKey: uuid(),
+  apiKey: uuid,
 });
 
 factory.define('groupMember', GroupMember, {
