@@ -110,10 +110,6 @@ export const ensureHasAccessToResource = (
       });
 
       if (group) {
-        if (!groupId) {
-          req.query.group = group.id;
-        }
-
         return callback(req, res);
       }
     }
