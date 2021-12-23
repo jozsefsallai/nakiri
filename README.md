@@ -121,7 +121,22 @@ This job should be running on a tidy schedule:
 NODE_ENV=production node bin/updateUsers
 ```
 
+## Backups
+
+You can back up your database and environment configuration to an S3 bucket. For
+this, you should [install AWS CLI][aws-cli], run `aws configure` to set up your
+credentials, then if you're on Linux or Mac, run or schedule the following
+script:
+
+```sh
+sh bin/backup.sh
+```
+
+If you're on Windows, sorry.
+
 ## License
 
 The source code of this app is licensed under MIT. Refer to the LICENSE file for
 more details.
+
+[aws-cli]: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
