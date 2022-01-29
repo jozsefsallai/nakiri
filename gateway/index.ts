@@ -72,7 +72,7 @@ export class Gateway {
     });
   }
 
-  async emit<T extends GatewayNotification>(
+  async emit<T extends Omit<GatewayNotification, 'notificationId'>>(
     event: string,
     data: T,
     condition?: (client: GatewayClient) => boolean,
