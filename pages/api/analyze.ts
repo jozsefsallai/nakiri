@@ -1,13 +1,11 @@
 import bar from 'next-bar';
-import { withSentry } from '@sentry/nextjs';
-
-import { ensureAuthenticated } from '@/middleware/auth';
-import { ensureHasAccessToResource } from '@/middleware/permissions';
-
-import * as analyzerController from '@/controllers/analyzer/analyzerController';
 
 export default bar({
-  post: withSentry(
-    ensureAuthenticated(ensureHasAccessToResource(analyzerController.analyze)),
-  ),
+  post: (_, res) => {
+    return res.status(410).json({
+      ok: false,
+      error:
+        'The analysis endpoint is no longer supported. Please use the Nakiri Gateway instead.',
+    });
+  },
 });

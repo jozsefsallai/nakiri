@@ -10,6 +10,9 @@ import channelMetadataHandler, {
 import gatewayHandler, {
   GatewayBlacklistNotificationJob,
 } from '@/jobs/handlers/gatewayHandler';
+import analysisHandler, {
+  IAnalysisRequest,
+} from '@/jobs/handlers/analysisHandler';
 
 import { Gateway } from '@/gateway';
 
@@ -25,10 +28,15 @@ const sendGatewayMessage = new Queue<GatewayBlacklistNotificationJob>(
   'send gateway message',
   config.redis.buildRedisUrl(1),
 );
+const queueAnalysis = new Queue<IAnalysisRequest>(
+  'queue message for analysis',
+  config.redis.buildRedisUrl(1),
+);
 
 collectVideoMetadata.process(videoMetadataHandler);
 collectChannelMetadata.process(channelMetadataHandler);
 sendGatewayMessage.process(gatewayHandler);
+queueAnalysis.process(analysisHandler);
 
 const setQueueGateway = async (gateway: Gateway) => {
   // Lord forgive me
@@ -47,6 +55,14 @@ const queueGatewayMessage = async (
   await sendGatewayMessage.add(request);
 };
 
+const queueAnalysisMessage = async (
+  _gateway: Gateway,
+  request: IAnalysisRequest,
+) => {
+  await setQueueGateway(_gateway);
+  await queueAnalysis.add(request);
+};
+
 sendGatewayMessage.on('completed', async (job, result) => {
   await global.__gateway.emit(job.data.event, result, (client) => {
     if (!job.data.entry.group) {
@@ -60,6 +76,7 @@ sendGatewayMessage.on('completed', async (job, result) => {
 export {
   collectVideoMetadata,
   collectChannelMetadata,
+  queueAnalysisMessage,
   queueGatewayMessage,
   setQueueGateway,
 };

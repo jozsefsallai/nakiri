@@ -10,7 +10,11 @@ import {
 
 import { GatewayClient } from './client';
 
-import { IdentifyRequest, ReconnectRequest } from './typings/requests';
+import {
+  AnalysisRequest,
+  IdentifyRequest,
+  ReconnectRequest,
+} from './typings/requests';
 import {
   GatewayClientACK,
   GatewayNotification,
@@ -21,6 +25,7 @@ import ackHandler from './handlers/ack';
 import reverseHandler, { IReverseRequest } from './handlers/reverse';
 import identifyHandler from './handlers/identify';
 import reconnectHandler from './handlers/reconnect';
+import analysisHandler from './handlers/analysis';
 
 export class Gateway {
   private wss: Server;
@@ -34,7 +39,7 @@ export class Gateway {
     this.port = port;
 
     this.wss.on('connection', (ws) => {
-      const client = new GatewayClient(ws);
+      const client = new GatewayClient(ws, this);
       this.clients.push(client);
 
       client.on<GatewayClientACK>('ack', ackHandler);
@@ -42,6 +47,7 @@ export class Gateway {
       client.on<IReverseRequest>('reverseMessage', reverseHandler);
       client.on<IdentifyRequest>('identify', identifyHandler);
       client.on<ReconnectRequest>('reconnect', reconnectHandler);
+      client.on<AnalysisRequest>('analysis', analysisHandler);
     });
 
     this.wss.on('error', (error) => {
@@ -66,7 +72,7 @@ export class Gateway {
     });
   }
 
-  async emit<T extends GatewayNotification>(
+  async emit<T extends Omit<GatewayNotification, 'notificationId'>>(
     event: string,
     data: T,
     condition?: (client: GatewayClient) => boolean,

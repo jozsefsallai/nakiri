@@ -16,6 +16,11 @@ import { DiscordAPIService } from '@/services/discord';
 import { URLUtils, YouTubeChannelMatch } from '@/lib/url';
 
 import { addYouTubeVideoID } from '@/controllers/youtube-video-ids/addYouTubeVideoID';
+import { AnalysisNotification } from '@/gateway/typings/notifications';
+
+import { v4 as uuid } from 'uuid';
+import { MessageContext } from '@/gateway/typings/requests';
+import { Severity } from '@/db/common/Severity';
 
 export interface AnalyzerResult {
   options: IAnalyzerOptions;
@@ -24,6 +29,7 @@ export interface AnalyzerResult {
   problematicChannelIDs: string[];
   problematicDiscordInvites: string[];
   problematicLinks: string[];
+  severity?: Severity;
 }
 
 interface LinkAnalysisResults {
@@ -59,10 +65,12 @@ export class Analyzer {
   private discordGuildRepository: Repository<DiscordGuild>;
   private linkPatternRepository: Repository<LinkPattern>;
 
+  private severity: Severity | undefined;
+
   constructor(
     groupId: string,
     content: string,
-    options: IAnalyzerOptions,
+    options?: IAnalyzerOptions,
     gateway?: Gateway,
   ) {
     this.groupId = groupId;
@@ -70,18 +78,18 @@ export class Analyzer {
 
     this.gateway = gateway;
 
-    this.analyzeYouTubeVideoIDs = options.analyzeYouTubeVideoIDs ?? true;
-    this.analyzeYouTubeChannelIDs = options.analyzeYouTubeChannelIDs ?? true;
+    this.analyzeYouTubeVideoIDs = options?.analyzeYouTubeVideoIDs ?? true;
+    this.analyzeYouTubeChannelIDs = options?.analyzeYouTubeChannelIDs ?? true;
     this.analyzeYouTubeChannelHandles =
-      options.analyzeYouTubeChannelHandles ?? true;
-    this.analyzeDiscordInvites = options.analyzeDiscordInvites ?? true;
-    this.analyzeLinks = options.analyzeLinks ?? true;
-    this.followRedirects = options.followRedirects ?? true;
-    this.preemptiveVideoIDAnalysis = options.preemptiveVideoIDAnalysis ?? true;
-    this.greedy = options.greedy ?? false;
-    this.guildId = options.guildId;
-    this.strictGuildCheck = options.strictGuildCheck ?? false;
-    this.strictGroupCheck = options.strictGroupCheck ?? false;
+      options?.analyzeYouTubeChannelHandles ?? true;
+    this.analyzeDiscordInvites = options?.analyzeDiscordInvites ?? true;
+    this.analyzeLinks = options?.analyzeLinks ?? true;
+    this.followRedirects = options?.followRedirects ?? true;
+    this.preemptiveVideoIDAnalysis = options?.preemptiveVideoIDAnalysis ?? true;
+    this.greedy = options?.greedy ?? false;
+    this.guildId = options?.guildId;
+    this.strictGuildCheck = options?.strictGuildCheck ?? false;
+    this.strictGroupCheck = options?.strictGroupCheck ?? false;
 
     if (this.preemptiveVideoIDAnalysis && config.youtube?.apiKey) {
       this.youTubeAPI = new YouTubeAPIService(config.youtube.apiKey);
@@ -98,6 +106,21 @@ export class Analyzer {
     this.youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
     this.linkPatternRepository = db.getRepository(LinkPattern);
     this.discordGuildRepository = db.getRepository(DiscordGuild);
+  }
+
+  private maxSeverity(
+    currentSeverity: Severity | undefined,
+    newSeverity: Severity | undefined,
+  ): Severity | undefined {
+    if (typeof currentSeverity === 'undefined') {
+      return newSeverity;
+    }
+
+    if (typeof newSeverity === 'undefined') {
+      return currentSeverity;
+    }
+
+    return Math.max(currentSeverity, newSeverity);
   }
 
   private _makeFindConditions<
@@ -200,6 +223,7 @@ export class Analyzer {
 
       if (entry) {
         problematicIDs.push(videoId);
+        this.severity = this.maxSeverity(this.severity, entry.severity);
 
         if (!this.greedy) {
           break;
@@ -211,6 +235,7 @@ export class Analyzer {
       const videoUploader = await this.getVideoUploader(videoId);
       if (videoUploader) {
         problematicIDs.push(videoId);
+        this.severity = this.maxSeverity(this.severity, videoUploader.severity);
 
         try {
           await addYouTubeVideoID({
@@ -249,6 +274,7 @@ export class Analyzer {
 
         if (entry) {
           problematicIDs.push(id);
+          this.severity = this.maxSeverity(this.severity, entry.severity);
 
           if (!this.greedy) {
             break;
@@ -290,10 +316,11 @@ export class Analyzer {
         inviteData.guild.id,
         'blacklistedId',
       );
-      const entry = this.discordGuildRepository.findOne({ where });
+      const entry = await this.discordGuildRepository.findOne({ where });
 
       if (entry) {
         problemaicInvites.push(invite);
+        this.severity = this.maxSeverity(this.severity, entry.severity);
 
         if (!this.greedy) {
           break;
@@ -304,22 +331,22 @@ export class Analyzer {
     return problemaicInvites;
   }
 
-  private checkLink(link: string, patterns: RegExp[]): boolean {
-    let found = false;
+  private checkLink(link: string, patterns: RegExp[]): number {
+    let foundIndex = -1;
 
-    for (const pattern of patterns) {
+    for (const [idx, pattern] of patterns.entries()) {
       if (pattern.test(link)) {
-        found = true;
+        foundIndex = idx;
       }
 
       pattern.lastIndex = 0; // might not even need to do this
 
-      if (found) {
+      if (foundIndex !== -1) {
         break;
       }
     }
 
-    return found;
+    return foundIndex;
   }
 
   private async handleLinks(links: string[]): Promise<LinkAnalysisResults> {
@@ -339,68 +366,74 @@ export class Analyzer {
 
       const allEntries = await this.linkPatternRepository.find({ where });
       patterns = allEntries.map((entry) => new RegExp(entry.pattern, 'gm'));
-    }
 
-    for (const link of links) {
-      if (patterns.length && this.checkLink(link, patterns)) {
-        problematicLinks.push(link);
+      for (const link of links) {
+        const foundIndex = this.checkLink(link, patterns);
 
-        if (!this.greedy) {
-          break;
-        }
+        if (foundIndex !== -1) {
+          problematicLinks.push(link);
+          this.severity = this.maxSeverity(
+            this.severity,
+            allEntries[foundIndex].severity,
+          );
 
-        continue;
-      }
-
-      if (this.followRedirects) {
-        const urldata = new URLUtils(link);
-        await urldata.prepare();
-
-        if (urldata.isYouTubeVideo()) {
-          const videoId = URLUtils.extractYouTubeID(urldata.url);
-          const result = await this.handleYouTubeVideos([videoId]);
-
-          if (result.length && !problematicVideoIDs.includes(videoId)) {
-            problematicVideoIDs.push(videoId);
-
-            if (!this.greedy) {
-              break;
-            }
+          if (!this.greedy) {
+            break;
           }
 
           continue;
         }
 
-        if (urldata.isYouTubeChannel()) {
-          const channel = URLUtils.extractYouTubeChannel(urldata.url);
+        if (this.followRedirects) {
+          const urldata = new URLUtils(link);
+          await urldata.prepare();
 
-          if (!channel) {
+          if (urldata.isYouTubeVideo()) {
+            const videoId = URLUtils.extractYouTubeID(urldata.url);
+            const result = await this.handleYouTubeVideos([videoId]);
+
+            if (result.length && !problematicVideoIDs.includes(videoId)) {
+              problematicVideoIDs.push(videoId);
+
+              if (!this.greedy) {
+                break;
+              }
+            }
+
             continue;
           }
 
-          const result = await this.handleYouTubeChannels([channel]);
+          if (urldata.isYouTubeChannel()) {
+            const channel = URLUtils.extractYouTubeChannel(urldata.url);
 
-          if (result.length && !problematicChannelIDs.includes(result[0])) {
-            problematicChannelIDs.push(result[0]);
-
-            if (!this.greedy) {
-              break;
+            if (!channel) {
+              continue;
             }
+
+            const result = await this.handleYouTubeChannels([channel]);
+
+            if (result.length && !problematicChannelIDs.includes(result[0])) {
+              problematicChannelIDs.push(result[0]);
+
+              if (!this.greedy) {
+                break;
+              }
+            }
+
+            continue;
           }
 
-          continue;
-        }
+          if (urldata.isDiscordInvite()) {
+            const invite = URLUtils.extractDiscordInvite(urldata.url);
 
-        if (urldata.isDiscordInvite()) {
-          const invite = URLUtils.extractDiscordInvite(urldata.url);
+            const result = await this.handleDiscordInvites([invite]);
 
-          const result = await this.handleDiscordInvites([invite]);
+            if (result.length && !problematicDiscordInvites.includes(invite)) {
+              problematicDiscordInvites.push(invite);
 
-          if (result.length && !problematicDiscordInvites.includes(invite)) {
-            problematicDiscordInvites.push(invite);
-
-            if (!this.greedy) {
-              break;
+              if (!this.greedy) {
+                break;
+              }
             }
           }
         }
@@ -446,6 +479,7 @@ export class Analyzer {
 
     if (problematicVideoIDs.length && !this.greedy) {
       result.problematic = true;
+      result.severity = this.severity;
       return result;
     }
 
@@ -455,6 +489,7 @@ export class Analyzer {
 
     if (problematicChannelIDs.length && !this.greedy) {
       result.problematic = true;
+      result.severity = this.severity;
       return result;
     }
 
@@ -466,6 +501,7 @@ export class Analyzer {
 
     if (problematicDiscordInvites.length && !this.greedy) {
       result.problematic = true;
+      result.severity = this.severity;
       return result;
     }
 
@@ -494,6 +530,31 @@ export class Analyzer {
       result.problematicDiscordInvites.length > 0 ||
       result.problematicLinks.length > 0;
 
+    result.severity = this.severity;
+
     return result;
+  }
+
+  public async analyzeForGatewayClient(
+    clientSessionId: string,
+    messageContext?: MessageContext,
+  ): Promise<void> {
+    if (!this.gateway) {
+      return;
+    }
+
+    const results = await this.analyze();
+
+    if (results.problematic) {
+      await this.gateway.emit<AnalysisNotification>(
+        'analysis',
+        {
+          content: this.content,
+          messageContext,
+          results,
+        },
+        (client) => client.getSessionId() === clientSessionId,
+      );
+    }
   }
 }

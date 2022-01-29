@@ -3,8 +3,10 @@ import WebSocket from 'ws';
 import { Group } from '@/db/models/groups/Group';
 import { handleError } from '@/lib/errors';
 import Redis from '@/services/redis';
+import { Gateway } from '.';
 
 export type GatewayContext<T> = {
+  gateway: Gateway;
   client: GatewayClient;
 } & T;
 
@@ -19,6 +21,8 @@ type GatewayEvent = [string, any];
 const noop = () => {};
 
 export class GatewayClient {
+  private gateway: Gateway;
+
   private ws: WebSocket;
   isAlive: boolean;
   private handlers: GatewayEventHandlers = {};
@@ -26,7 +30,9 @@ export class GatewayClient {
   private sessionId?: string;
   private group?: Group;
 
-  constructor(ws: WebSocket) {
+  constructor(ws: WebSocket, gateway: Gateway) {
+    this.gateway = gateway;
+
     this.ws = ws;
     this.isAlive = true;
 
@@ -53,7 +59,7 @@ export class GatewayClient {
           });
         }
 
-        await handler({ client: this, ...data });
+        await handler({ client: this, gateway: this.gateway, ...data });
       } catch (err) {
         handleError(err);
 
