@@ -1,10 +1,12 @@
 // Type definitions for messages coming FROM the gateway server TO a websocket
 // client WITHOUT a prior gateway request.
 
+import { AnalyzerResult } from '@/core/analyzer';
 import {
   IAnyBlacklistEntry,
   IAnyBlacklistName,
 } from '@/typings/IAnyBlacklistEntry';
+import { MessageContext } from './requests';
 
 // Fields all gateway notifications should have.
 export interface GatewayNotification {
@@ -38,6 +40,12 @@ export interface BlacklistEntryRemovedNotification extends GatewayNotification {
   global: boolean;
   guild?: string;
   metadata?: IAnyBlacklistEntry;
+}
+
+export interface AnalysisNotification extends GatewayNotification {
+  content: string;
+  results: AnalyzerResult;
+  messageContext?: MessageContext;
 }
 
 export interface NotificationQueueEntry<T = GatewayNotification> {

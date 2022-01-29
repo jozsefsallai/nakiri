@@ -55,9 +55,17 @@ export interface GetBlacklistedGuildsRequest extends GuildRestrictableRequest {}
 export interface GetBlacklistedPhrasesRequest
   extends GuildRestrictableRequest {}
 
+export interface MessageContext {
+  guildId?: string;
+  channelId?: string;
+  messageId?: string;
+  userId?: string;
+}
+
 // Used to request the analysis of a message.
 //   client.on('analysisRequested', (data: AnalysisRequest))
 export interface AnalysisRequest extends GatewayRequest {
   content: string;
+  messageContext?: MessageContext;
   options: IAnalyzerOptions;
 }

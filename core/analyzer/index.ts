@@ -16,6 +16,10 @@ import { DiscordAPIService } from '@/services/discord';
 import { URLUtils, YouTubeChannelMatch } from '@/lib/url';
 
 import { addYouTubeVideoID } from '@/controllers/youtube-video-ids/addYouTubeVideoID';
+import { AnalysisNotification } from '@/gateway/typings/notifications';
+
+import { v4 as uuid } from 'uuid';
+import { MessageContext } from '@/gateway/typings/requests';
 
 export interface AnalyzerResult {
   options: IAnalyzerOptions;
@@ -62,7 +66,7 @@ export class Analyzer {
   constructor(
     groupId: string,
     content: string,
-    options: IAnalyzerOptions,
+    options?: IAnalyzerOptions,
     gateway?: Gateway,
   ) {
     this.groupId = groupId;
@@ -70,18 +74,18 @@ export class Analyzer {
 
     this.gateway = gateway;
 
-    this.analyzeYouTubeVideoIDs = options.analyzeYouTubeVideoIDs ?? true;
-    this.analyzeYouTubeChannelIDs = options.analyzeYouTubeChannelIDs ?? true;
+    this.analyzeYouTubeVideoIDs = options?.analyzeYouTubeVideoIDs ?? true;
+    this.analyzeYouTubeChannelIDs = options?.analyzeYouTubeChannelIDs ?? true;
     this.analyzeYouTubeChannelHandles =
-      options.analyzeYouTubeChannelHandles ?? true;
-    this.analyzeDiscordInvites = options.analyzeDiscordInvites ?? true;
-    this.analyzeLinks = options.analyzeLinks ?? true;
-    this.followRedirects = options.followRedirects ?? true;
-    this.preemptiveVideoIDAnalysis = options.preemptiveVideoIDAnalysis ?? true;
-    this.greedy = options.greedy ?? false;
-    this.guildId = options.guildId;
-    this.strictGuildCheck = options.strictGuildCheck ?? false;
-    this.strictGroupCheck = options.strictGroupCheck ?? false;
+      options?.analyzeYouTubeChannelHandles ?? true;
+    this.analyzeDiscordInvites = options?.analyzeDiscordInvites ?? true;
+    this.analyzeLinks = options?.analyzeLinks ?? true;
+    this.followRedirects = options?.followRedirects ?? true;
+    this.preemptiveVideoIDAnalysis = options?.preemptiveVideoIDAnalysis ?? true;
+    this.greedy = options?.greedy ?? false;
+    this.guildId = options?.guildId;
+    this.strictGuildCheck = options?.strictGuildCheck ?? false;
+    this.strictGroupCheck = options?.strictGroupCheck ?? false;
 
     if (this.preemptiveVideoIDAnalysis && config.youtube?.apiKey) {
       this.youTubeAPI = new YouTubeAPIService(config.youtube.apiKey);
@@ -495,5 +499,29 @@ export class Analyzer {
       result.problematicLinks.length > 0;
 
     return result;
+  }
+
+  public async analyzeForGatewayClient(
+    clientSessionId: string,
+    messageContext?: MessageContext,
+  ): Promise<void> {
+    if (!this.gateway) {
+      return;
+    }
+
+    const results = await this.analyze();
+
+    if (results.problematic) {
+      await this.gateway.emit<AnalysisNotification>(
+        'analysis',
+        {
+          notificationId: uuid(),
+          content: this.content,
+          messageContext,
+          results,
+        },
+        (client) => client.getSessionId() === clientSessionId,
+      );
+    }
   }
 }
