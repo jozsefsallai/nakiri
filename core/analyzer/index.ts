@@ -18,9 +18,16 @@ import { URLUtils, YouTubeChannelMatch } from '@/lib/url';
 import { addYouTubeVideoID } from '@/controllers/youtube-video-ids/addYouTubeVideoID';
 import { AnalysisNotification } from '@/gateway/typings/notifications';
 
-import { v4 as uuid } from 'uuid';
 import { MessageContext } from '@/gateway/typings/requests';
 import { Severity } from '@/db/common/Severity';
+import { Phrase } from '@/db/models/blacklists/Phrase';
+import { getSimilarity } from '@/lib/similarity';
+
+export interface PhraseSimilarityMap {
+  phrase: string;
+  severity: Severity;
+  similarity: number;
+}
 
 export interface AnalyzerResult {
   options: IAnalyzerOptions;
@@ -29,7 +36,9 @@ export interface AnalyzerResult {
   problematicChannelIDs: string[];
   problematicDiscordInvites: string[];
   problematicLinks: string[];
+  problematicPhrases: PhraseSimilarityMap[];
   severity?: Severity;
+  maxPhraseSimilarity?: number;
 }
 
 interface LinkAnalysisResults {
@@ -49,6 +58,8 @@ export class Analyzer {
   private analyzeDiscordInvites: boolean;
   private analyzeLinks: boolean;
   private followRedirects: boolean;
+  private analyzePhrases: boolean;
+  private phraseAnalysisThreshold: number;
   private preemptiveVideoIDAnalysis: boolean;
   private greedy: boolean;
   private guildId?: string;
@@ -64,8 +75,10 @@ export class Analyzer {
   private youTubeChannelIDRepository: Repository<YouTubeChannelID>;
   private discordGuildRepository: Repository<DiscordGuild>;
   private linkPatternRepository: Repository<LinkPattern>;
+  private phraseRepository: Repository<Phrase>;
 
   private severity: Severity | undefined;
+  private maxPhraseSimilarity: number;
 
   constructor(
     groupId: string,
@@ -85,6 +98,8 @@ export class Analyzer {
     this.analyzeDiscordInvites = options?.analyzeDiscordInvites ?? true;
     this.analyzeLinks = options?.analyzeLinks ?? true;
     this.followRedirects = options?.followRedirects ?? true;
+    this.analyzePhrases = options?.analyzePhrases ?? true;
+    this.phraseAnalysisThreshold = options?.phraseAnalysisThreshold ?? 0.5;
     this.preemptiveVideoIDAnalysis = options?.preemptiveVideoIDAnalysis ?? true;
     this.greedy = options?.greedy ?? false;
     this.guildId = options?.guildId;
@@ -98,6 +113,8 @@ export class Analyzer {
     if (this.analyzeDiscordInvites) {
       this.discordAPI = new DiscordAPIService();
     }
+
+    this.maxPhraseSimilarity = 0.0;
   }
 
   public async prepare() {
@@ -106,6 +123,7 @@ export class Analyzer {
     this.youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
     this.linkPatternRepository = db.getRepository(LinkPattern);
     this.discordGuildRepository = db.getRepository(DiscordGuild);
+    this.phraseRepository = db.getRepository(Phrase);
   }
 
   private maxSeverity(
@@ -448,6 +466,42 @@ export class Analyzer {
     };
   }
 
+  private async handlePhrases(message: string): Promise<PhraseSimilarityMap[]> {
+    if (!this.analyzePhrases) {
+      return [];
+    }
+
+    const where: FindConditions<Phrase>[] = !this.guildId
+      ? [{ guildId: IsNull() }]
+      : this.strictGuildCheck
+      ? [{ guildId: this.guildId }]
+      : [{ guildId: IsNull() }, { guildId: this.guildId }];
+
+    const allEntries = await this.phraseRepository.find({ where });
+
+    const results: PhraseSimilarityMap[] = [];
+
+    for await (const phrase of allEntries) {
+      const similarityPercentage = getSimilarity(message, phrase.content);
+
+      if (similarityPercentage > this.phraseAnalysisThreshold) {
+        results.push({
+          phrase: phrase.content,
+          similarity: similarityPercentage,
+          severity: phrase.severity,
+        });
+
+        this.severity = this.maxSeverity(this.severity, phrase.severity);
+        this.maxPhraseSimilarity = Math.max(
+          this.maxPhraseSimilarity,
+          similarityPercentage,
+        );
+      }
+    }
+
+    return results;
+  }
+
   public async analyze(): Promise<AnalyzerResult> {
     await this.prepare();
 
@@ -471,6 +525,7 @@ export class Analyzer {
       problematicChannelIDs: [],
       problematicDiscordInvites: [],
       problematicLinks: [],
+      problematicPhrases: [],
     };
 
     const videoIDs = URLUtils.extractYouTubeIDs(this.content);
@@ -505,6 +560,16 @@ export class Analyzer {
       return result;
     }
 
+    const phrases = await this.handlePhrases(this.content);
+    result.problematicPhrases.push(...phrases);
+
+    if (phrases.length && !this.greedy) {
+      result.problematic = true;
+      result.severity = this.severity;
+      result.maxPhraseSimilarity = this.maxPhraseSimilarity;
+      return result;
+    }
+
     const links = URLUtils.extractLinks(this.content);
     const problematicLinksResult = await this.handleLinks(links);
     result.problematicLinks.push(...problematicLinksResult.problematicLinks);
@@ -528,9 +593,14 @@ export class Analyzer {
       result.problematicVideoIDs.length > 0 ||
       result.problematicChannelIDs.length > 0 ||
       result.problematicDiscordInvites.length > 0 ||
-      result.problematicLinks.length > 0;
+      result.problematicLinks.length > 0 ||
+      result.problematicPhrases.length > 0;
 
     result.severity = this.severity;
+
+    if (this.maxPhraseSimilarity) {
+      result.maxPhraseSimilarity = this.maxPhraseSimilarity;
+    }
 
     return result;
   }
