@@ -3,6 +3,24 @@
 Centralized blacklist database, API, and management panel primarily intended for
 use in Hololive fan Discord servers.
 
+## Used Technologies
+
+| Component                           | Tech                |
+| ----------------------------------- | ------------------- |
+| Primary programming language        | TypeScript          |
+| Web framework (backend and routing) | Express and Next.js |
+| Frontend library                    | React               |
+| Content markup languages            | Markdown, MDX       |
+| Styling                             | SCSS                |
+| Styling utility framework           | Tailwind            |
+| Database models and migrations      | TypeORM             |
+| Asynchronous jobs                   | Bull + Redis        |
+| Workers                             | Go                  |
+| Nakiri Gateway                      | Websockets          |
+| Documentation pages                 | Nextra              |
+| Source control                      | Git/GitHub          |
+| Error logs and reporting            | Sentry              |
+
 ## Requirements
 
 - Node.js v12 or newer
