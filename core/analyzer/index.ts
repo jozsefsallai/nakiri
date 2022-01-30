@@ -21,7 +21,7 @@ import { AnalysisNotification } from '@/gateway/typings/notifications';
 import { MessageContext } from '@/gateway/typings/requests';
 import { Severity } from '@/db/common/Severity';
 import { Phrase } from '@/db/models/blacklists/Phrase';
-import { getSimilarity } from '@/lib/similarity';
+import { getPhraseLikelihood } from '@/lib/similarity';
 
 export interface PhraseSimilarityMap {
   phrase: string;
@@ -118,12 +118,13 @@ export class Analyzer {
   }
 
   public async prepare() {
-    await db.prepare();
-    this.youTubeVideoIDRepository = db.getRepository(YouTubeVideoID);
-    this.youTubeChannelIDRepository = db.getRepository(YouTubeChannelID);
-    this.linkPatternRepository = db.getRepository(LinkPattern);
-    this.discordGuildRepository = db.getRepository(DiscordGuild);
-    this.phraseRepository = db.getRepository(Phrase);
+    const connection = await db.getTemporaryNamedConnection('analyzer');
+    this.youTubeVideoIDRepository = connection.getRepository(YouTubeVideoID);
+    this.youTubeChannelIDRepository =
+      connection.getRepository(YouTubeChannelID);
+    this.linkPatternRepository = connection.getRepository(LinkPattern);
+    this.discordGuildRepository = connection.getRepository(DiscordGuild);
+    this.phraseRepository = connection.getRepository(Phrase);
   }
 
   private maxSeverity(
@@ -482,9 +483,9 @@ export class Analyzer {
     const results: PhraseSimilarityMap[] = [];
 
     for await (const phrase of allEntries) {
-      const similarityPercentage = getSimilarity(message, phrase.content);
+      const similarityPercentage = getPhraseLikelihood(message, phrase.content);
 
-      if (similarityPercentage > this.phraseAnalysisThreshold) {
+      if (similarityPercentage >= this.phraseAnalysisThreshold) {
         results.push({
           phrase: phrase.content,
           similarity: similarityPercentage,
