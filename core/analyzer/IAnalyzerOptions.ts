@@ -4,6 +4,8 @@ export interface IAnalyzerOptions {
   analyzeYouTubeChannelHandles?: boolean;
   analyzeDiscordInvites?: boolean;
   analyzeLinks?: boolean;
+  analyzePhrases?: boolean;
+  phraseAnalysisThreshold?: number;
   followRedirects?: boolean;
   preemptiveVideoIDAnalysis?: boolean;
   greedy?: boolean;
