@@ -1,0 +1,28 @@
+---
+title: AnalyzerOptions
+---
+
+import 'nextra-theme-docs/style.css';
+
+# AnalyzerOptions
+
+This object specifies how the analyzer should behave during the analysis. It
+allows you to toggle various features of the analyzer.
+
+## Fields
+
+| Field name                     | Type     | Description                                                                                                                                       |
+| ------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `analyzeYouTubeVideoIDs`       | boolean? | Whether to check if a message links to forbidden YouTube videos. Defaults to `true`.                                                              |
+| `analyzeYouTubeChannelIDs`     | boolean? | Whether to check if a message links to forbidden YouTube channels. Defaults to `true`.                                                            |
+| `analyzeYouTubeChannelHandles` | boolean? | Same as the channel ID check, except this checks for YouTube handles. Defaults to `true`.                                                         |
+| `analyzeDiscordInvites`        | boolean? | Whether to check if a message links to a forbidden Discord server invite. Defaults to `true`.                                                     |
+| `analyzeLinks`                 | boolean? | Whether to check if a message contains links that match one of the forbidden link patterns. Defaults to `true`.                                   |
+| `analyzePhrases`               | boolean? | Whether to check if the message contains any forbidden phrases. Defaults to `true`.                                                               |
+| `phraseAnalysisThreshold`      | number?  | A real number between 0 and 1, which specifies the minimum similarity index for a match to be considered unwanted. Defaults to `0.5`.             |
+| `followRedirects`              | boolean? | Whether to follow redirects when checking links. Defaults to `true`.                                                                              |
+| `preemptiveVideoAnalysis`      | boolean? | Whether to check if a video belongs to a banned YouTube channel and automatically add it to the database of forbidden videos. Defaults to `true`. |
+| `greedy`                       | boolean? | Performs a greedy check, which means it won't stop at the very first result. Defaults to `false`.                                                 |
+| `guildId`                      | string?  | The ID of the guild whose blacklists to also include.                                                                                             |
+| `strictGuildCheck`             | boolean? | Only look inside the blacklists of the provided guild. Defaults to `false`.                                                                       |
+| `strictGroupCheck`             | boolean? | Only look inside the blacklists of the group. Defaults to `false`.                                                                                |

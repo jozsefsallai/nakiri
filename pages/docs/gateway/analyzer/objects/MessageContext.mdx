@@ -1,0 +1,23 @@
+---
+title: MessageContext
+---
+
+import 'nextra-theme-docs/style.css';
+
+# MessageContext
+
+This is an object that will be passed to the analysis gateway request to include
+additional information about the message that triggered the analysis. When the
+analysis result arrives, it will contain this data.
+
+## Fields
+
+You can technically pass **anything** to this object, since it will just be
+passed back and forth, but this is the official list of attributes it contains:
+
+| Field name  | Type    | Description                                        |
+| ----------- | ------- | -------------------------------------------------- |
+| `guildId`   | string? | The ID of the guild the message was sent in.       |
+| `channelId` | string? | The ID of the channel the message was sent in.     |
+| `messageId` | string? | The ID of the message that triggered the analysis. |
+| `userId`    | string? | The ID of the user that sent the message.          |

@@ -1,0 +1,7 @@
+{
+  "AnalyzerOptions": "AnalyzerOptions",
+  "AnalysisRequest": "AnalysisRequest",
+  "MessageContext": "MessageContext",
+  "AnalyzerResult": "AnalyzerResult",
+  "PhraseSimilarityMap": "PhraseSimilarityMap"
+}

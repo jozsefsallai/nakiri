@@ -1,0 +1,17 @@
+---
+title: AnalysisRequest
+---
+
+import 'nextra-theme-docs/style.css';
+
+# AnalysisRequest
+
+This is the payload that will be sent to the gateway to enqueue an analysis.
+
+## Fields
+
+| Field name       | Type                                                               | Description                                    |
+| ---------------- | ------------------------------------------------------------------ | ---------------------------------------------- |
+| `content`        | string                                                             | The message to analyze.                        |
+| `messageContext` | [MessageContext](/docs/gateway/analyzer/objects/MessageContext)?   | The circumstances the message was sent in.     |
+| `options`        | [AnalyzerOptions](/docs/gateway/analyzer/objects/AnalyzerOptions)? | The options to use when analyzing the message. |

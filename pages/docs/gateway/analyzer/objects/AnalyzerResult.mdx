@@ -1,0 +1,23 @@
+---
+title: AnalyzerResult
+---
+
+import 'nextra-theme-docs/style.css';
+
+# AnalyzerResult
+
+Contains information about the result of an analysis.
+
+## Fields
+
+| Field name                  | Type                                                                        | Description                                                                  |
+| --------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `options`                   | [AnalyzerOptions](/docs/gateway/analyzer/objects/AnalyzerOptions)           | The options that were used in this analysis.                                 |
+| `problematic`               | boolean                                                                     | Whether the analysis concluded that the message is problematic.              |
+| `problematicVideoIDs`       | string[]                                                                    | A list of blacklisted YouTube video IDs that the message contained.          |
+| `problematicChannelIDs`     | string[]                                                                    | A list of blacklisted YouTube channel IDs that the message contained.        |
+| `problematicDiscordInvites` | string[]                                                                    | A list of invites to blacklisted Discord servers that the message contained. |
+| `problematicLinks`          | string[]                                                                    | A list of links that matched one of the forbidden link patterns.             |
+| `problematicPhrases`        | [PhraseSimilarityMap](/docs/gateway/analyzer/objects/PhraseSimilarityMap)[] | An array of phrase similarities that were found in the message.              |
+| `severity`                  | [Severity](/docs/objects/Severity)?                                         | The highest severity of the found offenses in the message analysis.          |
+| `maxPhraseSimilarity`       | number?                                                                     | The maximum phrase similarity from the analyzed phrase similarity map.       |

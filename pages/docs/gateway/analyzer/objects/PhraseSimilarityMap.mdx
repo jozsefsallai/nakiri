@@ -1,0 +1,18 @@
+---
+title: PhraseSimilarityMap
+---
+
+import 'nextra-theme-docs/style.css';
+
+# PhraseSimilarityMap
+
+Contains information about the similarity of a message to an individual banned
+phrase.
+
+## Fields
+
+| Field name   | Type                               | Description                                                                   |
+| ------------ | ---------------------------------- | ----------------------------------------------------------------------------- |
+| `phrase`     | string                             | The banned phrase's content.                                                  |
+| `similarity` | number                             | The similarity of the message to the banned phrase (real number from 0 to 1). |
+| `severity`   | [Severity](/docs/objects/Severity) | The severity rank of the phrase.                                              |

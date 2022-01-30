@@ -1,0 +1,88 @@
+---
+title: Analyzing Messages
+---
+
+import 'nextra-theme-docs/style.css';
+
+# Analyzing Messages using the Nakiri Gateway
+
+You can use the Nakiri Gateway to check whether a message contains a forbidden
+item. For example, you can check whether a message contains a link to a YouTube
+video that you don't want to be posted on your server.
+
+The analyzer will report back whether the message:
+
+- contains a link to a banned YouTube video
+- contains a link to a banned YouTube channel
+- contains a link to a YouTube video from a banned YouTube channel
+- contains a link that matches a forbidden link pattern
+- contains an invite to a forbidden Discord server
+- contains a phrase that's forbidden
+
+This response will also contain the maximum severity of the offenses, which will
+allow you to take action more easily. For example, if a message is caught with
+an offense that has a very high severity, you can delete the offending message
+and mute its author automatically.
+
+**Note:** the analyzer is still in its proof-of-work stage, so a lot of things
+can and will probably break. It's also likely to return false positives,
+especially in regards of forbidden phrases. There's also currently no rate
+limiting, so please try to use it with caution.
+
+## Requesting an analysis
+
+You can request to analyze a message using the following gateway request:
+
+```json
+[
+  "analysis",
+  {
+    "content": "hello please check this cool vid: https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "messageContext": {
+      "guildId": "871445016525029417",
+      "channelId": "871445017300963341",
+      "messageId": "911129474509201448",
+      "authorId": "245890903133257730"
+    }, // optional
+    "options": {
+      // optional
+    }
+  }
+]
+```
+
+You can learn more about the analysis request [here](/docs/gateway/analyzer/objects/AnalysisRequest).
+
+## After the request
+
+Once you've made the request to analyze a message you will receive nothing in
+return. Well, that's a bit harshly worded. The analysis will be added to a queue
+system which will eventually be ran and returned to the client through a gateway
+notification. The name of the notification is `analysis`.
+
+The notification will have the following body:
+
+```json
+[
+  "analysis",
+  {
+    "ok": true,
+    "data": {
+      "notificationId": "dfac9fb7-f8cc-464e-aa9a-535aa43571ec",
+      "content": "hello please check this cool vid: https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "messageContext": {
+        "guildId": "871445016525029417",
+        "channelId": "871445017300963341",
+        "messageId": "911129474509201448",
+        "authorId": "245890903133257730"
+      },
+      "results": {
+        // AnalyzerResult
+      }
+    }
+  }
+]
+```
+
+The `results` field will contain an [AnalyzerResult](/docs/gateway/analyzer/objects/AnalyzerResult)
+object. You can learn more about notifications [here](/docs/gateway/notifications).
