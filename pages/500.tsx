@@ -6,7 +6,7 @@ const ServerErrorPage = () => {
   return (
     <>
       <Head>
-        <title>404</title>
+        <title>500</title>
       </Head>
 
       <BoxLayout>
