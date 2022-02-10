@@ -26,6 +26,7 @@ import { getPhraseLikelihood } from '@/lib/similarity';
 export interface PhraseSimilarityMap {
   phrase: string;
   severity: Severity;
+  word: string;
   similarity: number;
 }
 
@@ -483,19 +484,20 @@ export class Analyzer {
     const results: PhraseSimilarityMap[] = [];
 
     for await (const phrase of allEntries) {
-      const similarityPercentage = getPhraseLikelihood(message, phrase.content);
+      const similarityMatch = getPhraseLikelihood(message, phrase.content);
 
-      if (similarityPercentage >= this.phraseAnalysisThreshold) {
+      if (similarityMatch.similarity >= this.phraseAnalysisThreshold) {
         results.push({
           phrase: phrase.content,
-          similarity: similarityPercentage,
           severity: phrase.severity,
+          word: similarityMatch.word,
+          similarity: similarityMatch.similarity,
         });
 
         this.severity = this.maxSeverity(this.severity, phrase.severity);
         this.maxPhraseSimilarity = Math.max(
           this.maxPhraseSimilarity,
-          similarityPercentage,
+          similarityMatch.similarity,
         );
       }
     }

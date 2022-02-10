@@ -1,5 +1,10 @@
 import latinize from 'latinize';
 
+export interface SimilarityMatch {
+  word: string;
+  similarity: number;
+}
+
 const getBigrams = (str: string): Set<string> => {
   const bigrams = new Set<string>();
 
@@ -39,11 +44,14 @@ export const getSimilarity = (first: string, second: string): number => {
 export const getPhraseLikelihood = (
   content: string,
   phrase: string,
-): number => {
+): SimilarityMatch => {
   const phraseComponents = phrase.split(' ');
   const contentComponents = content.split(/\s/g).filter((c) => c.length > 0);
 
-  let maxSimilarity = 0.0;
+  let maxSimilarityMatch: SimilarityMatch = {
+    word: '',
+    similarity: 0,
+  };
 
   for (let i = 0; i < contentComponents.length; ++i) {
     const ngrams = contentComponents.slice(i, i + phraseComponents.length);
@@ -52,9 +60,14 @@ export const getPhraseLikelihood = (
       break;
     }
 
-    const similarity = getSimilarity(ngrams.join(' '), phrase);
-    maxSimilarity = Math.max(maxSimilarity, similarity);
+    const stringToCompare = ngrams.join(' ');
+    const similarity = getSimilarity(stringToCompare, phrase);
+
+    if (similarity > maxSimilarityMatch.similarity) {
+      maxSimilarityMatch.similarity = similarity;
+      maxSimilarityMatch.word = stringToCompare;
+    }
   }
 
-  return maxSimilarity;
+  return maxSimilarityMatch;
 };
