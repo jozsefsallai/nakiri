@@ -65,7 +65,9 @@ export const getPhraseLikelihood = (
 
     if (similarity > maxSimilarityMatch.similarity) {
       maxSimilarityMatch.similarity = similarity;
-      maxSimilarityMatch.word = stringToCompare;
+      maxSimilarityMatch.word = stringToCompare
+        .toLowerCase()
+        .replace(/[^a-z ]/g, '');
     }
   }
 
